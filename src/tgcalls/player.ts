@@ -40,7 +40,7 @@ export class Player {
     }
 
     async play(readable: Readable) {
-        this.stream = new Stream(readable, 16, 65000, 1);
+        this.stream = new Stream(readable, 16, 48000, 1);
         this.stream.on('finish', async () => await this.finish())
         await this.tgcalls.start(this.stream.createTrack());
         this.playing = true;
