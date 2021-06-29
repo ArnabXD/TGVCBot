@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNEXT",
+    "module": "commonjs",
+    "allowJs": true,
+    // "checkJs": true,
+    "outDir": "./build",
+    "strict": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
