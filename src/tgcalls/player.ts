@@ -8,14 +8,13 @@ export class Player {
     chatId: number;
     tgcalls: TGCalls<{ chatId: number }>;
     playing: boolean;
-    stream: Stream;
+    stream?: Stream;
     close: () => void;
 
     constructor(chatId: number, close: () => void) {
         this.chatId = chatId;
         this.close = close;
         queue.init(chatId);
-        this.stream = new Stream();
         this.tgcalls = new TGCalls({ chatId });
         this.tgcalls.joinVoiceCall = async (payload) => await joinCall(chatId, payload);
         this.playing = false;
@@ -35,7 +34,7 @@ export class Player {
     }
 
     setReadable(readable: Readable) {
-        this.stream.setReadable(readable);
+        this.stream?.setReadable(readable);
         this.playing = true;
     }
 
@@ -47,8 +46,8 @@ export class Player {
     }
 
     pause() {
-        if (queue.getAll(this.chatId) && !this.stream.paused) {
-            this.stream.pause();
+        if (queue.getAll(this.chatId) && !this.stream?.paused) {
+            this.stream?.pause();
             this.playing = false;
             return true;
         }
@@ -56,7 +55,7 @@ export class Player {
     }
 
     resume() {
-        if (queue.getAll(this.chatId) && this.stream.paused) {
+        if (queue.getAll(this.chatId) && this.stream?.paused) {
             this.stream.pause();
             this.playing = true;
             return true;
@@ -65,8 +64,8 @@ export class Player {
     }
 
     async skip() {
-        if (this.stream.finished) return false;
-        this.stream.finish();
+        if (this.stream?.finished) return false;
+        this.stream?.finish();
         await this.finish();
         return true;
     }
