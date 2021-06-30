@@ -6,6 +6,7 @@ IT HAS SERIOUS BUGS ([#1](/../../issues/1)) SO DON'T DEPLOY
 - [@AndrewLaneX](https://github.com/AndrewLaneX) for [tgcallsjs](https://github.com/tgcallsjs/tgcalls).
 - [@rojserbest](https://github.com/rojserbest) for [callsmusic2](https://github.com/callsmusic/callsmusic2) which i used as base
 - [@cachecleanerjeet](https://github.com/cachecleanerjeet) for [JioSaavn API](https://github.com/cachecleanerjeet/JiosaavnAPI)
+- [@TechiError](https://github.com/TechiError) for Deezer API
 - [Telegraf](https://github.com/telegraf/telegraf/)
 - [GramJS](https://github.com/gram-js/gramjs/)
 
@@ -34,6 +35,7 @@ yarn start
 ## Bot Usage
 
 - `/jiosaavn <song name>` : Play Song from JioSaavn.
+- `/deezer <song name>` : Play Song from Deezer.
 - `/pause`
 - `/resume`
 - `/skip`
