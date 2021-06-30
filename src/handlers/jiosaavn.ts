@@ -7,7 +7,7 @@ import { JioSaavnSongResponse, JioSaavnSongSearchResponse } from '../types/respo
 
 export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
 
-    let keyword = ctx.message.text.replace(/\/jiosaavn\s/, '').replace(/\s/g, "+");
+    let keyword = ctx.message.text.replace(/\/jiosaavn(@[a-zA-Z0-9\-_]+)?\s/, '').replace(/\s/g, "+");
     if (keyword === "/jiosaavn") return await ctx.reply("Die You Retard")
     await ctx.replyWithChatAction("typing");
 
