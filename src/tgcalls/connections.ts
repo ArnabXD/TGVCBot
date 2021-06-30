@@ -11,6 +11,7 @@ export class Connection {
 
     async setReadable(chatID: number, readable: Readable) {
         if (chatID in this.connection) {
+            console.log(1)
             this.connection[chatID].setReadable(readable)
         } else {
             let player = new Player(chatID, () => this.close(chatID));
@@ -46,7 +47,6 @@ export class Connection {
     async skip(chatId: number) {
         if (this.inCall(chatId)) {
             if (await this.connection[chatId].skip()) {
-                // this.close(chatId);
                 return 0;
             } else return 1;
         } else return 2;
@@ -54,6 +54,8 @@ export class Connection {
 
     close(chatID: number) {
         if (!(chatID in this.connection)) return false;
+        this.connection[chatID].tgcalls.close();
+        leaveCall(chatID);
         delete this.connection[chatID];
         return true;
     }
