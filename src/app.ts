@@ -15,9 +15,7 @@ import { connections } from './tgcalls';
     await startUserBot()
 })();
 
-// Enable graceful stop
 process.once('SIGINT', async () => {
     bot.stop('SIGINT')
     await connections.closeAll();
 })
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
