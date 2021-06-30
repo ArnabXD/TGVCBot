@@ -4,11 +4,13 @@ import { connections, queue } from '../tgcalls';
 import { ffmpeg } from '../ffmpeg';
 import { escape } from 'html-escaper';
 import { JioSaavnSongResponse, JioSaavnSongSearchResponse } from '../types/responseTypes';
+import { commandExtractor } from '../utils';
 
 export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
-
-    let keyword = ctx.message.text.replace(/\/jiosaavn(@[a-zA-Z0-9\-_]+)?\s/, '').replace(/\s/g, "+");
-    if (keyword === "/jiosaavn") return await ctx.reply("Die You Retard")
+    
+    let { args: keyword } = commandExtractor(ctx.message.text)
+    if (!keyword) return await ctx.reply("Die You Retard")
+    
     await ctx.replyWithChatAction("typing");
 
     let [result]: JioSaavnSongSearchResponse[] = await (await fetch(`https://jiosaavn-api.vercel.app/search?query=${keyword}`)).json()
