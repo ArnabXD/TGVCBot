@@ -7,13 +7,13 @@ import { JioSaavnSongResponse, JioSaavnSongSearchResponse } from '../types/respo
 import { commandExtractor } from '../utils';
 
 export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
-    
+
     let { args: keyword } = commandExtractor(ctx.message.text)
     if (!keyword) return await ctx.reply("Die You Retard")
-    
+
     await ctx.replyWithChatAction("typing");
 
-    let [result]: JioSaavnSongSearchResponse[] = await (await fetch(`https://jiosaavn-api.vercel.app/search?query=${keyword}`)).json()
+    let [result]: JioSaavnSongSearchResponse[] = await (await fetch(`https://jiosaavn-api.vercel.app/search?query=${keyword.replace(/\s/g, '+')}`)).json()
     if (!result) return await ctx.reply("No Results Found")
 
     let song: JioSaavnSongResponse = await (await fetch(`https://jiosaavn-api.vercel.app/song?id=${result.id}`)).json();
@@ -31,7 +31,7 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
             },
             readable: FFMPEG
         })
-        return await ctx.replyWithHTML(`<a href="${song.perma_url}">${song.song}</a> Queued at Postion ${position} by ${escape(ctx.from.first_name)}`)
+        return await ctx.replyWithHTML(`<a href="${song.perma_url}">${song.song}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
     } else {
         await connections.setReadable(ctx.chat.id, FFMPEG);
         return await ctx.replyWithHTML(`Playing <a href="${song.perma_url}">${song.song}</a>`)
