@@ -54,7 +54,6 @@ export class Connection {
 
     close(chatID: number) {
         if (!(chatID in this.connection)) return false;
-        this.connection[chatID].stream.emit('finish');
         delete this.connection[chatID];
         return true;
     }
