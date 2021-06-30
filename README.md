@@ -1,6 +1,6 @@
 # TGVCBot (Beta)
 
-Currently this is just another failure VC Bot so i recommend not using it. Also it has jiosaavn support only.
+IT HAS SERIOUS BUGS SO DON'T DEPLOY
 
 ## Credits & Thanks to
 - [@AndrewLaneX](https://github.com/AndrewLaneX) for [tgcallsjs](https://github.com/tgcallsjs/tgcalls).
