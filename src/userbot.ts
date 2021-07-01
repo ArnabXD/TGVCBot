@@ -5,7 +5,7 @@ import env from './env';
 
 const { API_ID, API_HASH, SESSION, LOG_CHANNEL } = env;
 const session = new StringSession(SESSION)
-Logger.setLevel("none")
+Logger.setLevel("none");
 
 export const client = new TelegramClient(session, API_ID, API_HASH!, {
     connectionRetries: 3,
