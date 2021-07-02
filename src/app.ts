@@ -12,10 +12,10 @@ import { connections } from './tgcalls';
         allowedUpdates: ["message", "callback_query"]
     })
     await log("Bot is Running");
-    await startUserBot()
+    await startUserBot();
 })();
 
 process.once('SIGINT', async () => {
-    bot.stop('SIGINT')
+    bot.stop('SIGINT');
     await connections.closeAll();
 })

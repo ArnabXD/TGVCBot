@@ -10,5 +10,5 @@ export const log = async (message: string, parse_mode: ExtraReplyMessage['parse_
     }
     return await bot.telegram.sendMessage(env.LOG_CHANNEL!, message, {
         parse_mode: parse_mode
-    })
+    });
 }

@@ -13,8 +13,10 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
 
     await ctx.replyWithChatAction("typing");
 
-    let [result]: JioSaavnSongSearchResponse[] = await (await fetch(`https://jiosaavn-api.vercel.app/search?query=${keyword.replace(/\s/g, '+')}`)).json()
-    if (!result) return await ctx.reply("No Results Found")
+    let resp: JioSaavnSongSearchResponse[] = await (await fetch(`https://jiosaavn-api.vercel.app/search?query=${keyword.replace(/\s/g, '+')}`)).json()
+    if (!resp[0]) return await ctx.reply("No Results Found")
+
+    let [result] = resp
 
     let song: JioSaavnSongResponse = await (await fetch(`https://jiosaavn-api.vercel.app/song?id=${result.id}`)).json();
 
