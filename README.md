@@ -1,6 +1,6 @@
 # TGVCBot (Beta)
 
-IT HAS SERIOUS BUGS ([#1](/../../issues/1)) SO DON'T DEPLOY
+
 
 ## Credits & Thanks to
 - [@AndrewLaneX](https://github.com/AndrewLaneX) for [tgcallsjs](https://github.com/tgcallsjs/tgcalls).
