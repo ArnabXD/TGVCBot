@@ -1,6 +1,7 @@
 import { Player } from './player';
 import { Readable } from 'stream';
 import { leaveCall } from '../calls';
+import { queue } from './queue';
 
 export class Connection {
     connection: { [key: number]: Player };
@@ -55,6 +56,7 @@ export class Connection {
     close(chatID: number) {
         if (!(chatID in this.connection)) return false;
         this.connection[chatID].tgcalls.close();
+        queue.clear(chatID)
         leaveCall(chatID);
         delete this.connection[chatID];
         return true;
