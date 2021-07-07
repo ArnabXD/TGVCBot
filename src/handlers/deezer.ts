@@ -13,7 +13,7 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
 
     await ctx.replyWithChatAction("typing");
 
-    let [result]: DeezerResponse[] = await (await fetch(`http://jostapi.herokuapp.com/deezer?query=${keyword.replace(/\s/g, '%20')}&quality=mp3&limit=1`)).json()
+    let [result]: DeezerResponse[] = await (await fetch(`https://jostapi-production.up.railway.app//deezer?query=${keyword.replace(/\s/g, '%20')}&quality=mp3&limit=1`)).json()
     if (!result) return await ctx.reply("No Results Found")
 
     let FFMPEG = ffmpeg(result.raw_link)
@@ -34,7 +34,7 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
         return await ctx.replyWithHTML(`<a href="${result.link}">${result.title}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
     } else {
         await connections.setReadable(ctx.chat.id, FFMPEG);
-        return await ctx.replyWithPhoto(`http://music-banner.herokuapp.com/banner?image=${result.album.cover_big}&title=${result.title_short}&artist=${result.artist.name}`, {
+        return await ctx.replyWithPhoto(`https://music-banner.herokuapp.com/banner?image=${result.album.cover_big}&title=${result.title_short}&artist=${result.artist.name}`, {
             caption: `Playing <a href="${result.link}">${result.title}</a>`,
             parse_mode: 'HTML'
         })
