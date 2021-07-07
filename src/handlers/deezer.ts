@@ -23,6 +23,8 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
         const position = queue.add(ctx.chat.id, {
             link: result.link,
             title: result.title,
+            image: result.album.cover_big,
+            artist: result.artist.name,
             requestedBy: {
                 id: ctx.from.id,
                 first_name: ctx.from.first_name
@@ -32,6 +34,9 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
         return await ctx.replyWithHTML(`<a href="${result.link}">${result.title}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
     } else {
         await connections.setReadable(ctx.chat.id, FFMPEG);
-        return await ctx.replyWithHTML(`Playing <a href="${result.link}">${result.title}</a>`)
+        return await ctx.replyWithPhoto(`http://music-banner.herokuapp.com/banner?image=${result.album.cover_big}&title=${result.title_short}&artist=${result.artist.name}`, {
+            caption: `Playing <a href="${result.link}">${result.title}</a>`,
+            parse_mode: 'HTML'
+        })
     }
 })

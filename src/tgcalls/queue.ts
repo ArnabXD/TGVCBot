@@ -3,7 +3,8 @@ import { Readable } from 'stream';
 export interface QueueData {
     link: string;
     title: string;
-    duration?: string;
+    image: string;
+    artist: string;
     requestedBy: {
         id: number,
         first_name: string

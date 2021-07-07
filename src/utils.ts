@@ -4,7 +4,10 @@ import { escape } from 'html-escaper';
 
 export const sendPlayingMessage = async (chat: number, data: QueueData) => {
     let text = `<b>Playing </b><a href="${data.link}">${escape(data.title)}</a>\nRequested by <a href="tg://user?id=${data.requestedBy.id}">${escape(data.requestedBy.first_name)}</a>`
-    await bot.telegram.sendMessage(chat, text, { parse_mode: 'HTML' });
+    await bot.telegram.sendPhoto(chat, `http://music-banner.herokuapp.com/banner?image=${data.image}&title=${data.title}&artist=${data.artist}`, {
+        caption: text,
+        parse_mode: 'HTML'
+    });
 }
 
 export const commandExtractor = (text: string) => {

@@ -27,6 +27,8 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
         const position = queue.add(ctx.chat.id, {
             link: song.perma_url,
             title: song.song,
+            image: result.image,
+            artist: result.more_info.singers,
             requestedBy: {
                 id: ctx.from.id,
                 first_name: ctx.from.first_name
