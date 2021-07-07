@@ -13,7 +13,7 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
 
     await ctx.replyWithChatAction("typing");
 
-    let resp: DeezerResponse[] = await (await fetch(`https://jostapi-production.up.railway.app//deezer?query=${keyword.replace(/\s/g, '%20')}&quality=mp3&limit=1`)).json()
+    let resp: DeezerResponse[] = await (await fetch(`https://jostapi-production.up.railway.app/deezer?query=${keyword.replace(/\s/g, '%20')}&quality=mp3&limit=1`)).json()
     if (resp.length === 0) return await ctx.reply("No Results Found");
 
     let [result] = resp;
