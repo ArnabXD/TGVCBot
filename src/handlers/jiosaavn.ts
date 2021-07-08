@@ -4,7 +4,7 @@ import { connections, queue } from '../tgcalls';
 import { ffmpeg } from '../ffmpeg';
 import { escape } from 'html-escaper';
 import { JioSaavnSongResponse, JioSaavnSongSearchResponse } from '../types/responseTypes';
-import { commandExtractor } from '../utils';
+import { commandExtractor, sendPlayingMessage } from '../utils';
 
 export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
 
@@ -38,9 +38,15 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
         return await ctx.replyWithHTML(`<a href="${song.perma_url}">${song.song}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
     } else {
         await connections.setReadable(ctx.chat.id, FFMPEG);
-        return await ctx.replyWithPhoto(`https://music-banner.herokuapp.com/banner?image=${song.image}&title=${song.song}&artist=${song.singers}`, {
-            caption: `Playing <a href="${song.perma_url}">${song.song}</a>`,
-            parse_mode: 'HTML'
+        return await sendPlayingMessage(ctx.chat.id, {
+            link: song.perma_url,
+            title: song.song,
+            image: song.image,
+            artist: song.singers,
+            requestedBy: {
+                id: ctx.from.id,
+                first_name: ctx.from.first_name
+            }
         })
     }
 })
