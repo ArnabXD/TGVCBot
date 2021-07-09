@@ -21,7 +21,7 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
     if (!FFMPEG) return await ctx.reply("Something went wrong with FFMPEG")
 
     if (connections.playing(ctx.chat.id)) {
-        const position = queue.add(ctx.chat.id, {
+        const position = queue.push(ctx.chat.id, {
             link: result.link,
             title: result.title,
             image: result.album.cover_big,

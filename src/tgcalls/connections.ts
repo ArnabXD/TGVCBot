@@ -4,66 +4,72 @@ import { leaveCall } from '../calls';
 import { queue } from './queue';
 
 export class Connection {
-    connection: { [key: number]: Player };
+    connections: { [key: number]: Player };
 
     constructor() {
-        this.connection = {}
+        this.connections = {};
     }
 
-    async setReadable(chatID: number, readable: Readable) {
-        if (chatID in this.connection) {
-            console.log(1)
-            this.connection[chatID].setReadable(readable)
-        } else {
-            let player = new Player(chatID, () => this.close(chatID));
-            await player.play(readable);
-            this.connection[chatID] = player;
+    async setReadable(chatId: number, readable: Readable) {
+        if (chatId in this.connections)
+            this.connections[chatId].setReadable(readable);
+        else {
+            const connection = new Player(chatId, () => this.remove(chatId));
+            await connection.joinCall(readable);
+            this.connections[chatId] = connection;
         }
     }
 
     inCall(chatId: number) {
-        return !!this.connection[chatId];
+        return !!this.connections[chatId];
     }
 
     playing(chatId: number) {
         if (this.inCall(chatId))
-            if (this.connection[chatId].playing) return true;
+            if (this.connections[chatId].playing) return true;
         return false;
     }
 
     pause(chatId: number) {
         if (this.inCall(chatId)) {
-            if (this.connection[chatId].pause()) return 0;
+            if (this.connections[chatId].pause()) return 0;
             else return 1;
         } else return 2;
     }
 
     resume(chatId: number) {
         if (this.inCall(chatId)) {
-            if (this.connection[chatId].resume()) return 0;
+            if (this.connections[chatId].resume()) return 0;
             else return 1;
         } else return 2;
     }
 
     async skip(chatId: number) {
         if (this.inCall(chatId)) {
-            if (await this.connection[chatId].skip()) {
+            if (await this.connections[chatId].skip()) {
                 return 0;
             } else return 1;
         } else return 2;
     }
 
-    close(chatID: number) {
-        if (!(chatID in this.connection)) return false;
-        this.connection[chatID].tgcalls.close();
-        queue.clear(chatID)
-        leaveCall(chatID);
-        delete this.connection[chatID];
-        return true;
+    async stop(chatId: number) {
+        if (this.inCall(chatId)) {
+            if (await this.connections[chatId].skip()) {
+                this.remove(chatId);
+                return 0;
+            } else return 1;
+        } else return 2;
+    }
+
+    remove(chatId: number) {
+        if (chatId in this.connections) {
+            delete this.connections[chatId];
+            return true;
+        } else return false;
     }
 
     async closeAll() {
-        Object.keys(this.connection).forEach(async (key) => {
+        Object.keys(this.connections).forEach(async (key) => {
             try {
                 await leaveCall(Number(key))
             } catch { }

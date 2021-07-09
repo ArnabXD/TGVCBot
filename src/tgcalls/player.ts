@@ -6,67 +6,61 @@ import { sendPlayingMessage } from '../utils';
 
 export class Player {
     chatId: number;
-    tgcalls: TGCalls<{ chatId: number }>;
     playing: boolean;
     stream?: Stream;
-    close: () => void;
+    tgcalls: TGCalls<{ chatId: number }>;
+    remove: () => void;
 
-    constructor(chatId: number, close: () => void) {
+    constructor(chatId: number, remove: () => void) {
         this.chatId = chatId;
-        this.close = close;
-        queue.init(chatId);
+        this.playing = false;
         this.tgcalls = new TGCalls({ chatId });
         this.tgcalls.joinVoiceCall = async (payload) => await joinCall(chatId, payload);
-        this.playing = false;
+        this.remove = remove;
     }
 
-    async finish() {
+    async end() {
         this.playing = false;
         let next = queue.get(this.chatId);
-        if (next) {
+        if (next?.readable) {
             this.setReadable(next.readable);
             await sendPlayingMessage(this.chatId, next);
         } else {
-            queue.clear(this.chatId);
             await leaveCall(this.chatId);
-            this.close();
+            this.remove();
         }
     }
 
-    setReadable(readable: Readable) {
-        this.stream?.setReadable(readable);
-        this.playing = true;
-    }
-
-    async play(readable: Readable) {
+    async joinCall(readable: Readable) {
         this.stream = new Stream(readable, 16, 48000, 1);
-        this.stream.on('finish', async () => await this.finish())
+        this.stream.on("finish", async () => await this.end());
         await this.tgcalls.start(this.stream.createTrack());
         this.playing = true;
     }
 
+    async setReadable(readable: Readable) {
+        this.stream?.setReadable(readable);
+        this.playing = true;
+    }
+
     pause() {
-        if (queue.getAll(this.chatId) && !this.stream?.paused) {
+        if (!this.stream?.paused && this.playing) {
             this.stream?.pause();
-            this.playing = false;
             return true;
-        }
-        return false;
+        } else return false;
     }
 
     resume() {
-        if (queue.getAll(this.chatId) && this.stream?.paused) {
-            this.stream.pause();
-            this.playing = true;
+        if (this.stream?.paused && this.playing) {
+            this.stream?.pause();
             return true;
-        }
-        return false;
+        } else return false;
     }
 
     async skip() {
         if (this.stream?.finished) return false;
         this.stream?.finish();
-        await this.finish();
+        await this.end();
         return true;
     }
-}
+};

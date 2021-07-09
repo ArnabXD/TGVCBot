@@ -13,54 +13,35 @@ export interface QueueData {
 }
 
 class Queues {
-    queue: { [key: number]: QueueData[] };
+    queues: { [key: number]: QueueData[] };
 
     constructor() {
-        this.queue = {}
+        this.queues = {};
     }
 
-    init(chatId: number) {
-        this.queue[chatId] = []
-        return this.queue[chatId];
-    }
-
-    add(chatId: number, data: QueueData) {
-        if (chatId in this.queue) {
-            return this.queue[chatId].push(data)
-        } else {
-            this.queue[chatId] = [data]
-            return 1;
-        }
+    push(chatId: number, item: QueueData) {
+        if (chatId in this.queues) this.queues[chatId].push(item);
+        else this.queues[chatId] = [item];
+        return this.queues[chatId].length;
     }
 
     get(chatId: number) {
-        if (chatId in this.queue) {
-            if (this.queue[chatId].length !== 0) {
-                return this.queue[chatId].shift()
-            }
+        if (chatId in this.queues) {
+            if (this.queues[chatId].length !== 0)
+                return this.queues[chatId].shift();
         }
     }
 
     getAll(chatId: number) {
-        if (chatId in this.queue) return this.queue[chatId];
-        return [];
-    }
-
-    hasNoData(chatId: number) {
-        if (chatId in this.queue) {
-            if (this.queue[chatId].length !== 0) {
-                return false;
-            }
-        }
-        return true;
+        if (chatId in this.queues) return this.queues[chatId];
+        else return [];
     }
 
     clear(chatId: number) {
-        if (chatId in this.queue) {
-            delete this.queue[chatId];
+        if (chatId in this.queues) {
+            delete this.queues[chatId];
             return true;
-        }
-        return false;
+        } else return false;
     }
 }
 
