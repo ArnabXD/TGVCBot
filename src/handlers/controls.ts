@@ -35,7 +35,7 @@ export const Skip = Composer.command('skip', async (ctx) => {
 })
 
 export const Stop = Composer.command(`stopvc`, async (ctx) => {
-    if (connections.close(ctx.chat.id)) {
+    if (connections.remove(ctx.chat.id)) {
         return await ctx.reply(`Stopped`)
     }
 })

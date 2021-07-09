@@ -24,7 +24,7 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
     if (!FFMPEG) return await ctx.reply("Something went wrong with FFMPEG")
 
     if (connections.playing(ctx.chat.id)) {
-        const position = queue.add(ctx.chat.id, {
+        const position = queue.push(ctx.chat.id, {
             link: song.perma_url,
             title: song.song,
             image: song.image,
