@@ -63,6 +63,8 @@ export class Connection {
 
     remove(chatId: number) {
         if (chatId in this.connections) {
+            queue.clear(chatId)
+            leaveCall(chatId);
             delete this.connections[chatId];
             return true;
         } else return false;
