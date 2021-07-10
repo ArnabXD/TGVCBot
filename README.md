@@ -1,10 +1,6 @@
 # TGVCBot (Beta)
 
-<<<<<<< HEAD
 ![LOGO](https://telegra.ph/file/e9dd76aadf0b500e02738.jpg)
-=======
-![LOGO](https://telegra.ph/file/dd7933d25477c161b7d52.png)
->>>>>>> 3108b7f (Let's Test Heroku)
 
 ## Credits & Thanks to
 - [@AndrewLaneX](https://github.com/AndrewLaneX) for [tgcallsjs](https://github.com/tgcallsjs/tgcalls).
