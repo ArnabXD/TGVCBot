@@ -13,35 +13,28 @@ export interface QueueData {
 }
 
 class Queues {
-    queues: { [key: number]: QueueData[] };
+    queues: Map<number, QueueData[]>
 
     constructor() {
-        this.queues = {};
+        this.queues = new Map<number, QueueData[]>();
     }
 
     push(chatId: number, item: QueueData) {
-        if (chatId in this.queues) this.queues[chatId].push(item);
-        else this.queues[chatId] = [item];
-        return this.queues[chatId].length;
+        let queue = this.queues.get(chatId);
+        if (queue) return queue.push(item);
     }
 
     get(chatId: number) {
-        if (chatId in this.queues) {
-            if (this.queues[chatId].length !== 0)
-                return this.queues[chatId].shift();
-        }
+        let queue = this.queues.get(chatId);
+        if (queue) return queue.shift();
     }
 
     getAll(chatId: number) {
-        if (chatId in this.queues) return this.queues[chatId];
-        else return [];
+        return this.queues.get(chatId);
     }
 
     clear(chatId: number) {
-        if (chatId in this.queues) {
-            delete this.queues[chatId];
-            return true;
-        } else return false;
+        return this.queues.delete(chatId);
     }
 }
 

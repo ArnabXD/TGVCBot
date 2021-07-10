@@ -4,7 +4,7 @@ import { escape } from 'html-escaper';
 
 export const QueueList = Composer.command(`queue`, async (ctx) => {
     let data = queue.getAll(ctx.chat.id);
-    if (data.length === 0) return await ctx.replyWithHTML("Queue is empty");
+    if (!data || data.length === 0) return await ctx.replyWithHTML("Queue is empty");
 
     let text = `<b><i>Queue List : </i></b>\n\n`;
     data.forEach((d, i) => {
