@@ -1,7 +1,8 @@
 import { spawn } from 'child_process';
+import env from './env';
 
-const args = "-c:a libopus -b:a 128K -acodec pcm_s16le -f s16le -ac 1 -ar 48000 pipe:1"
+const args = `${env.CODEC} -acodec pcm_s16le -f s16le -ac 1 -ar 48000 pipe:1`
 
 export const ffmpeg = (input: string) => {
-    return spawn("ffmpeg", ["-y", "-nostdin", "-i", `${input}`, ...args.split(' ')]).stdout
+    return spawn("ffmpeg", ["-y", "-nostdin", "-i", `${input}`, ...args.split(/\s/g)]).stdout
 }
