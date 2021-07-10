@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "dotenv": "^10.0.0",
+    "envalid": "^7.1.1",
     "html-escaper": "^3.0.3",
     "input": "^1.0.1",
     "node-fetch": "^2.6.1",

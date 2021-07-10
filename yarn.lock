@@ -550,6 +550,11 @@ entities@^2.0.0:
   resolved "https://registry.yarnpkg.com/entities/-/entities-2.2.0.tgz#098dc90ebb83d8dffa089d55256b351d34c4da55"
   integrity sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==
 
+envalid@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/envalid/-/envalid-7.1.1.tgz#6429c5e3ef6987e4ea44893dd354b6cc1646de75"
+  integrity sha512-2MIPjXAWcAVsO2jTVbgMFRc66lQCy2bQDP+zPT3NucrbWMD3pij5iGZMwQiv3zdveyVfl0qAGpI1JRQGfkmu1w==
+
 es5-ext@^0.10.35, es5-ext@^0.10.50:
   version "0.10.53"
   resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.53.tgz#93c5a3acfdbef275220ad72644ad02ee18368de1"

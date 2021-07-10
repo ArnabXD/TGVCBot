@@ -33,7 +33,7 @@ export class Player {
 
     async joinCall(readable: Readable) {
         this.stream = new Stream(readable, 16, 48000, 1);
-        this.stream.on("finish", async () => await this.end());
+        this.stream.addListener('finish', () => this.end());
         await this.tgcalls.start(this.stream.createTrack());
         this.playing = true;
     }
@@ -59,7 +59,7 @@ export class Player {
 
     async skip() {
         if (this.stream?.finished) return false;
-        this.stream?.finish();
+        this.stream?.stop();
         await this.end();
         return true;
     }
