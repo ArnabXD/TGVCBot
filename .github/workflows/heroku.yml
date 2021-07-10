@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     environment: Heroku
     steps:
@@ -14,5 +14,5 @@ jobs:
         uses: tiagogouvea/github-dpl-action@master
         with:
           provider: "heroku"
-          app: ${{ env.HEROKU_APP_NAME }}
-          api-key: ${{env.HEROKU_API}}
+          app: ${{secrets.HEROKU_APP_NAME}}
+          api-key: ${{secrets.HEROKU_API}}
