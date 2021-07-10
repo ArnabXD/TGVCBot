@@ -59,7 +59,7 @@ export class Player {
 
     async skip() {
         if (this.stream?.finished) return false;
-        this.stream?.stop();
+        this.stream?.finish();
         await this.end();
         return true;
     }
