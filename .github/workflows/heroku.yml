@@ -1,0 +1,18 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Heroku
+    steps:
+      - uses: actions/checkout@v2
+      - name: Dpl to heroku
+        uses: tiagogouvea/github-dpl-action@master
+        with:
+          provider: "heroku"
+          app: ${{ env.HEROKU_APP_NAME }}
+          api-key: ${{env.HEROKU_API}}
