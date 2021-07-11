@@ -5,15 +5,21 @@ import { ffmpeg } from '../ffmpeg';
 import { escape } from 'html-escaper';
 import { DeezerResponse } from '../types/responseTypes';
 import { commandExtractor, sendPlayingMessage } from '../utils';
+import { stringify } from 'querystring';
 
 export const Deezer = Composer.command('deezer', async (ctx) => {
 
     let { args: keyword } = commandExtractor(ctx.message.text)
-    if (!keyword) return await ctx.reply("Die You Retard")
+    if (!keyword) return await ctx.reply("Die You Retard");
+    let query = stringify({
+        query: keyword,
+        quality: "mp3",
+        limit: 1
+    })
 
     await ctx.replyWithChatAction("typing");
 
-    let resp: DeezerResponse[] = await (await fetch(`https://jostapi-production.up.railway.app/deezer?query=${keyword.replace(/\s/g, '%20')}&quality=mp3&limit=1`)).json()
+    let resp: DeezerResponse[] = await (await fetch(`https://jostapi-production.up.railway.app/deezer?${query}`)).json()
     if (!resp || resp.length === 0) return await ctx.reply("No Results Found");
 
     let [result] = resp;
