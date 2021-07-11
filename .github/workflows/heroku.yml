@@ -3,6 +3,8 @@ name: Deploy to Heroku
 on:
   push:
     branches: [main]
+    tags:
+      - "*"
 
 jobs:
   deploy:
