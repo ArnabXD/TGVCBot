@@ -1,5 +1,8 @@
 # TGVCBot (Beta)
 
+[![Deploy to Heroku](https://github.com/ArnabXD/TGVCBot/actions/workflows/heroku.yml/badge.svg?branch=main)](https://github.com/ArnabXD/TGVCBot/actions/workflows/heroku.yml)
+[![TypeScript Build](https://github.com/ArnabXD/TGVCBot/actions/workflows/typescript.yml/badge.svg?branch=main)](https://github.com/ArnabXD/TGVCBot/actions/workflows/typescript.yml)
+
 ![LOGO](https://telegra.ph/file/e9dd76aadf0b500e02738.jpg)
 
 ## Credits & Thanks to
