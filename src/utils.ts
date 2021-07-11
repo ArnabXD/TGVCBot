@@ -13,17 +13,20 @@ export const getPosterImageUrl = (image: string, title: string, artist: string =
         artist,
         // x: Date.now()
     })
-    console.log(`https://music-banner.herokuapp.com/banner?${query}`);
     return `https://music-banner.herokuapp.com/banner?${query}`;
 }
 
 export const sendPlayingMessage = async (chat: number, data: PartialBy<QueueData, 'readable'>) => {
-    let text = `<b>Playing </b><a href="${data.link}">${data.title}</a>\nRequested by <a href="tg://user?id=${data.requestedBy.id}">${escape(data.requestedBy.first_name)}</a>`
+    let text =
+        `<b>Playing </b><a href="${data.link}">${data.title}</a>\n` +
+        `&#10151; Duration : ${hhmmss(data.duration)}\n` +
+        `&#10151; Requested by <a href="tg://user?id=${data.requestedBy.id}">${escape(data.requestedBy.first_name)}</a>`;
     try {
         await bot.telegram.sendPhoto(chat, getPosterImageUrl(data.image, data.title, data.artist), {
             caption: text,
             parse_mode: 'HTML'
         });
+        console.log(`[TGVCBot][CHAT:${chat}] Started Playing - ${data.title}`);
     } catch (err) {
         await bot.telegram.sendMessage(chat, text, { parse_mode: 'HTML' });
         await log(escape(String(err)));
@@ -38,4 +41,14 @@ export const commandExtractor = (text: string) => {
         bot: parts ? parts[2] : null,
         args: parts ? parts[3] : null
     }
+}
+
+export const hhmmss = (duration: string): string => {
+    let sec = parseInt(duration, 10)
+    let hms = (new Date(1000 * sec)).toISOString().substr(11, 8).split(":");
+    let str = ``;
+    (hms[0] !== "00") ? (str += `${parseInt(hms[0], 10)}h`) : (str += ``);
+    (hms[1] !== "00") ? (str += `${parseInt(hms[1], 10)}m`) : (str += ``);
+    (hms[2] !== "00") ? (str += `${parseInt(hms[2], 10)}s`) : (str += ``);
+    return str;
 }

@@ -5,6 +5,7 @@ export interface QueueData {
     title: string;
     image: string;
     artist: string;
+    duration: string;
     requestedBy: {
         id: number,
         first_name: string
@@ -21,7 +22,12 @@ class Queues {
 
     push(chatId: number, item: QueueData) {
         let queue = this.queues.get(chatId);
-        if (queue) return queue.push(item);
+        if (queue) {
+            return queue.push(item);
+        } else {
+            this.queues.set(chatId, [item]);
+            return 1;
+        }
     }
 
     get(chatId: number) {

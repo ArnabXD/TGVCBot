@@ -31,6 +31,7 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
             title: song.song,
             image: song.image,
             artist: song.singers,
+            duration: song.duration,
             requestedBy: {
                 id: ctx.from.id,
                 first_name: ctx.from.first_name
@@ -45,6 +46,7 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
             title: song.song,
             image: song.image,
             artist: song.singers,
+            duration: song.duration,
             requestedBy: {
                 id: ctx.from.id,
                 first_name: ctx.from.first_name

@@ -36,6 +36,7 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
                 id: ctx.from.id,
                 first_name: ctx.from.first_name
             },
+            duration: `${result.duration}`,
             readable: FFMPEG
         })
         return await ctx.replyWithHTML(`<a href="${result.link}">${result.title}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
@@ -46,6 +47,7 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
             title: result.title,
             image: result.album.cover_big,
             artist: result.artist.name,
+            duration: `${result.duration}`,
             requestedBy: {
                 id: ctx.from.id,
                 first_name: ctx.from.first_name

@@ -26,6 +26,7 @@ export interface JioSaavnSongResponse {
     label: string;
     albumid: string;
     language: string;
+    duration: string;
     copyright_text: string;
     has_lyrics: string;
     media_url: string;
