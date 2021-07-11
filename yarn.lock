@@ -1627,9 +1627,10 @@ term-size@^2.1.0:
   resolved "https://registry.yarnpkg.com/term-size/-/term-size-2.2.1.tgz#2a6a54840432c2fb6320fea0f415531e90189f54"
   integrity sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==
 
-"tgcalls@github:tgcallsjs/tgcalls":
+tgcalls@^0.1.3:
   version "0.1.3"
-  resolved "https://codeload.github.com/tgcallsjs/tgcalls/tar.gz/6d1bfb75ac10a003393cf98d01ac0243ba6707d1"
+  resolved "https://registry.yarnpkg.com/tgcalls/-/tgcalls-0.1.3.tgz#6f0c896c5c649befa42ddcbd3a206f3193493ba9"
+  integrity sha512-cRjflXB6WK0kCxqvU+Cr0E0DPQHixVxD+JMKZUc6lCWL03o/X1+9AOBlBRz3fO9wjb/RVdAGShZsabbG0hndlA==
   dependencies:
     wrtc "^0.4.7"
 
