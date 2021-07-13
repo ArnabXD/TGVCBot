@@ -15,12 +15,14 @@
 
 ## How to Run ?
 
-Requirements
+### Requirements ([wiki](../../wiki/Requirements))
 
 - FFMPEG
 - NodeJs > V14. (Latest is better)
+- Yarn (Optional)
 
-Installation
+
+### Installation
  
 ```bash
 git clone https://github.com/ArnabXD/TGVCBot.git
@@ -29,7 +31,7 @@ yarn
 yarn build
 ```
 
-Start
+### Start
 
 ```bash
 yarn start
@@ -39,6 +41,7 @@ yarn start
 
 - `/jiosaavn <song name>` : Play Song from JioSaavn.
 - `/deezer <song name>` : Play Song from Deezer.
+- `/queue`
 - `/pause`
 - `/resume`
 - `/skip`
