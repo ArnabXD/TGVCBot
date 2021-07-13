@@ -9,14 +9,14 @@ type PartialBy<T, K extends keyof T> = OmitX<T, K> & Partial<Pick<T, K>>
 export const getPosterImageUrl = (image: string, title: string, artist: string = "@ArnabXD/TGVCBot") => {
     let query = qs.stringify({
         image,
-        title: title.replace(/&quot;/g, `"`),
+        title: title,
         artist,
         // x: Date.now()
     })
     return `https://music-banner.herokuapp.com/banner?${query}`;
 }
 
-export const sendPlayingMessage = async (chat: number, data: PartialBy<QueueData, 'readable'>) => {
+export const sendPlayingMessage = async (chat: number, data: PartialBy<QueueData, 'mp3_link'>) => {
     let text =
         `<b>Playing </b><a href="${data.link}">${data.title}</a>\n` +
         `&#10151; Duration : ${hhmmss(data.duration)}\n` +
@@ -33,6 +33,10 @@ export const sendPlayingMessage = async (chat: number, data: PartialBy<QueueData
     }
 }
 
+export const sendErrorMessage = async (chat: number, message: string) => {
+    return await bot.telegram.sendMessage(chat, `<b>Error :</b>\n${message}`);
+}
+
 export const commandExtractor = (text: string) => {
     let parts = /^\/([^@\s]+)@?(?:(\S+)|)\s?([\s\S]+)?$/i.exec(text.trim());
     return {
@@ -47,8 +51,8 @@ export const hhmmss = (duration: string): string => {
     let sec = parseInt(duration, 10)
     let hms = (new Date(1000 * sec)).toISOString().substr(11, 8).split(":");
     let str = ``;
-    (hms[0] !== "00") ? (str += `${parseInt(hms[0], 10)}h`) : (str += ``);
-    (hms[1] !== "00") ? (str += `${parseInt(hms[1], 10)}m`) : (str += ``);
+    (hms[0] !== "00") ? (str += `${parseInt(hms[0], 10)}h `) : (str += ``);
+    (hms[1] !== "00") ? (str += `${parseInt(hms[1], 10)}m `) : (str += ``);
     (hms[2] !== "00") ? (str += `${parseInt(hms[2], 10)}s`) : (str += ``);
     return str;
 }

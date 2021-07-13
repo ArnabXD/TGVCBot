@@ -2,7 +2,8 @@ import { TGCalls, Stream } from 'tgcalls';
 import { joinCall, leaveCall } from '../calls';
 import { Readable } from 'stream';
 import { queue } from './queue';
-import { sendPlayingMessage } from '../utils';
+import { sendPlayingMessage, sendErrorMessage } from '../utils';
+import { ffmpeg } from '../ffmpeg';
 
 export class Player {
     chatId: number;
@@ -22,8 +23,13 @@ export class Player {
     async end() {
         this.playing = false;
         let next = queue.get(this.chatId);
-        if (next?.readable) {
-            this.setReadable(next.readable);
+        if (next) {
+            let FFMPEG = ffmpeg(next.mp3_link);
+            if (!FFMPEG) {
+                await sendErrorMessage(this.chatId, "Can't Stream this Song due to FFMPEG errors")
+                await this.end();
+            }
+            this.setReadable(FFMPEG);
             await sendPlayingMessage(this.chatId, next);
         } else {
             await leaveCall(this.chatId);

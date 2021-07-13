@@ -23,8 +23,6 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
     if (!resp || resp.length === 0) return await ctx.reply("No Results Found");
 
     let [result] = resp;
-    let FFMPEG = ffmpeg(result.raw_link)
-    if (!FFMPEG) return await ctx.reply("Something went wrong with FFMPEG")
 
     if (connections.playing(ctx.chat.id)) {
         const position = queue.push(ctx.chat.id, {
@@ -37,10 +35,12 @@ export const Deezer = Composer.command('deezer', async (ctx) => {
                 first_name: ctx.from.first_name
             },
             duration: `${result.duration}`,
-            readable: FFMPEG
+            mp3_link: result.raw_link
         })
         return await ctx.replyWithHTML(`<a href="${result.link}">${result.title}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
     } else {
+        let FFMPEG = ffmpeg(result.raw_link);
+        if (!FFMPEG) return await ctx.reply("Something went wrong with FFMPEG");
         await connections.setReadable(ctx.chat.id, FFMPEG);
         return await sendPlayingMessage(ctx.chat.id, {
             link: result.link,

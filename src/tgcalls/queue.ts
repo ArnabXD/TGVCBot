@@ -7,10 +7,10 @@ export interface QueueData {
     artist: string;
     duration: string;
     requestedBy: {
-        id: number,
-        first_name: string
+        id: number;
+        first_name: string;
     };
-    readable: Readable
+    mp3_link: string;
 }
 
 class Queues {
