@@ -11,7 +11,7 @@ jobs:
     environment: Heroku
     steps:
       - uses: actions/checkout@v2
-      - name: Dpl to heroku
+      - name: Deploy to Heroku
         uses: tiagogouvea/github-dpl-action@master
         with:
           provider: "heroku"
