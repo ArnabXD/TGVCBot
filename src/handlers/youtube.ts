@@ -2,7 +2,7 @@ import { Composer } from 'telegraf';
 import { connections, queue } from '../tgcalls';
 import { ffmpeg } from '../ffmpeg';
 import { escape } from 'html-escaper';
-import { commandExtractor, sendPlayingMessage, downloadSong } from '../utils';
+import { commandExtractor, sendPlayingMessage, getYoutubeData } from '../utils';
 
 export const Youtube = Composer.command('youtube', async (ctx) => {
 
@@ -10,7 +10,7 @@ export const Youtube = Composer.command('youtube', async (ctx) => {
     if (!keyword) return await ctx.reply("Provide Youtube Link/Search Keyword");
 
     await ctx.replyWithChatAction("typing");
-    let result = await downloadSong(keyword);
+    let result = await getYoutubeData(keyword);
 
     if (!result) return await ctx.reply('No Results Found');
 

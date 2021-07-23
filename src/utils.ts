@@ -58,8 +58,9 @@ export const hhmmss = (duration: string): string => {
     return str;
 }
 
-export const downloadSong = async (query: string): Promise<PartialBy<QueueData, "requestedBy"> | null> => {
-    // Regehttps://stackoverflow.com/a/37704433/12250600
+// Credit - @AndrewLaneX's LemonJamsBot (https://github.com/tgcallsjs/LemonJamsBot)
+export const getYoutubeData = async (query: string): Promise<PartialBy<QueueData, "requestedBy"> | null> => {
+    // Regex - https://stackoverflow.com/a/37704433/12250600
     let url = (/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/).test(query) ? query : `ytsearch:${query}`;
     return new Promise((resolve, reject) => {
         const ytdlChunks: string[] = [];
