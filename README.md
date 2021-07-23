@@ -9,7 +9,6 @@
 - [@AndrewLaneX](https://github.com/AndrewLaneX) for [tgcallsjs](https://github.com/tgcallsjs/tgcalls).
 - [@rojserbest](https://github.com/rojserbest) for [callsmusic2](https://github.com/callsmusic/callsmusic2) which i used as base
 - [@cachecleanerjeet](https://github.com/cachecleanerjeet) for [JioSaavn API](https://github.com/cachecleanerjeet/JiosaavnAPI)
-- [@TechiError](https://github.com/TechiError) for Deezer API
 - [Telegraf](https://github.com/telegraf/telegraf/)
 - [GramJS](https://github.com/gram-js/gramjs/)
 
@@ -19,6 +18,7 @@
 
 - FFMPEG
 - NodeJs > V14. (Latest is better)
+- Youtube-DL
 - Yarn (Optional)
 
 
@@ -40,7 +40,7 @@ yarn start
 ## Bot Usage
 
 - `/jiosaavn <song name>` : Play Song from JioSaavn.
-- `/deezer <song name>` : Play Song from Deezer.
+- `/youtube <song name/link>` : Play Song from Youtube.
 - `/queue`
 - `/pause`
 - `/resume`
@@ -50,4 +50,4 @@ yarn start
 
 ## MEME
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+Heroku Support Temporarily Disabled
