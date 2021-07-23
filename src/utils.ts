@@ -2,6 +2,7 @@ import { bot, log } from './bot';
 import { QueueData } from './tgcalls';
 import { escape } from 'html-escaper';
 import qs from 'querystring';
+import { spawn } from 'child_process';
 
 type OmitX<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type PartialBy<T, K extends keyof T> = OmitX<T, K> & Partial<Pick<T, K>>
@@ -56,3 +57,40 @@ export const hhmmss = (duration: string): string => {
     (hms[2] !== "00") ? (str += `${parseInt(hms[2], 10)}s`) : (str += ``);
     return str;
 }
+
+export const downloadSong = async (query: string): Promise<PartialBy<QueueData, "requestedBy"> | null> => {
+    // Regehttps://stackoverflow.com/a/37704433/12250600
+    let url = (/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/).test(query) ? query : `ytsearch:${query}`;
+    return new Promise((resolve, reject) => {
+        const ytdlChunks: string[] = [];
+        const ytdl = spawn('youtube-dl', ['--extract-audio', '--print-json', '--get-url', url.replace(/'/g, `'"'"'`)]);
+
+        ytdl.stderr.on('data', data => console.error(data.toString()));
+
+        ytdl.stdout.on('data', data => {
+            ytdlChunks.push(data.toString());
+        });
+
+        ytdl.on('exit', code => {
+            if (code !== 0) {
+                return reject();
+            }
+            try {
+                const ytdlData = ytdlChunks.join('');
+                const [inputUrl, _videoInfo] = ytdlData.split('\n');
+                const videoInfo = JSON.parse(_videoInfo);
+
+                resolve({
+                    title: videoInfo.title,
+                    duration: videoInfo.duration,
+                    link: videoInfo.webpage_url,
+                    image: videoInfo.thumbnail,
+                    artist: videoInfo.channel,
+                    mp3_link: inputUrl,
+                });
+            } catch (err) {
+                resolve(null);
+            }
+        });
+    });
+};
