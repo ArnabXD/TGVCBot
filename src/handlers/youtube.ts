@@ -22,7 +22,9 @@ export const Youtube = Composer.command('youtube', async (ctx) => {
                 id: ctx.from.id
             }
         })
-        return await ctx.replyWithHTML(`<a href="${result.link}">${result.title}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
+        return await ctx.replyWithHTML(`<a href="${result.link}">${result.title}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`, {
+            disable_web_page_preview: true
+        })
     } else {
         let FFMPEG = ffmpeg(result.mp3_link);
         if (!FFMPEG) return await ctx.reply("Something went wrong with FFMPEG");

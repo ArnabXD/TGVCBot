@@ -35,7 +35,9 @@ export const JioSaavn = Composer.command('jiosaavn', async (ctx) => {
             },
             mp3_link: song.other_qualities.pop()?.url ?? song.media_url
         })
-        return await ctx.replyWithHTML(`<a href="${song.perma_url}">${song.song}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`)
+        return await ctx.replyWithHTML(`<a href="${song.perma_url}">${song.song}</a> Queued at Postion ${position} by <a href="tg://user?id=${ctx.from.id}">${escape(ctx.from.first_name)}</a>`, {
+            disable_web_page_preview: true
+        })
     } else {
         let FFMPEG = ffmpeg(song.other_qualities.pop()?.url ?? song.media_url);
         if (!FFMPEG) return await ctx.reply("Something went wrong with FFMPEG");
