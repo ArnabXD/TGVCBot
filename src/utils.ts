@@ -10,8 +10,8 @@ type PartialBy<T, K extends keyof T> = OmitX<T, K> & Partial<Pick<T, K>>
 export const getPosterImageUrl = (image: string, title: string, artist: string = "@ArnabXD/TGVCBot") => {
     let query = qs.stringify({
         image,
-        title: title,
-        artist,
+        title: (title.length > 50) ? title.slice(0,50) + "..." : title,
+        artist: (artist.length > 40) ? artist.slice(0,40) + "..." : artist,
         // x: Date.now()
     })
     return `https://music-banner.herokuapp.com/banner?${query}`;
