@@ -30,7 +30,7 @@ export const Skip = Composer.command(['skip', 'next'], async (ctx) => {
     await TgCalls.stop(ctx.chat.id);
 });
 
-export const Stop = Composer.command(['stopvc', 'close'], async (ctx) => {
+export const Stop = Composer.command('stopvc', async (ctx) => {
     if (ctx.chat.type === 'private') return await ctx.reply("This Command works on Group Only");
     if (!TgCalls.connected(ctx.chat.id)) return await ctx.reply("Inactive VC");
 

@@ -38,7 +38,7 @@ yarn start
 - `/pause | /p` : Pause the Stream
 - `/resume | /r` : Resume the Stream
 - `/skip | /next` : Skip the Stream
-- `/stopvc | /close` : Stop the Stream
+- `/stopvc` : Stop the Stream
 
 
 ## MEMES

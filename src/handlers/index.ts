@@ -9,6 +9,9 @@ export const InitHandlers = (): void => {
     bot.use(Start);
     bot.use(JioSaavnPlay);
     bot.use(YTPlay);
-    bot.use(Pause, Resume, Skip, Stop);
+    bot.use(Pause);
+    bot.use(Resume);
+    bot.use(Skip);
+    bot.use(Stop);
     bot.use(QueueList);
 }
