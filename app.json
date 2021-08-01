@@ -30,10 +30,6 @@
             "description": "GramJS/Telethon Session of the VC User",
             "required": true
         },
-        "OWNER_ID": {
-            "description": "Your Telegram User ID",
-            "required": true
-        },
         "CODEC": {
             "description": "Custom Codec (default : `-c copy`)",
             "required": false
