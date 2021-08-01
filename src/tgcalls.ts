@@ -53,7 +53,7 @@ export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolea
 
     if (data.provider === 'youtube') {
         try {
-            await TgCalls.stream(chat.id, ytdl.downloadFromInfo(await ytdl.getInfo(data.link), { filter: 'audioonly' }), {
+            await TgCalls.stream(chat.id, ytdl.downloadFromInfo(await ytdl.getInfo(data.link), { quality: 'highestaudio' }), {
                 onFinish: () => onFinish(chat),
                 stream: streamParams
             });
