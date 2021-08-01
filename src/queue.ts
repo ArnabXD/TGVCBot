@@ -34,6 +34,10 @@ class Queues {
         if (queue) return queue.shift();
     }
 
+    has(chatId: number) {
+        return !!this.queues.get(chatId);
+    }
+
     getAll(chatId: number) {
         return this.queues.get(chatId);
     }
