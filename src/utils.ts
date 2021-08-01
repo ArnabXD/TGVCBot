@@ -37,7 +37,7 @@ export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
     let text =
         `<b>Playing </b><a href="${data.link}">${data.title}</a>\n` +
         `&#10143; Duration : ${hhmmss(data.duration)}\n` +
-        `&#10143; Requested by <a href="tg://user?id=${data.requestedBy.id}">${escape(data.requestedBy.first_name)}</a>`;
+        `&#10143; Requested by <a href="tg://user?id=${data.requestedBy.id}">${data.requestedBy.first_name}</a>`;
     try {
         await bot.telegram.sendPhoto(chat.id, getPosterImageUrl(data.image, data.title, data.artist), {
             caption: text,
