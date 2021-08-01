@@ -1,0 +1,50 @@
+{
+    "name": "@ArnabXD/TGVCBot",
+    "description": "Telegram Bot to Play Music in Voice Chat",
+    "keywords": [
+        "telegram",
+        "vc",
+        "music"
+    ],
+    "repository": "https://github.com/ArnabXD/TGVCBot",
+    "logo": "https://telegra.ph/file/dd7933d25477c161b7d52.png",
+    "success_url": "https://telegram.dog/xdbots",
+    "env": {
+        "API_ID": {
+            "description": "Get API_ID from https://my.telegram.org/apps.",
+            "required": true
+        },
+        "API_HASH": {
+            "description": "Get API_HASH from https://my.telegram.org/apps.",
+            "required": true
+        },
+        "BOT_TOKEN": {
+            "description": "Bot Token from @BotFather",
+            "required": true
+        },
+        "LOG_CHANNEL": {
+            "description": "LOG Channel ID (Make sure bot and VC User are added in the group)",
+            "required": true
+        },
+        "SESSION": {
+            "description": "GramJS/Telethon Session of the VC User",
+            "required": true
+        },
+        "OWNER_ID": {
+            "description": "Your Telegram User ID",
+            "required": true
+        },
+        "CODEC": {
+            "description": "Custom Codec (default : `-c copy`)",
+            "required": false
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
+        },
+        {
+            "url": "heroku/nodejs"
+        }
+    ]
+}
