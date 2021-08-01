@@ -8,6 +8,7 @@ export const Start = Composer.command('start', async (ctx) => {
     await ctx.replyWithHTML(text, {
         ...Markup.inlineKeyboard([
             [Markup.button.url('View Source', 'https://github.com/ArnabXD/TGVCBot')]
-        ])
+        ]),
+        disable_web_page_preview: true
     })
 })
