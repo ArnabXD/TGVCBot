@@ -36,9 +36,9 @@ export const getPosterImageUrl = (image: string, title: string, artist: string =
 
 export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
     let text =
-        `<b>Playing </b><a href="${data.link}">${data.title}</a>\n` +
-        `&#10143; Duration : ${hhmmss(data.duration)}\n` +
-        `&#10143; Requested by <a href="tg://user?id=${data.requestedBy.id}">${escape(data.requestedBy.first_name)}</a>`;
+        `Playing <a href="${data.link}">${data.title}</a>\n` +
+        `<b>&#10143;</b> Duration : ${hhmmss(data.duration)}\n` +
+        `<b>&#10143;</b> Requested by <a href="tg://user?id=${data.requestedBy.id}">${escape(data.requestedBy.first_name)}</a>`;
     try {
         await bot.telegram.sendPhoto(chat.id, getPosterImageUrl(data.image, data.title, data.artist), {
             caption: text,
