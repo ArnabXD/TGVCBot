@@ -1,6 +1,6 @@
 import { GramTGCalls } from 'gram-tgcalls';
 import { userbot } from './userbot';
-import bot from './bot';
+import bot, { log } from './bot';
 import { Chat } from './types/chat';
 import { queue, QueueData } from './queue';
 import { escape } from 'html-escaper';
@@ -39,19 +39,27 @@ export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolea
     }
 
     if (data.provider === 'jiosaavn') {
-        let FFMPEG = ffmpeg(data.mp3_link);
-        await sendPlayingMessage(chat, data);
-        await TgCalls.stream(chat.id, FFMPEG, {
-            onFinish: () => onFinish(chat),
-            stream: streamParams
-        })
+        try {
+            let FFMPEG = ffmpeg(data.mp3_link);
+            await TgCalls.stream(chat.id, FFMPEG, {
+                onFinish: () => onFinish(chat),
+                stream: streamParams
+            });
+            await sendPlayingMessage(chat, data);
+        } catch (error) {
+            await log(escape(String(error)));
+        }
     }
 
     if (data.provider === 'youtube') {
-        await sendPlayingMessage(chat, data);
-        await TgCalls.stream(chat.id, ytdl.downloadFromInfo(await ytdl.getInfo(data.link), { filter: 'audioonly' }), {
-            onFinish: () => onFinish(chat),
-            stream: streamParams
-        })
+        try {
+            await TgCalls.stream(chat.id, ytdl.downloadFromInfo(await ytdl.getInfo(data.link), { filter: 'audioonly' }), {
+                onFinish: () => onFinish(chat),
+                stream: streamParams
+            });
+            await sendPlayingMessage(chat, data);
+        } catch (error) {
+            await log(escape(String(error)));
+        }
     }
 }
