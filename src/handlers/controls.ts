@@ -34,7 +34,9 @@ export const Stop = Composer.command('stopvc', async (ctx) => {
     if (ctx.chat.type === 'private') return await ctx.reply("This Command works on Group Only");
     if (!TgCalls.connected(ctx.chat.id)) return await ctx.reply("Inactive VC");
 
-    if (queue.clear(ctx.chat.id) && await TgCalls.stop(ctx.chat.id)) {
+    queue.clear(ctx.chat.id);
+
+    if (await TgCalls.stop(ctx.chat.id)) {
         return await ctx.reply('Stopped')
     }
 });
