@@ -24,8 +24,6 @@ export const onFinish = async (chat: Chat) => {
 
 export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolean = false) => {
 
-    bot.telegram.sendChatAction(chat.id, 'typing');
-
     if (TgCalls.connected(chat.id) && !TgCalls.finished(chat.id) && !force) {
         let position = queue.push(chat.id, data);
         return await bot.telegram.sendMessage(

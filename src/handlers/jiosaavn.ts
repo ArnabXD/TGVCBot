@@ -6,6 +6,8 @@ import { JioSaavnSongResponse, JioSaavnSongSearchResponse } from '../types/jiosa
 import { playOrQueueSong } from '../tgcalls';
 
 export const JioSaavnPlay = Composer.command(['jiosaavn', 'jsvn'], async (ctx) => {
+    
+    await ctx.telegram.sendChatAction(ctx.chat.id, "typing");
 
     if (ctx.chat.type === 'private') return await ctx.reply("This Command works on Group Only");
 
