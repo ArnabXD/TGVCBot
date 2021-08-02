@@ -37,28 +37,20 @@ export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolea
     }
 
     if (data.provider === 'jiosaavn') {
-        try {
-            let FFMPEG = ffmpeg(data.mp3_link);
-            await TgCalls.stream(chat.id, FFMPEG, {
-                onFinish: () => onFinish(chat),
-                stream: streamParams
-            });
-            await sendPlayingMessage(chat, data);
-        } catch (error) {
-            await log(escape(String(error)));
-        }
+        let FFMPEG = ffmpeg(data.mp3_link);
+        await TgCalls.stream(chat.id, FFMPEG, {
+            onFinish: () => onFinish(chat),
+            stream: streamParams
+        });
+        await sendPlayingMessage(chat, data);
     }
 
     if (data.provider === 'youtube') {
-        try {
-            let readable = ytdl.downloadFromInfo(await ytdl.getInfo(data.link), { quality: 'highestaudio', filter: 'audioonly' })
-            await TgCalls.stream(chat.id, readable, {
-                onFinish: () => onFinish(chat),
-                stream: streamParams
-            });
-            await sendPlayingMessage(chat, data);
-        } catch (error) {
-            await log(escape(String(error)));
-        }
+        let readable = ytdl.downloadFromInfo(await ytdl.getInfo(data.link), { quality: 'highestaudio', filter: 'audioonly' })
+        await TgCalls.stream(chat.id, readable, {
+            onFinish: () => onFinish(chat),
+            stream: streamParams
+        });
+        await sendPlayingMessage(chat, data);
     }
 }
