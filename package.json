@@ -28,6 +28,7 @@
     "html-escaper": "^3.0.3",
     "telegraf": "^4.4.1",
     "yt-search": "^2.10.0",
+    "ytdl-core": "^4.9.1",
     "ytdl-core-telegram": "^2.0.2"
   }
 }
