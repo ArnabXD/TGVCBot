@@ -36,7 +36,7 @@ export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolea
         )
     }
 
-    if (data.provider === 'jiosaavn') {
+    if (data.provider === 'jiosaavn' || data.provider == 'telegram') {
         let FFMPEG = ffmpeg(data.mp3_link);
         await TgCalls.stream(chat.id, FFMPEG, {
             onFinish: () => onFinish(chat),

@@ -9,7 +9,7 @@ export interface QueueData {
         first_name: string;
     };
     mp3_link: string;
-    provider: 'jiosaavn' | 'youtube'
+    provider: 'jiosaavn' | 'youtube' | 'telegram'
 }
 
 class Queues {

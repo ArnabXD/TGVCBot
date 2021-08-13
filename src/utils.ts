@@ -50,3 +50,8 @@ export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
         await log(escape(String(err)));
     }
 }
+
+export const getMessageLink = (chat: number, message_id: number) => {
+    let chat_id = chat.toString();
+    return `https://t.me/c/${chat_id.slice(chat_id.startsWith("-100") ? 4 : 1)}/${message_id}`
+}
