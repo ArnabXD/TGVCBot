@@ -5,7 +5,6 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon src/app.ts",
-    "session": "ts-node src/session.ts",
     "test": "tsc --noEmit",
     "build": "tsc",
     "start": "node build/app.js"
