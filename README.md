@@ -6,6 +6,13 @@
 ![LOGO](https://telegra.ph/file/e9dd76aadf0b500e02738.jpg)
 
 
+### ❤️ Support This Project
+
+<a href="https://www.buymeacoffee.com/arnabxd" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important;width: 195px !important;" ></a>
+
+_Support to get custom thumbnail API for your Bot_
+
+
 ### Requirements ([wiki](../../wiki/Requirements))
 
 - FFMPEG
