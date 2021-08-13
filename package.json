@@ -29,5 +29,8 @@
     "yt-search": "^2.10.0",
     "ytdl-core": "^4.9.1",
     "ytdl-core-telegram": "^2.0.6"
+  },
+  "engines": {
+    "node": ">=14.x"
   }
 }
