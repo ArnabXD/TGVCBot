@@ -11,6 +11,8 @@ import { playOrQueueSong } from '../tgcalls';
 import { getMessageLink } from '../utils';
 
 export const Play = Composer.command(['play', 'pl'], async ctx => {
+    await ctx.telegram.sendChatAction(ctx.chat.id, "typing");
+    
     if (ctx.chat.type === 'private') return await ctx.reply("This Command works on Group Only");
 
     if (
