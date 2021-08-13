@@ -880,10 +880,10 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.6.tgz#ff040b2b0853b23c3d31027523706f1885d76bee"
   integrity sha512-nTnJ528pbqxYanhpDYsi4Rd8MAeaBA67+RZ10CM1m3bTAVFEDcd5AuA4a6W5YkGZ1iNXHzZz8T6TBKLeBuNriQ==
 
-gram-tgcalls@^1.3.7:
-  version "1.3.7"
-  resolved "https://registry.yarnpkg.com/gram-tgcalls/-/gram-tgcalls-1.3.7.tgz#ad6195fa69344ca0d6ec9a67ac423570c5213f51"
-  integrity sha512-ufTOTZyY0CH1jSq+CCTTHsd3+acNvBwXPheBF5hkYKSY4sLXpEN/CFf/RZCBIHMlB8AgnG12B3qg08fA1POmVA==
+gram-tgcalls@^1.3.9:
+  version "1.3.9"
+  resolved "https://registry.yarnpkg.com/gram-tgcalls/-/gram-tgcalls-1.3.9.tgz#85af5c71c7fe4e1cf87c8105f670d17162ceb0ff"
+  integrity sha512-KXBSMW88NZdonffXMObrjH8e3PqGW3We8aWG1fysKbtMx9+E5DScOdpPFR8vgVq3J0Phr78wMmKd67i7EF9rFQ==
   dependencies:
     node-pre-gyp "^0.17.0"
     telegram "^1.7.23"
