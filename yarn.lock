@@ -2266,10 +2266,10 @@ yt-search@^2.10.0:
     minimist "~1.2.5"
     node-fzf "~0.5.1"
 
-ytdl-core-telegram@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/ytdl-core-telegram/-/ytdl-core-telegram-2.0.2.tgz#91cc7301a4360830468402a3b86b6c910f105e5f"
-  integrity sha512-3OhfQUEVtuCa4JM6SQVx2bUF4C/rJYwhUnkTH6wBoPW4bFGWZuM5qph/kz6GMQO5rBKh1MSE0sEp08G6dqmh4Q==
+ytdl-core-telegram@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/ytdl-core-telegram/-/ytdl-core-telegram-2.0.6.tgz#ab79ca6d86a831762d5bad37ba75bbcdecfa1564"
+  integrity sha512-CBWIN3iKqyF5PCMMvtbn4OFBHQUw4oLrxyLcq6RFxxtVPnTJVnUk4gdbqe5zimBzFH6vRM5XgfGiuLDi9rbWSw==
   dependencies:
     fluent-ffmpeg "^2.1.2"
     ytdl-core "^4.9.0"
