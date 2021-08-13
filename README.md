@@ -8,7 +8,7 @@
 
 ### ❤️ Support This Project
 
-<a href="https://www.buymeacoffee.com/arnabxd" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important;width: 195px !important;" ></a>
+<a href="https://www.buymeacoffee.com/arnabxd" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="150"></a>
 
 _Support to get custom thumbnail API for your Bot_
 
