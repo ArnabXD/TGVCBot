@@ -36,7 +36,7 @@ export const YTPlay = Composer.command(['youtube', 'yt'], async (ctx) => {
                 id: ctx.from.id,
                 first_name: ctx.from.first_name
             },
-            mp3_link: video.url,
+            mp3_link: video.videoId,
             provider: 'youtube'
         }
     )

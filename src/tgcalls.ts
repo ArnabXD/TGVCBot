@@ -10,11 +10,12 @@ import { GramTGCalls } from 'gram-tgcalls';
 import { userbot } from './userbot';
 import bot, { log } from './bot';
 import { Chat } from './types/chat';
+import { Ytmp3 } from './types/ytmp3.response';
 import { queue, QueueData } from './queue';
 import { escape } from 'html-escaper';
 import { ffmpeg } from './ffmpeg';
 import { sendPlayingMessage } from './utils';
-import ytdl from 'ytdl-core-telegram';
+import axios from 'axios';
 
 export const TgCalls = new GramTGCalls(userbot);
 
@@ -54,7 +55,16 @@ export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolea
     }
 
     if (data.provider === 'youtube') {
-        let readable = ytdl.downloadFromInfo(await ytdl.getInfo(data.link), { quality: 'highestaudio', filter: 'audioonly' })
+        let response = (await axios.get<Ytmp3>(`https://apis.arnabxd.me/ytmp3?id=${data.mp3_link}`)).data
+        if (!response.result) {
+            onFinish(chat)
+            return
+        }
+
+        let audio = (response.audio.filter(d => d.itag === 251).length > 0) ? response.audio.filter(d => d.itag === 251)[0] : response.audio[0]
+
+        let readable = ffmpeg(audio.url)
+
         await TgCalls.stream(chat.id, readable, {
             onFinish: () => onFinish(chat),
             stream: streamParams
