@@ -63,3 +63,8 @@ export const getMessageLink = (chat: number, message_id: number) => {
     let chat_id = chat.toString();
     return `https://t.me/c/${chat_id.slice(chat_id.startsWith("-100") ? 4 : 1)}/${message_id}`
 }
+
+export const getDownloadLink = async (id: string): Promise<string> => {
+    let resp = await bot.telegram.getFileLink(id)
+    return resp.href
+}

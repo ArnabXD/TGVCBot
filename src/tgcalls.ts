@@ -14,7 +14,7 @@ import { Ytmp3 } from './types/ytmp3.response';
 import { queue, QueueData } from './queue';
 import { escape } from 'html-escaper';
 import { ffmpeg } from './ffmpeg';
-import { sendPlayingMessage } from './utils';
+import { sendPlayingMessage, getDownloadLink } from './utils';
 import axios from 'axios';
 
 export const TgCalls = new GramTGCalls(userbot);
@@ -45,13 +45,25 @@ export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolea
         )
     }
 
-    if (data.provider === 'jiosaavn' || data.provider == 'telegram') {
+    if (data.provider === 'jiosaavn') {
         let FFMPEG = ffmpeg(data.mp3_link);
         await TgCalls.stream(chat.id, FFMPEG, {
             onFinish: () => onFinish(chat),
             stream: streamParams
         });
         await sendPlayingMessage(chat, data);
+    }
+
+    if (data.provider === 'telegram') {
+        let mp3_link = await getDownloadLink(data.mp3_link);
+        let poster = data.image.startsWith('http') ? data.image : await getDownloadLink(data.image);
+
+        let FFMPEG = ffmpeg(mp3_link);
+        await TgCalls.stream(chat.id, FFMPEG, {
+            onFinish: () => onFinish(chat),
+            stream: streamParams
+        });
+        await sendPlayingMessage(chat, { ...data, image: poster });
     }
 
     if (data.provider === 'youtube') {
