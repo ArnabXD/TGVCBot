@@ -68,13 +68,8 @@ export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolea
 
     if (data.provider === 'youtube') {
         let response = (await axios.get<Ytmp3>(`https://apis.arnabxd.me/ytmp3?id=${data.mp3_link}`)).data
-        if (!response.result) {
-            onFinish(chat)
-            return
-        }
 
         let audio = (response.audio.filter(d => d.itag === 251).length > 0) ? response.audio.filter(d => d.itag === 251)[0] : response.audio[0]
-
         let readable = ffmpeg(audio.url)
 
         await TgCalls.stream(chat.id, readable, {
