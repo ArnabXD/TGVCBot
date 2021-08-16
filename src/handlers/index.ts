@@ -13,6 +13,7 @@ import { YTPlay } from './youtube';
 import { Play } from './play';
 import { Pause, Resume, Skip, Stop } from './controls';
 import { QueueList } from './queue';
+import { Help } from './help';
 
 export const InitHandlers = (): void => {
     bot.use(Start);
@@ -24,4 +25,5 @@ export const InitHandlers = (): void => {
     bot.use(Skip);
     bot.use(Stop);
     bot.use(QueueList);
+    bot.use(Help);
 }
