@@ -28,6 +28,9 @@
     "telegraf": "^4.4.1",
     "yt-search": "^2.10.0"
   },
+  "resolutions": {
+    "telegram": "^1.8.7"
+  },
   "engines": {
     "node": ">=14.x"
   }
