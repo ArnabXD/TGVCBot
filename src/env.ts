@@ -16,7 +16,7 @@ const env = cleanEnv(process.env, {
     SESSION: str(),
     BOT_TOKEN: str(),
     LOG_CHANNEL: num(),
-    CODEC: str({ default: "-c copy" })
+    CODEC: str({ default: "-c:a libmp3lame -b:a 128K" })
 })
 
 export default env;
