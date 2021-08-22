@@ -8,7 +8,8 @@
 
 import { GramTGCalls } from 'gram-tgcalls';
 import { userbot } from './userbot';
-import bot, { log } from './bot';
+import bot from './bot';
+import env from './env';
 import { Chat } from './types/chat';
 import { Ytmp3 } from './types/ytmp3.response';
 import { queue, QueueData } from './queue';
@@ -32,6 +33,10 @@ export const onFinish = async (chat: Chat) => {
 }
 
 export const playOrQueueSong = async (chat: Chat, data: QueueData, force: boolean = false) => {
+
+    if (parseInt(data.duration, 10) > env.MAX_DURATION) {
+        return await bot.telegram.sendMessage(chat.id, "This song exceeded supported duration, Skipped");
+    }
 
     if (TgCalls.connected(chat.id) && !TgCalls.finished(chat.id) && !force) {
         let position = queue.push(chat.id, data);

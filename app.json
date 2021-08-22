@@ -31,7 +31,11 @@
             "required": true
         },
         "CODEC": {
-            "description": "Custom Codec (default : `-c copy`)",
+            "description": "Custom Codec and Bitrate (default : `-c:a libmp3lame -b:a 128K`)",
+            "required": false
+        },
+        "MAX_DURATION": {
+            "description": "Maximum Duration support for Streams (in seconds). Default 360",
             "required": false
         }
     },
