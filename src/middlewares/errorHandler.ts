@@ -1,25 +1,32 @@
 /**
  * Copyright 2021 Arnab Paryali and the Contributors - https://github.com/ArnabXD/TGVCBot/graphs/contributors
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-*/
+ */
 
-import { Context, MiddlewareFn } from 'telegraf';
-import { log } from '../bot';
-import { escape } from 'html-escaper';
+import { Context, MiddlewareFn } from "grammy";
+import { log } from "../bot";
+import { escape } from "html-escaper";
 
 export const ErrorHandler: MiddlewareFn<Context> = async (ctx, next) => {
-    try {
-        await next();
-    } catch (err) {
-        let error = String(err);
-        if (error.includes("Could not find the input entity") || error.includes("Cannot cast InputPeerChat")) {
-            await ctx.reply("My VC User is unable to join the Voice Chat here, So can't play anything. Bye Bye");
-            return await ctx.leaveChat();
-        }
-        await ctx.replyWithHTML(`<code>${escape(String(err))}</code>`);
-        await log(`<b>Error :</b>\n <code>${escape(String(err))}</code>`);
+  try {
+    await next();
+  } catch (err) {
+    let error = String(err);
+    if (
+      error.includes("Could not find the input entity") ||
+      error.includes("Cannot cast InputPeerChat")
+    ) {
+      await ctx.reply(
+        "My VC User is unable to join the Voice Chat here, So can't play anything. Bye Bye"
+      );
+      return await ctx.leaveChat();
     }
-}
+    await ctx.reply(`<code>${escape(String(err))}</code>`, {
+      parse_mode: "HTML",
+    });
+    await log(`<b>Error :</b>\n <code>${escape(String(err))}</code>`);
+  }
+};
