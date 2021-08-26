@@ -14,10 +14,11 @@ import { InitHandlers } from "./handlers";
 (async () => {
   InitMiddleWares();
   InitHandlers();
+  await startUserBot();
+  await bot.api.getMe();
+  await log("Bot is Running");
   await bot.start({
     drop_pending_updates: true,
     allowed_updates: ["message", "callback_query"],
   });
-  await log("Bot is Running");
-  await startUserBot();
 })();
