@@ -26,5 +26,6 @@ composer.command("start", (ctx) => {
       "https://github.com/ArnabXD/TGVCBot"
     ),
     disable_web_page_preview: true,
+    parse_mode: "HTML"
   });
 });
