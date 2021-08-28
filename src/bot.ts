@@ -6,15 +6,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bot } from "grammy";
-import { ParseMode } from "@grammyjs/types";
-import env from "./env";
+import { Bot } from 'grammy';
+import { ParseMode } from '@grammyjs/types';
+import env from './env';
 
 const bot = new Bot(env.BOT_TOKEN, {
   client: { canUseWebhookReply: () => false },
 });
 
-export const log = async (message: string, parse_mode: ParseMode = "HTML") => {
+export const log = async (message: string, parse_mode: ParseMode = 'HTML') => {
   if (!env.LOG_CHANNEL) {
     console.log(message);
     return;

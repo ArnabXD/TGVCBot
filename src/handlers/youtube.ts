@@ -6,27 +6,27 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Composer } from "grammy";
-import { commandExtractor } from "../utils";
-import ytsearch from "yt-search";
-import { playOrQueueSong } from "../tgcalls";
+import { Composer } from 'grammy';
+import { commandExtractor } from '../utils';
+import ytsearch from 'yt-search';
+import { playOrQueueSong } from '../tgcalls';
 
 const composer = new Composer();
 
 export default composer;
 
-composer.command(["youtube", "yt"], async (ctx) => {
-  await ctx.api.sendChatAction(ctx.chat.id, "typing");
+composer.command(['youtube', 'yt'], async ctx => {
+  await ctx.api.sendChatAction(ctx.chat.id, 'typing');
 
-  if (ctx.chat.type === "private")
-    return await ctx.reply("This Command works on Group Only");
+  if (ctx.chat.type === 'private')
+    return await ctx.reply('This Command works on Group Only');
 
   let { args: query } = commandExtractor(ctx.message!.text);
   if (!query)
-    return await ctx.reply("Please Provide Search Keyword/Youtube Link");
+    return await ctx.reply('Please Provide Search Keyword/Youtube Link');
 
   const { videos } = await ytsearch.search({ query, pages: 1 });
-  if (!videos || videos.length < 1) return await ctx.reply("No Results Found");
+  if (!videos || videos.length < 1) return await ctx.reply('No Results Found');
 
   let [video] = videos;
   await playOrQueueSong(
@@ -42,7 +42,7 @@ composer.command(["youtube", "yt"], async (ctx) => {
         first_name: ctx.from!.first_name,
       },
       mp3_link: video.videoId,
-      provider: "youtube",
-    }
+      provider: 'youtube',
+    },
   );
 });

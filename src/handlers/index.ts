@@ -6,14 +6,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import bot from "../bot";
-import start from "./start";
-import jiosaavn from "./jiosaavn";
-import youtube from "./youtube";
-import play from "./play";
-import controls from "./controls";
-import queue from "./queue";
-import help from "./help";
+import bot from '../bot';
+import start from './start';
+import jiosaavn from './jiosaavn';
+import youtube from './youtube';
+import play from './play';
+import controls from './controls';
+import queue from './queue';
+import help from './help';
 
 export const InitHandlers = (): void => {
   bot.use(start);
