@@ -2197,10 +2197,10 @@ yn@3.1.1:
   resolved "https://registry.npmjs.org/yn/-/yn-3.1.1.tgz"
   integrity sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
 
-yt-search@^2.10.0:
-  version "2.10.0"
-  resolved "https://registry.npmjs.org/yt-search/-/yt-search-2.10.0.tgz"
-  integrity sha512-sGUW+dpEk+wqow+KajTee/IyH6FEI9ZUg4SHOVy0b5E217REI1/+xuIge3amUCxHIkHJI2fjKPtBpBI63szqXQ==
+yt-search@^2.10.1:
+  version "2.10.1"
+  resolved "https://registry.yarnpkg.com/yt-search/-/yt-search-2.10.1.tgz#971c2b4675e31ed503218e101583d0995c435589"
+  integrity sha512-7xORFvQMkzkVVOsRVV6qW+Ld8FIl8OQcN3ThsDf04jwr2GyR4miGmC98IA2X/gjTWUEj2SRhmzw6kApj3LHdsQ==
   dependencies:
     async.parallellimit "~0.5.2"
     boolstring "~1.0.2"
