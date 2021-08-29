@@ -40,7 +40,13 @@ export const playOrQueueSong = async (
   if (parseInt(data.duration, 10) > env.MAX_DURATION) {
     return await bot.api.sendMessage(
       chat.id,
-      'This song exceeded supported duration, Skipped',
+      `<a href="${data.link}">${escape(
+        data.title,
+      )}</> exceeded maximum supported duration, Skipped`,
+      {
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      },
     );
   }
 
