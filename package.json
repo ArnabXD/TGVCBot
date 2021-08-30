@@ -12,6 +12,7 @@
   "author": "ArnabXD <arnabxd@pm.me>",
   "license": "ISC",
   "devDependencies": {
+    "@grammyjs/types": "^2.2.6",
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^15.12.4",
     "@types/yt-search": "^2.3.2",
@@ -20,7 +21,6 @@
     "typescript": "^4.3.4"
   },
   "dependencies": {
-    "@grammyjs/types": "^2.2.6",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "envalid": "^7.1.1",
