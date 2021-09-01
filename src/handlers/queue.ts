@@ -36,7 +36,7 @@ composer.command([`queue`, `q`], async (ctx) => {
 
 composer.command(['delete', 'remove', 'd'], async (ctx) => {
   let text = commandExtractor(ctx.message?.text!);
-  
+
   if (!text.args || !parseInt(text.args, 10)) {
     return await ctx.reply('Command Example :\n/del 2');
   }
@@ -45,7 +45,15 @@ composer.command(['delete', 'remove', 'd'], async (ctx) => {
   let data = queue.delete(ctx.chat.id, position);
 
   if (!data) return await ctx.reply('Invalid queue position');
-  return await ctx.reply('Deleted <i>' + data[0].title + '</i> from queue', {
-    parse_mode: 'HTML'
-  });
+  return await ctx.reply(
+    'Deleted <a href="' +
+      data[0].link +
+      '">' +
+      data[0].title +
+      '</a> from queue',
+    {
+      parse_mode: 'HTML',
+      disable_web_page_preview: true
+    }
+  );
 });
