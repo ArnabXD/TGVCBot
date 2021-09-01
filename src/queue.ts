@@ -50,6 +50,13 @@ class Queues {
     return this.queues.get(chatId);
   }
 
+  delete(chatId: number, position: number) {
+    let queue = this.queues.get(chatId);
+    if (queue && position <= queue.length) {
+      return queue.splice(position - 1, 1);
+    }
+  }
+
   clear(chatId: number) {
     return this.queues.delete(chatId);
   }
