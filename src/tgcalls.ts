@@ -23,7 +23,7 @@ export const TgCalls = new GramTGCalls(userbot);
 const streamParams = {
   bitsPerSample: 16,
   sampleRate: 65000,
-  channelCount: 1,
+  channelCount: 1
 };
 
 export const onFinish = async (chat: Chat) => {
@@ -35,18 +35,18 @@ export const onFinish = async (chat: Chat) => {
 export const playOrQueueSong = async (
   chat: Chat,
   data: QueueData,
-  force: boolean = false,
+  force: boolean = false
 ) => {
   if (parseInt(data.duration, 10) > env.MAX_DURATION) {
     return await bot.api.sendMessage(
       chat.id,
       `<a href="${data.link}">${escape(
-        data.title,
+        data.title
       )}</> exceeded maximum supported duration, Skipped`,
       {
         parse_mode: 'HTML',
-        disable_web_page_preview: true,
-      },
+        disable_web_page_preview: true
+      }
     );
   }
 
@@ -55,14 +55,14 @@ export const playOrQueueSong = async (
     return await bot.api.sendMessage(
       chat.id,
       `<a href="${data.link}">${escape(
-        data.title,
+        data.title
       )}</a> Queued at Postion ${position} by <a href="tg://user?id=${
         data.requestedBy.id
       }">${escape(data.requestedBy.first_name)}</a>`,
       {
         disable_web_page_preview: true,
-        parse_mode: 'HTML',
-      },
+        parse_mode: 'HTML'
+      }
     );
   }
 
@@ -70,7 +70,7 @@ export const playOrQueueSong = async (
     let FFMPEG = ffmpeg(data.mp3_link);
     await TgCalls.stream(chat.id, FFMPEG, {
       onFinish: () => onFinish(chat),
-      stream: streamParams,
+      stream: streamParams
     });
     await sendPlayingMessage(chat, data);
   }
@@ -84,7 +84,7 @@ export const playOrQueueSong = async (
     let FFMPEG = ffmpeg(mp3_link);
     await TgCalls.stream(chat.id, FFMPEG, {
       onFinish: () => onFinish(chat),
-      stream: streamParams,
+      stream: streamParams
     });
     await sendPlayingMessage(chat, { ...data, image: poster });
   }
@@ -92,20 +92,27 @@ export const playOrQueueSong = async (
   if (data.provider === 'youtube') {
     let response = (
       await axios.get<Ytmp3>(
-        `https://apis.arnabxd.me/ytmp3?id=${data.mp3_link}`,
+        `https://apis.arnabxd.me/ytmp3?id=${data.mp3_link}`
       )
     ).data;
 
     let audio =
-      response.audio.filter(d => d.itag === 251).length > 0
-        ? response.audio.filter(d => d.itag === 251)[0]
+      response.audio.filter((d) => d.itag === 251).length > 0
+        ? response.audio.filter((d) => d.itag === 251)[0]
         : response.audio[0];
     let readable = ffmpeg(audio.url);
 
-    await TgCalls.stream(chat.id, readable, {
-      onFinish: () => onFinish(chat),
-      stream: streamParams,
-    });
-    await sendPlayingMessage(chat, data);
+    try {
+      await TgCalls.stream(chat.id, readable, {
+        onFinish: () => onFinish(chat),
+        stream: streamParams
+      });
+      await sendPlayingMessage(chat, data);
+    } catch (e) {
+      await bot.api.sendMessage(
+        chat.id,
+        'Failed to stream the song. Inaccessible link.'
+      );
+    }
   }
 };
