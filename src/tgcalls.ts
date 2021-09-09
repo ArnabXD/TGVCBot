@@ -153,8 +153,10 @@ class TGCalls {
       let [readable, killProcess] = await ffmpeg(data.mp3_link);
       await tgcalls.stream({
         readable: readable,
-        options: {
-          ...streamParams,
+        params: {
+          ...streamParams
+        },
+        listeners: {
           onFinish: () => this.onFinish(chat, killProcess)
         }
       });
@@ -170,8 +172,10 @@ class TGCalls {
       let [readable, killProcess] = await ffmpeg(mp3_link);
       await tgcalls.stream({
         readable: readable,
-        options: {
-          ...streamParams,
+        params: {
+          ...streamParams
+        },
+        listeners: {
           onFinish: () => this.onFinish(chat, killProcess)
         }
       });
@@ -202,8 +206,10 @@ class TGCalls {
 
       await tgcalls.stream({
         readable: readable,
-        options: {
-          ...streamParams,
+        params: {
+          ...streamParams
+        },
+        listeners: {
           onFinish: () => this.onFinish(chat, kill)
         }
       });
@@ -241,13 +247,13 @@ class TGCalls {
       await tgcalls.stream(
         {
           readable: audioStream,
-          options: {
+          params: {
             ...streamParams
           }
         },
         {
           readable: videoStream,
-          options: {
+          listeners: {
             onFinish: () =>
               this.onFinish(chat, () => {
                 killAudioOutput();
