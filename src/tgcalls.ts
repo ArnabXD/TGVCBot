@@ -207,6 +207,7 @@ class TGCalls {
           onFinish: () => this.onFinish(chat, kill)
         }
       });
+      await sendPlayingMessage(chat, data);
     }
 
     if (data.provider === 'ytvideo') {
@@ -255,6 +256,7 @@ class TGCalls {
           }
         }
       );
+      await sendPlayingMessage(chat, data);
     }
   }
 }
