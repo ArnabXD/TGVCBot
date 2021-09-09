@@ -106,14 +106,13 @@ class TGCalls {
     return false;
   }
 
-  private async onFinish(chat: Chat, killProcess: () => any) {
+  private onFinish(chat: Chat, kill: () => any) {
     let next = queue.get(chat.id);
     if (next) {
-      await this.streamOrQueue(chat, next);
+      this.streamOrQueue(chat, next);
     }
-    await this.stop(chat.id);
+    kill();
     this.gramTgCalls.delete(chat.id);
-    killProcess();
   }
 
   async streamOrQueue(chat: Chat, data: QueueData, force: boolean = false) {
@@ -151,7 +150,7 @@ class TGCalls {
       : this.init(chat.id);
 
     if (data.provider === 'jiosaavn') {
-      let { readable, killProcess } = ffmpeg(data.mp3_link);
+      let [readable, killProcess] = await ffmpeg(data.mp3_link);
       await tgcalls.stream({
         readable: readable,
         options: {
@@ -168,7 +167,7 @@ class TGCalls {
         ? data.image
         : await getDownloadLink(data.image);
 
-      let { readable, killProcess } = ffmpeg(mp3_link);
+      let [readable, killProcess] = await ffmpeg(mp3_link);
       await tgcalls.stream({
         readable: readable,
         options: {
@@ -190,22 +189,72 @@ class TGCalls {
         response.audio.filter((d) => d.itag === 251).length > 0
           ? response.audio.filter((d) => d.itag === 251)[0]
           : response.audio[0];
-      let { readable, killProcess } = ffmpeg(audio.url);
+      let [readable, kill] = await ffmpeg(audio.url);
 
-      try {
-        await tgcalls.stream({
-          readable: readable,
-          options: {
-            ...streamParams,
-            onFinish: () => this.onFinish(chat, killProcess)
-          }
-        });
-      } catch (e) {
+      if (!readable) {
         await bot.api.sendMessage(
           chat.id,
-          'Failed to stream the song. Inaccessible link.'
+          'Failed to stream the song. Inaccessible link. Try again later'
         );
+        this.onFinish(chat, kill);
+        return;
       }
+
+      await tgcalls.stream({
+        readable: readable,
+        options: {
+          ...streamParams,
+          onFinish: () => this.onFinish(chat, kill)
+        }
+      });
+    }
+
+    if (data.provider === 'ytvideo') {
+      let response = (
+        await axios.get<Ytmp3>(
+          `https://apis.arnabxd.me/ytmp3?id=${data.mp3_link}`
+        )
+      ).data;
+
+      let audio =
+        response.audio.filter((d) => d.itag === 251)[0] || response.audio[0];
+
+      let video =
+        response.video.filter((d) => d.itag === 135)[0] || response.video[0];
+
+      let [audioStream, killAudioOutput] = await ffmpeg(audio.url);
+      let [videoStream, killVideoOutput] = await ffmpeg(video.url, true);
+
+      if (!audioStream || !videoStream) {
+        await bot.api.sendMessage(
+          chat.id,
+          'Failed to stream the song. Inaccessible link. Try again later'
+        );
+        this.onFinish(chat, () => {
+          killAudioOutput();
+          killVideoOutput();
+        });
+        return;
+      }
+
+      await tgcalls.stream(
+        {
+          readable: audioStream,
+          options: {
+            ...streamParams
+          }
+        },
+        {
+          readable: videoStream,
+          options: {
+            onFinish: () =>
+              this.onFinish(chat, () => {
+                killAudioOutput();
+                killVideoOutput();
+              })
+          }
+        }
+      );
     }
   }
 }

@@ -16,8 +16,7 @@ const env = cleanEnv(process.env, {
   SESSION: str(),
   BOT_TOKEN: str(),
   LOG_CHANNEL: num(),
-  CODEC: str({ default: '-c:a libmp3lame -b:a 128K' }),
-  MAX_DURATION: num({ default: 360 }),
+  MAX_DURATION: num({ default: 36000 })
 });
 
 export default env;

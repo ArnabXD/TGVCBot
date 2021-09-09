@@ -7,24 +7,34 @@
  */
 
 import { spawn } from 'child_process';
-import env from './env';
+import { Readable } from 'stream';
 
-const args = `${env.CODEC} -acodec pcm_s16le -f s16le -ac 1 -ar 65000 pipe:1`;
+const audioArgs =
+  '-acodec pcm_s16le -f s16le -ac 1 -ar 48000 -preset veryfast pipe:1';
+const videoArgs = '-f rawvideo -vf scale=640:-1 -r 24 -preset ultrafast pipe:1';
 
-export const ffmpeg = (input: string) => {
-  let process = spawn('ffmpeg', [
-    '-y',
-    '-nostdin',
-    '-i',
-    `${input}`,
-    ...args.split(/\s/g)
-  ]);
-  return {
-    readable: process.stdout,
-    killProcess: async () => {
-      try {
-        process.kill();
-      } catch (e) {}
-    }
-  };
+export const ffmpeg = async (
+  input: string,
+  video: boolean = false
+): Promise<[Readable, () => void]> => {
+  return new Promise((resolve, reject) => {
+    let process = spawn('ffmpeg', [
+      '-y',
+      '-nostdin',
+      '-i',
+      `${input}`,
+      ...(video ? videoArgs : audioArgs).split(/\s/g)
+    ]);
+
+    process.stdout.once('error', () => reject());
+
+    resolve([
+      process.stdout,
+      () => {
+        try {
+          process.kill();
+        } catch (e) {}
+      }
+    ]);
+  });
 };
