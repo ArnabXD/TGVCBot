@@ -873,13 +873,13 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.8.tgz#e412b8d33f5e006593cbd3cee6df9f2cebbe802a"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==
 
-gram-tgcalls@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/gram-tgcalls/-/gram-tgcalls-2.1.2.tgz#d484572d53a620d9debcf88900baae674673515d"
-  integrity sha512-mfeH1dfYdDnPJD2yFIYXG6hYVfTX8gYVpkaQ6o4Ke20MUobShR0gQ+rIv/u4zR47voJayl4BqDdV5MDXzqHvOA==
+gram-tgcalls@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/gram-tgcalls/-/gram-tgcalls-2.1.5.tgz#6924ad4648f1c30dd9d58d4d9943859337b67e73"
+  integrity sha512-ScfWUsdCbrmSnK/pilow5px3LVqPDW5NL8+OuJwrsB6j1zx+3ykgwDwZMMXd7CVs01t8Ry3pE/DCVYm+gz+6gA==
   dependencies:
     telegram "^1.8.10"
-    tgcalls "github:rojserbest/tgcalls"
+    tgcalls "^1.0.1"
 
 grammy@^1.3.3:
   version "1.3.3"
@@ -1904,9 +1904,10 @@ term-size@^2.1.0:
   resolved "https://registry.yarnpkg.com/term-size/-/term-size-2.2.1.tgz#2a6a54840432c2fb6320fea0f415531e90189f54"
   integrity sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==
 
-"tgcalls@github:rojserbest/tgcalls":
-  version "1.0.0"
-  resolved "https://codeload.github.com/rojserbest/tgcalls/tar.gz/c75cd8cae008d60634aafb0e50578935f672ddbb"
+tgcalls@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/tgcalls/-/tgcalls-1.0.1.tgz#3ff35a595839709b0337e99e5f1d7e627e7dd1a6"
+  integrity sha512-ZJ2hcvJt3wvtdy0Hfn2l1swu5TZg+cH0Ut2ur72az8DCFGXL5vI8QGvVpkpb2SQMBgX4kfZti6dUg5TuKoPStg==
   dependencies:
     wrtc "^0.4.7"
 
