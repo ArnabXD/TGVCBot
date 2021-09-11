@@ -10,8 +10,9 @@ import { spawn } from 'child_process';
 import { Readable } from 'stream';
 
 const audioArgs =
-  '-acodec pcm_s16le -f s16le -ac 1 -ar 48000 -preset veryfast pipe:1';
-const videoArgs = '-f rawvideo -vf scale=640:-1 -r 24 -preset ultrafast pipe:1';
+  '-acodec pcm_s16le -f s16le -ac 1 -ar 48000 -tune zerolatency pipe:1';
+const videoArgs =
+  '-f rawvideo -vf scale=640:-1 -r 20 -preset ultrafast -tune zerolatency pipe:1';
 
 export const ffmpeg = async (
   input: string,
@@ -28,13 +29,15 @@ export const ffmpeg = async (
 
     process.stdout.once('error', () => reject());
 
-    resolve([
-      process.stdout,
-      () => {
-        try {
-          process.kill();
-        } catch (e) {}
-      }
-    ]);
+    process.stdout.once('readable', () => {
+      resolve([
+        process.stdout,
+        () => {
+          try {
+            process.kill();
+          } catch (e) {}
+        }
+      ]);
+    });
   });
 };
