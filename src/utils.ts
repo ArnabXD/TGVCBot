@@ -18,7 +18,7 @@ export const commandExtractor = (text: string) => {
     text: text,
     command: parts ? parts[1] : null,
     bot: parts ? parts[2] : null,
-    args: parts ? parts[3] : null,
+    args: parts ? parts[3] : null
   };
 };
 
@@ -35,12 +35,12 @@ export const hhmmss = (duration: string): string => {
 export const getPosterImageUrl = (
   image: string,
   title: string,
-  artist: string = '@ArnabXD/TGVCBot',
+  artist: string = '@ArnabXD/TGVCBot'
 ) => {
   let query = stringify({
     image,
     title: title.length > 55 ? title.slice(0, 52) + '...' : title,
-    artist: artist.length > 45 ? artist.slice(0, 42) + '...' : artist,
+    artist: artist.length > 45 ? artist.slice(0, 42) + '...' : artist
     // x: Date.now()
   });
   return `https://music-banner.herokuapp.com/banner?${query}`;
@@ -59,8 +59,8 @@ export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
       getPosterImageUrl(data.image, data.title, data.artist),
       {
         caption: text,
-        parse_mode: 'HTML',
-      },
+        parse_mode: 'HTML'
+      }
     );
     console.log(`[TGVCBot][${chat.name}] Playing - ${data.title}`);
   } catch (err) {
@@ -72,7 +72,7 @@ export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
 export const getMessageLink = (chat: number, message_id: number) => {
   let chat_id = chat.toString();
   return `https://t.me/c/${chat_id.slice(
-    chat_id.startsWith('-100') ? 4 : 1,
+    chat_id.startsWith('-100') ? 4 : 1
   )}/${message_id}`;
 };
 

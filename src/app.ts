@@ -19,6 +19,6 @@ import { InitHandlers } from './handlers';
   await log('Bot is Running');
   await bot.start({
     drop_pending_updates: true,
-    allowed_updates: ['message', 'callback_query'],
+    allowed_updates: ['message', 'callback_query']
   });
 })();

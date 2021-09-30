@@ -17,7 +17,7 @@ export const userbot = new TelegramClient(
   new StringSession(env.SESSION),
   env.API_ID,
   env.API_HASH,
-  { connectionRetries: 5 },
+  { connectionRetries: 5 }
 );
 
 export const startUserBot = async () => {

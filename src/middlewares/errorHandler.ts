@@ -20,12 +20,12 @@ export const ErrorHandler: MiddlewareFn<Context> = async (ctx, next) => {
       error.includes('Cannot cast InputPeerChat')
     ) {
       await ctx.reply(
-        "My VC User is unable to join the Voice Chat here, So can't play anything. Bye Bye",
+        "My VC User is unable to join the Voice Chat here, So can't play anything. Bye Bye"
       );
       return await ctx.leaveChat();
     }
     await ctx.reply(`<code>${escape(String(err))}</code>`, {
-      parse_mode: 'HTML',
+      parse_mode: 'HTML'
     });
     await log(`<code>${escape(String(err))}</code>`);
   }

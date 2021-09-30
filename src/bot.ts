@@ -11,7 +11,7 @@ import { ParseMode } from '@grammyjs/types';
 import env from './env';
 
 const bot = new Bot(env.BOT_TOKEN, {
-  client: { canUseWebhookReply: () => false },
+  client: { canUseWebhookReply: () => false }
 });
 
 export const log = async (message: string, parse_mode: ParseMode = 'HTML') => {
@@ -20,7 +20,7 @@ export const log = async (message: string, parse_mode: ParseMode = 'HTML') => {
     return;
   }
   return await bot.api.sendMessage(env.LOG_CHANNEL!, message, {
-    parse_mode,
+    parse_mode
   });
 };
 

@@ -17,6 +17,6 @@ export const ffmpeg = (input: string) => {
     '-nostdin',
     '-i',
     `${input}`,
-    ...args.split(/\s/g),
+    ...args.split(/\s/g)
   ]).stdout;
 };

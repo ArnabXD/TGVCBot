@@ -14,7 +14,7 @@ const composer = new Composer();
 
 export default composer;
 
-composer.command(['play', 'pl'], async ctx => {
+composer.command(['play', 'pl'], async (ctx) => {
   await ctx.api.sendChatAction(ctx.chat.id, 'typing');
 
   if (ctx.chat.type === 'private')
@@ -42,8 +42,8 @@ composer.command(['play', 'pl'], async ctx => {
       provider: 'telegram',
       requestedBy: {
         first_name: ctx.from.first_name,
-        id: ctx.from.id,
-      },
-    },
+        id: ctx.from.id
+      }
+    }
   );
 });

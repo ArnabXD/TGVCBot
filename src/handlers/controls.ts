@@ -14,7 +14,7 @@ const composer = new Composer();
 
 export default composer;
 
-composer.command(['pause', 'p'], ctx => {
+composer.command(['pause', 'p'], (ctx) => {
   if (ctx.chat.type === 'private')
     return ctx.reply('This Command works on Group Only');
   if (!TgCalls.connected(ctx.chat.id)) return ctx.reply('Inactive VC');
@@ -22,7 +22,7 @@ composer.command(['pause', 'p'], ctx => {
   return ctx.reply(TgCalls.pause(ctx.chat.id) ? 'Paused' : 'Not Playing');
 });
 
-composer.command(['resume', 'r'], ctx => {
+composer.command(['resume', 'r'], (ctx) => {
   if (ctx.chat.type === 'private')
     return ctx.reply('This Command works on Group Only');
   if (!TgCalls.connected(ctx.chat.id)) return ctx.reply('Inactive VC');
@@ -30,7 +30,7 @@ composer.command(['resume', 'r'], ctx => {
   return ctx.reply(TgCalls.resume(ctx.chat.id) ? 'Resumed' : 'Not Paused');
 });
 
-composer.command(['skip', 'next'], async ctx => {
+composer.command(['skip', 'next'], async (ctx) => {
   if (ctx.chat.type === 'private')
     return await ctx.reply('This Command works on Group Only');
   if (!TgCalls.connected(ctx.chat.id)) return await ctx.reply('Inactive VC');
@@ -42,7 +42,7 @@ composer.command(['skip', 'next'], async ctx => {
     await playOrQueueSong(
       { id: ctx.chat.id, name: ctx.chat.title },
       next,
-      true,
+      true
     );
     TgCalls.resume(ctx.chat.id);
     return;
@@ -51,7 +51,7 @@ composer.command(['skip', 'next'], async ctx => {
   await TgCalls.stop(ctx.chat.id);
 });
 
-composer.command('stopvc', async ctx => {
+composer.command('stopvc', async (ctx) => {
   if (ctx.chat.type === 'private')
     return await ctx.reply('This Command works on Group Only');
   if (!TgCalls.connected(ctx.chat.id)) return await ctx.reply('Inactive VC');

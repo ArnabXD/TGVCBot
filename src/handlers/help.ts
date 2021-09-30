@@ -16,4 +16,6 @@ const help =
   `/stopvc : Stop the stream\n` +
   `/help : Show this Menu`;
 
-composer.command('help', ctx => ctx.reply(help, { parse_mode: 'MarkdownV2' }));
+composer.command('help', (ctx) =>
+  ctx.reply(help, { parse_mode: 'MarkdownV2' })
+);
