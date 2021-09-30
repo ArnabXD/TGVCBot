@@ -7,7 +7,7 @@
  */
 
 import { Composer, InlineKeyboard } from 'grammy';
-import { commandExtractor, hhmmss } from '../utils';
+import { commandExtractor } from '../utils';
 import ytsearch from 'yt-search';
 import { playOrQueueSong } from '../tgcalls';
 import { escape } from 'html-escaper';
