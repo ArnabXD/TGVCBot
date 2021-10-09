@@ -8,12 +8,6 @@
 
 ![LOGO](https://telegra.ph/file/e9dd76aadf0b500e02738.jpg)
 
-### ❤️ Support This Project
-
-<a href="https://www.buymeacoffee.com/arnabxd" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="150"></a>
-
-_Support to get custom thumbnail API for your Bot_
-
 ### Requirements ([wiki](../../wiki/Requirements))
 
 - FFMPEG
@@ -26,11 +20,11 @@ _Support to get custom thumbnail API for your Bot_
 | ------------ | -------------------------------------------------------------------------------------- | -------- |
 | API_ID       | Your telegram app's API_ID. Get it from https://my.telegram.org/apps                   | True     |
 | API_HASH     | Your telegram app's API_HASH. Get it from https://my.telegram.org/apps                 | True     |
-| BOT_TOKEN    | Bot Token from @BotFather                                                              | True     |
+| BOT_TOKEN    | Bot Token from [@BotFather](https://telegram.dog/BotFather)                            | True     |
 | LOG_CHANNEL  | Chat ID of Channel/Group to keep logs. (Make sure to add VC User and Bot to the group) | True     |
-| SESSION      | GramJS/Telethon session string of the VC User                                          | True     |
-| MAX_DURATION | Set maximum duration of the stream. Default - `36000` seconds                          | False    |
-| THUMNAIL     | Direct link for default thumbnail (used if audio has no thumbnails).                   | False    |
+| SESSION      | GramJS/Telethon session string of the VC User. [Session Gen](https://ssg.rojser.best)  | True     |
+| MAX_DURATION | Set maximum duration of the stream. Default: `36000` seconds                           | False    |
+| THUMBNAIL    | Direct link for default thumbnail (used if audio has no thumbnails).                   | False    |
 
 ### Tutorial
 
@@ -56,3 +50,7 @@ _Support to get custom thumbnail API for your Bot_
 
 - [@cachecleanerjeet](https://github.com/cachecleanerjeet) for [JioSaavn API](https://github.com/cachecleanerjeet/JiosaavnAPI)
 - Respective devs of all the packages/libraries used.
+
+---
+
+**_Loved the project? Consider sponsoring._**
