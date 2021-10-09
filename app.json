@@ -26,12 +26,12 @@
       "description": "GramJS/Telethon Session of the VC User. https://ssg.rojser.best",
       "required": true
     },
-    "CODEC": {
-      "description": "Custom Codec and extra FFPEMG args (default : `-c:a libmp3lame -b:a 128K`)",
+    "THUMBNAIL": {
+      "description": "Direct link for default thumbnail (used if audio has no thumbnails).",
       "required": false
     },
     "MAX_DURATION": {
-      "description": "Maximum Duration support for Streams (in seconds). Default 360",
+      "description": "Maximum Duration support for Streams (in seconds). Default 36000",
       "required": false
     }
   },

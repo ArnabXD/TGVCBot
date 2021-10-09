@@ -9,7 +9,7 @@
 import { Composer, InlineKeyboard } from 'grammy';
 import { commandExtractor } from '../utils';
 import ytsearch from 'yt-search';
-import { playOrQueueSong } from '../tgcalls';
+import { tgcalls } from '../tgcalls';
 import { escape } from 'html-escaper';
 
 const composer = new Composer();
@@ -30,7 +30,7 @@ composer.command(['youtube', 'yt'], async (ctx) => {
   if (!videos || videos.length < 1) return await ctx.reply('No Results Found');
 
   let [video] = videos;
-  await playOrQueueSong(
+  await tgcalls.streamOrQueue(
     { id: ctx.chat.id, name: ctx.chat.title },
     {
       title: video.title,
@@ -106,7 +106,7 @@ composer.callbackQuery(/^yt:\d+:[a-zA-Z0-9.\-_]/, async (ctx) => {
 
   let video = await ytsearch.search({ videoId });
 
-  await playOrQueueSong(
+  await tgcalls.streamOrQueue(
     { id: ctx.chat?.id!, name: ctx.chat?.title! },
     {
       title: video.title,

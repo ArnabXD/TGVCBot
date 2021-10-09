@@ -10,12 +10,12 @@ import { Composer, InlineKeyboard } from 'grammy';
 import axios from 'axios';
 import { escape } from 'html-escaper';
 import { stringify } from 'querystring';
-import { commandExtractor } from '../utils';
+import { commandExtractor, hhmmss } from '../utils';
 import {
   JioSaavnSongResponse,
   JioSaavnSongSearchResponse
 } from '../types/jiosaavn.response';
-import { playOrQueueSong } from '../tgcalls';
+import { tgcalls } from '../tgcalls';
 
 const composer = new Composer();
 
@@ -46,7 +46,7 @@ composer.command(['jiosaavn', 'jsvn'], async (ctx) => {
     )
   ).data;
 
-  await playOrQueueSong(
+  await tgcalls.streamOrQueue(
     { id: ctx.chat.id, name: ctx.chat.title },
     {
       link: song.perma_url,
@@ -128,7 +128,7 @@ composer.callbackQuery(/^jsvn:\d+:[a-zA-Z0-9.\-_]/, async (ctx) => {
     )
   ).data;
 
-  await playOrQueueSong(
+  await tgcalls.streamOrQueue(
     {
       id: ctx.chat?.id!,
       name: ctx.chat?.title!

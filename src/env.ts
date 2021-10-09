@@ -16,8 +16,10 @@ const env = cleanEnv(process.env, {
   SESSION: str(),
   BOT_TOKEN: str(),
   LOG_CHANNEL: num(),
-  CODEC: str({ default: '-c:a libmp3lame -b:a 128K' }),
-  MAX_DURATION: num({ default: 360 })
+  MAX_DURATION: num({ default: 36000 }),
+  THUMBNAIL: str({
+    default: 'https://telegra.ph/file/6b07279fd80ef2b844ed0.png'
+  })
 });
 
 export default env;

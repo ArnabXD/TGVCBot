@@ -7,16 +7,48 @@
  */
 
 import { spawn } from 'child_process';
-import env from './env';
+import { Readable } from 'stream';
 
-const args = `${env.CODEC} -acodec pcm_s16le -f s16le -ac 1 -ar 65000 pipe:1`;
+const audioArgs = '-acodec pcm_s16le -f s16le -ac 1 -ar 48000 pipe:1';
 
-export const ffmpeg = (input: string) => {
-  return spawn('ffmpeg', [
-    '-y',
-    '-nostdin',
-    '-i',
-    `${input}`,
-    ...args.split(/\s/g)
-  ]).stdout;
+export const ffmpeg = async (
+  input: string
+): Promise<[Readable, () => void]> => {
+  return new Promise((resolve, reject) => {
+    let process = spawn('ffmpeg', [
+      '-y',
+      '-nostdin',
+      '-i',
+      `${input}`,
+      ...audioArgs.split(/\s/g)
+    ]);
+
+    process.stderr.once('error', (e) => reject(e.message));
+
+    process.stdout.once('readable', () => {
+      resolve([
+        process.stdout,
+        () => {
+          try {
+            process.kill();
+          } catch (e) {}
+        }
+      ]);
+    });
+  });
+};
+
+export const TestFFMPEG = (): void => {
+  const ffmpeg = spawn('ffmpeg');
+  ffmpeg.once('error', (e) => {
+    switch (e.message) {
+      case 'spawn ffmpeg ENOENT':
+        console.log('[Error] : FFMPEG not found');
+        break;
+      default:
+        console.log(e.message);
+        break;
+    }
+    process.exit();
+  });
 };

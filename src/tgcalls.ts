@@ -15,104 +15,213 @@ import { Ytmp3 } from './types/ytmp3.response';
 import { queue, QueueData } from './queue';
 import { escape } from 'html-escaper';
 import { ffmpeg } from './ffmpeg';
-import { sendPlayingMessage, getDownloadLink } from './utils';
+import {
+  sendPlayingMessage,
+  getDownloadLink,
+  sendFailedToStreamMessage
+} from './utils';
 import axios from 'axios';
-
-export const TgCalls = new GramTGCalls(userbot);
 
 const streamParams = {
   bitsPerSample: 16,
-  sampleRate: 65000,
+  sampleRate: 48000,
   channelCount: 1
 };
 
-export const onFinish = async (chat: Chat) => {
-  let next = queue.get(chat.id);
-  if (next) return playOrQueueSong(chat, next);
-  await TgCalls.stop(chat.id);
-};
+class TGCalls {
+  private gramTgCalls: Map<number, GramTGCalls>;
 
-export const playOrQueueSong = async (
-  chat: Chat,
-  data: QueueData,
-  force: boolean = false
-) => {
-  if (parseInt(data.duration, 10) > env.MAX_DURATION) {
-    return await bot.api.sendMessage(
-      chat.id,
-      `<a href="${data.link}">${escape(
-        data.title
-      )}</> exceeded maximum supported duration, Skipped`,
-      {
-        parse_mode: 'HTML',
-        disable_web_page_preview: true
-      }
-    );
+  constructor() {
+    this.gramTgCalls = new Map<number, GramTGCalls>();
   }
 
-  if (TgCalls.connected(chat.id) && !TgCalls.finished(chat.id) && !force) {
-    let position = queue.push(chat.id, data);
-    return await bot.api.sendMessage(
-      chat.id,
-      `<a href="${data.link}">${escape(
-        data.title
-      )}</a> Queued at Postion ${position} by <a href="tg://user?id=${
-        data.requestedBy.id
-      }">${escape(data.requestedBy.first_name)}</a>`,
-      {
-        disable_web_page_preview: true,
-        parse_mode: 'HTML'
-      }
-    );
+  private init(chat: number) {
+    this.gramTgCalls.set(chat, new GramTGCalls(userbot, chat));
+    return this.gramTgCalls.get(chat) as GramTGCalls;
   }
 
-  if (data.provider === 'jiosaavn') {
-    let FFMPEG = ffmpeg(data.mp3_link);
-    await TgCalls.stream(chat.id, FFMPEG, {
-      onFinish: () => onFinish(chat),
-      stream: streamParams
+  private async onStreamFinish(chat: Chat, kill: () => any): Promise<void> {
+    let next = queue.get(chat.id);
+    if (!next) {
+      await kill();
+      await this.gramTgCalls.get(chat.id)?.stop();
+      this.gramTgCalls.delete(chat.id);
+      return;
+    }
+    await tgcalls.streamOrQueue(chat, next);
+  }
+
+  has(chat: number) {
+    return this.gramTgCalls.has(chat);
+  }
+
+  delete(chat: number) {
+    return this.gramTgCalls.delete(chat);
+  }
+
+  closeAll() {
+    this.gramTgCalls.forEach((call) => {
+      call.stop();
     });
-    await sendPlayingMessage(chat, data);
   }
 
-  if (data.provider === 'telegram') {
-    let mp3_link = await getDownloadLink(data.mp3_link);
-    let poster = data.image.startsWith('http')
-      ? data.image
-      : await getDownloadLink(data.image);
-
-    let FFMPEG = ffmpeg(mp3_link);
-    await TgCalls.stream(chat.id, FFMPEG, {
-      onFinish: () => onFinish(chat),
-      stream: streamParams
-    });
-    await sendPlayingMessage(chat, { ...data, image: poster });
+  connected(chat: number) {
+    let tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) return false;
+    if (!tgcalls.audioFinished() || !tgcalls.videoFinished()) {
+      return true;
+    }
+    return false;
   }
 
-  if (data.provider === 'youtube') {
-    let response = (
-      await axios.get<Ytmp3>(
-        `https://apis.arnabxd.me/ytmp3?id=${data.mp3_link}`
-      )
-    ).data;
+  finished(chat: number) {
+    let tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) return false;
+    return !!(tgcalls.audioFinished() && tgcalls.videoFinished());
+  }
 
-    let audio =
-      response.audio.filter((d) => d.itag === 251).length > 0
-        ? response.audio.filter((d) => d.itag === 251)[0]
-        : response.audio[0];
-    let readable = ffmpeg(audio.url);
+  pause(chat: number) {
+    let tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) return false;
+    if (
+      !tgcalls.audioFinished() &&
+      tgcalls.videoFinished() &&
+      tgcalls.pauseAudio()
+    ) {
+      return true;
+    }
+    if (
+      !tgcalls.audioFinished() &&
+      !tgcalls.videoFinished() &&
+      tgcalls.pauseAudio() &&
+      tgcalls.pauseVideo()
+    ) {
+      return true;
+    }
+    return true;
+  }
 
-    try {
-      await TgCalls.stream(chat.id, readable, {
-        onFinish: () => onFinish(chat),
-        stream: streamParams
-      });
-      await sendPlayingMessage(chat, data);
-    } catch (e) {
-      await bot.api.sendMessage(
+  resume(chat: number) {
+    let tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) return false;
+    if (
+      !tgcalls.audioFinished() &&
+      tgcalls.videoFinished() &&
+      tgcalls.resumeAudio()
+    ) {
+      return true;
+    }
+    if (
+      !tgcalls.audioFinished() &&
+      !tgcalls.videoFinished() &&
+      tgcalls.resumeAudio() &&
+      tgcalls.resumeVideo()
+    ) {
+      return true;
+    }
+    return true;
+  }
+
+  async stop(chat: number) {
+    let tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) return false;
+    if (await tgcalls.stop()) {
+      return true;
+    }
+    return false;
+  }
+
+  async streamOrQueue(chat: Chat, data: QueueData, force: boolean = false) {
+    if (parseInt(data.duration, 10) > env.MAX_DURATION) {
+      return await bot.api.sendMessage(
         chat.id,
-        'Failed to stream the song. Inaccessible link.'
+        `<a href="${data.link}">${escape(
+          data.title
+        )}</> exceeded maximum supported duration, Skipped`,
+        {
+          parse_mode: 'HTML',
+          disable_web_page_preview: true
+        }
       );
     }
+
+    if (this.connected(chat.id) && !this.finished(chat.id) && !force) {
+      let position = queue.push(chat.id, data);
+      return await bot.api.sendMessage(
+        chat.id,
+        `<a href="${data.link}">${escape(
+          data.title
+        )}</a> Queued at Postion ${position} by <a href="tg://user?id=${
+          data.requestedBy.id
+        }">${escape(data.requestedBy.first_name)}</a>`,
+        {
+          disable_web_page_preview: true,
+          parse_mode: 'HTML'
+        }
+      );
+    }
+
+    let tgcalls = this.gramTgCalls.get(chat.id)
+      ? (this.gramTgCalls.get(chat.id) as GramTGCalls)
+      : this.init(chat.id);
+
+    if (data.provider === 'jiosaavn') {
+      let [readable, killProcess] = await ffmpeg(data.mp3_link);
+      await tgcalls.stream({
+        readable: readable,
+        params: streamParams,
+        listeners: {
+          onFinish: () => this.onStreamFinish(chat, killProcess)
+        }
+      });
+      await sendPlayingMessage(chat, data);
+    }
+
+    if (data.provider === 'telegram') {
+      let mp3_link = await getDownloadLink(data.mp3_link);
+      let poster = data.image.startsWith('http')
+        ? data.image
+        : await getDownloadLink(data.image);
+
+      let [readable, killProcess] = await ffmpeg(mp3_link);
+      await tgcalls.stream({
+        readable: readable,
+        params: streamParams,
+        listeners: {
+          onFinish: () => this.onStreamFinish(chat, killProcess)
+        }
+      });
+      await sendPlayingMessage(chat, { ...data, image: poster });
+    }
+
+    if (data.provider === 'youtube') {
+      let response = (
+        await axios.get<Ytmp3>(
+          'https://apis.arnabxd.me/ytmp3?id=' + data.mp3_link
+        )
+      ).data;
+
+      let audio =
+        response.audio.filter((d) => d.itag === 251).length > 0
+          ? response.audio.filter((d) => d.itag === 251)[0]
+          : response.audio[0];
+      let [readable, kill] = await ffmpeg(audio.url);
+
+      await tgcalls.stream({
+        readable: readable,
+        params: streamParams,
+        listeners: {
+          onFinish: () => this.onStreamFinish(chat, kill),
+          onError: async (e) => {
+            console.log(1);
+            await sendFailedToStreamMessage(chat.id, e);
+            this.onStreamFinish(chat, kill);
+          }
+        }
+      });
+      await sendPlayingMessage(chat, data);
+    }
   }
-};
+}
+
+export const tgcalls = new TGCalls();

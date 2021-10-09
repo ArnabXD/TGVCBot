@@ -69,6 +69,14 @@ export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
   }
 };
 
+export const sendFailedToStreamMessage = async (chat: number, error: Error) => {
+  bot.api.sendMessage(
+    chat,
+    'Failed to stream the song\n`' + error.message + '`',
+    { parse_mode: 'MarkdownV2' }
+  );
+};
+
 export const getMessageLink = (chat: number, message_id: number) => {
   let chat_id = chat.toString();
   return `https://t.me/c/${chat_id.slice(
