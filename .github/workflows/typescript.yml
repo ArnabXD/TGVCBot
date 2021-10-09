@@ -3,7 +3,7 @@ name: TypeScript Build
 on:
   push:
     branches-ignore: [gh-pages]
-    paths-ignore: ["**.md"]
+    paths-ignore: ['**.md']
   pull_request:
     branches-ignore: [gh-pages]
 
@@ -20,14 +20,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Restore yarn cache
-        id: yarn-cache
-        uses: actions/cache@v2
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Install dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
       - name: TypeScript Build Test
         run: yarn test

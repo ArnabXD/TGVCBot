@@ -1,8 +1,9 @@
 name: Deploy to Heroku
 
 on:
-  push:
-    branches: [main]
+  release:
+    types:
+      - published
 
 jobs:
   deploy:
@@ -14,6 +15,6 @@ jobs:
       - name: Deploy to Heroku
         uses: tiagogouvea/github-dpl-action@master
         with:
-          provider: "heroku"
+          provider: 'heroku'
           app: ${{secrets.HEROKU_APP_NAME}}
           api-key: ${{secrets.HEROKU_API}}
