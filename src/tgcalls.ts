@@ -43,9 +43,13 @@ class TGCalls {
   private async onStreamFinish(chat: Chat, kill: () => any): Promise<void> {
     let next = queue.get(chat.id);
     if (!next) {
-      await kill();
-      await this.gramTgCalls.get(chat.id)?.stop();
+      let call = this.gramTgCalls.get(chat.id);
       this.gramTgCalls.delete(chat.id);
+      if (!call?.audioStopped) {
+        return;
+      }
+      call?.stop();
+      await kill();
       return;
     }
     await tgcalls.streamOrQueue(chat, next);
@@ -59,16 +63,10 @@ class TGCalls {
     return this.gramTgCalls.delete(chat);
   }
 
-  closeAll() {
-    this.gramTgCalls.forEach((call) => {
-      call.stop();
-    });
-  }
-
   connected(chat: number) {
     let tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) return false;
-    if (!tgcalls.audioFinished() || !tgcalls.videoFinished()) {
+    if (!tgcalls.audioFinished) {
       return true;
     }
     return false;
@@ -77,49 +75,25 @@ class TGCalls {
   finished(chat: number) {
     let tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) return false;
-    return !!(tgcalls.audioFinished() && tgcalls.videoFinished());
+    return !!tgcalls.audioFinished;
   }
 
   pause(chat: number) {
     let tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) return false;
-    if (
-      !tgcalls.audioFinished() &&
-      tgcalls.videoFinished() &&
-      tgcalls.pauseAudio()
-    ) {
+    if (!tgcalls.audioFinished && tgcalls.pauseAudio()) {
       return true;
     }
-    if (
-      !tgcalls.audioFinished() &&
-      !tgcalls.videoFinished() &&
-      tgcalls.pauseAudio() &&
-      tgcalls.pauseVideo()
-    ) {
-      return true;
-    }
-    return true;
+    return false;
   }
 
   resume(chat: number) {
     let tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) return false;
-    if (
-      !tgcalls.audioFinished() &&
-      tgcalls.videoFinished() &&
-      tgcalls.resumeAudio()
-    ) {
+    if (!tgcalls.audioFinished && tgcalls.resumeAudio()) {
       return true;
     }
-    if (
-      !tgcalls.audioFinished() &&
-      !tgcalls.videoFinished() &&
-      tgcalls.resumeAudio() &&
-      tgcalls.resumeVideo()
-    ) {
-      return true;
-    }
-    return true;
+    return false;
   }
 
   async stop(chat: number) {
