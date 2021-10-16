@@ -1,9 +1,12 @@
 {
   "prettier.enable": true,
-  "typescript.format.enable": false,
-  "javascript.format.enable": false,
-  "json.format.enable": false,
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }
