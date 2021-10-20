@@ -45,9 +45,6 @@ class TGCalls {
     if (!next) {
       let call = this.gramTgCalls.get(chat.id);
       this.gramTgCalls.delete(chat.id);
-      if (!call?.audioStopped) {
-        return;
-      }
       call?.stop();
       await kill();
       return;
