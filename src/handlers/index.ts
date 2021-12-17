@@ -14,6 +14,7 @@ import play from './play';
 import controls from './controls';
 import queue from './queue';
 import help from './help';
+import leave from './leave';
 
 export const InitHandlers = (): void => {
   bot.use(start);
@@ -23,4 +24,5 @@ export const InitHandlers = (): void => {
   bot.use(controls);
   bot.use(queue);
   bot.use(help);
+  bot.use(leave);
 };

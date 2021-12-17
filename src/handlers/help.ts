@@ -14,6 +14,7 @@ const help =
   `/r : Resume the stream\n` +
   `/next or /skip : Skip the current song\n` +
   `/stopvc : Stop the stream\n` +
+  `/leave : Leave VC (works if stream is finished but VC user not left)\n` +
   `/help : Show this Menu`;
 
 composer.command('help', (ctx) =>
