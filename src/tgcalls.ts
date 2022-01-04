@@ -137,7 +137,8 @@ class TGVCCalls {
       await tgcalls.stream(readable, {
         ...streamParams,
         listeners: {
-          onFinish: () => this.onStreamFinish(chat, killProcess)
+          onFinish: () => this.onStreamFinish(chat, killProcess),
+          onError: () => this.onStreamFinish(chat, () => {})
         }
       });
       await sendPlayingMessage(chat, data);
@@ -153,7 +154,8 @@ class TGVCCalls {
       await tgcalls.stream(readable, {
         ...streamParams,
         listeners: {
-          onFinish: () => this.onStreamFinish(chat, killProcess)
+          onFinish: () => this.onStreamFinish(chat, killProcess),
+          onError: () => this.onStreamFinish(chat, () => {})
         }
       });
       await sendPlayingMessage(chat, { ...data, image: poster });
@@ -175,7 +177,8 @@ class TGVCCalls {
       await tgcalls.stream(readable, {
         ...streamParams,
         listeners: {
-          onFinish: () => this.onStreamFinish(chat, kill)
+          onFinish: () => this.onStreamFinish(chat, kill),
+          onError: () => this.onStreamFinish(chat, () => {})
         }
       });
       await sendPlayingMessage(chat, data);
