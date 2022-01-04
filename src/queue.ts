@@ -38,8 +38,11 @@ class Queues {
   }
 
   get(chatId: number) {
-    let queue = this.queues.get(chatId);
-    if (queue) return queue.shift();
+    const queue = this.queues.get(chatId);
+    if (queue) {
+      const current = queue.shift();
+      return current;
+    }
   }
 
   has(chatId: number) {
@@ -48,6 +51,22 @@ class Queues {
 
   getAll(chatId: number) {
     return this.queues.get(chatId);
+  }
+
+  shuffle(chatId: number) {
+    const all = this.queues.get(chatId);
+    if (!all) {
+      return;
+    }
+
+    // https://en.wikipedia.org/wiki/Schwartzian_transform
+    this.queues.set(
+      chatId,
+      all
+        .map((value) => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
+    );
   }
 
   delete(chatId: number, position: number) {

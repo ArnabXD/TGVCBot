@@ -44,6 +44,7 @@
 - `/pause | /p` : Pause the Stream
 - `/resume | /r` : Resume the Stream
 - `/skip | /next` : Skip the Stream
+- `/shuffle` : Shuffle the playlist
 - `/stopvc` : Stop the Stream
 - `/leave` : Leave VC (works if stream is finished but VC user not left)
 

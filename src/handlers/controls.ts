@@ -51,6 +51,21 @@ composer.command(['skip', 'next'], async (ctx) => {
   await tgcalls.stop(ctx.chat.id);
 });
 
+composer.command(['shuffle'], async (ctx) => {
+  if (ctx.chat.type === 'private')
+    return await ctx.reply('This Command works on Group Only');
+  if (!tgcalls.connected(ctx.chat.id)) return await ctx.reply('Inactive VC');
+
+  const playlist = queue.getAll(ctx.chat.id);
+
+  if (playlist && playlist.length) {
+    queue.shuffle(ctx.chat.id);
+    await ctx.reply('Shuffled the playlist');
+  } else {
+    await ctx.reply('No Playlist to shuffle');
+  }
+});
+
 composer.command('stopvc', async (ctx) => {
   if (ctx.chat.type === 'private')
     return await ctx.reply('This Command works on Group Only');
