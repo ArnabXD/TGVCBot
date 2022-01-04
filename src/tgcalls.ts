@@ -48,6 +48,18 @@ class TGVCCalls {
     await tgcalls.streamOrQueue(chat, next);
   }
 
+  private async onStreamError(error: Error, chat: Chat): Promise<void> {
+    const errorMessage = error.message || String(error);
+
+    if (errorMessage.includes('No active call')) {
+      queue.clear(chat.id);
+      this.gramTgCalls.delete(chat.id);
+      return;
+    }
+
+    await this.onStreamFinish(chat, () => {});
+  }
+
   has(chat: number) {
     return this.gramTgCalls.has(chat);
   }
@@ -138,7 +150,7 @@ class TGVCCalls {
         ...streamParams,
         listeners: {
           onFinish: () => this.onStreamFinish(chat, killProcess),
-          onError: () => this.onStreamFinish(chat, () => {})
+          onError: (e) => this.onStreamError(e, chat)
         }
       });
       await sendPlayingMessage(chat, data);
@@ -155,7 +167,7 @@ class TGVCCalls {
         ...streamParams,
         listeners: {
           onFinish: () => this.onStreamFinish(chat, killProcess),
-          onError: () => this.onStreamFinish(chat, () => {})
+          onError: (e) => this.onStreamError(e, chat)
         }
       });
       await sendPlayingMessage(chat, { ...data, image: poster });
@@ -178,7 +190,7 @@ class TGVCCalls {
         ...streamParams,
         listeners: {
           onFinish: () => this.onStreamFinish(chat, kill),
-          onError: () => this.onStreamFinish(chat, () => {})
+          onError: (e) => this.onStreamError(e, chat)
         }
       });
       await sendPlayingMessage(chat, data);
