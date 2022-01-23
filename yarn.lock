@@ -27,7 +27,7 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
-"@mapbox/node-pre-gyp@^1.0.7":
+"@mapbox/node-pre-gyp@^1.0.8":
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.8.tgz#32abc8a5c624bc4e46c43d84dfb8b26d33a96f58"
   integrity sha512-CMGKi28CF+qlbXh26hDe6NxCd7amqeAzEqnS6IHeO6LoaKyM/n+Xw3HT1COdq8cuioOdlKdqn/hCmqPUOMOywg==
@@ -2353,10 +2353,10 @@ tar@^6.1.11:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
-telegram@^2.0.14:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/telegram/-/telegram-2.1.0.tgz#98c3fa18696cccff3e99938fd8508cb13822978c"
-  integrity sha512-VNUfzRh4Mup6Rxr30kGmFYXkOtcibiL2ICg90+QggtKQdp2jH4fw7SpOfix0wQMetd3mzANlOPQuJpYp2PIlsA==
+telegram@^2.4.1:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/telegram/-/telegram-2.4.3.tgz#316212097df81374763f726d4a98e6c776346f08"
+  integrity sha512-x45WbERi7NUJdYCRSN7F+Lz63Tb6Vwc0s3WG6/7KI6qpKSEGVg2gNDar/y+RDjNdV6c8Z1fwAn9iPMI/AFwigw==
   dependencies:
     "@cryptography/aes" "^0.1.1"
     async-mutex "^0.3.0"
@@ -2379,13 +2379,13 @@ telegram@^2.0.14:
     bufferutil "^4.0.3"
     utf-8-validate "^5.0.5"
 
-tgcalls-next@^0.0.0-rc.0:
-  version "0.0.0-rc.0"
-  resolved "https://registry.yarnpkg.com/tgcalls-next/-/tgcalls-next-0.0.0-rc.0.tgz#6dd4189b171beaeb4a7c1e769f9cac46a0fda39b"
-  integrity sha512-DeUFt/CrHtVyNk+oGnZZfay7UQcpUzmyjRdrxeXmAk59LPMubWlBNBGujq8025nwJ3qtMI/XdKI3PpN6VqXrZA==
+tgcalls-next@^0.0.0-rc.14:
+  version "0.0.0-rc.14"
+  resolved "https://registry.yarnpkg.com/tgcalls-next/-/tgcalls-next-0.0.0-rc.14.tgz#7c9acaf1f98437a9b9093dddfbf885b7240777df"
+  integrity sha512-Jxaw9U2ftBfKdkOK+SOVlaX+cRAuGaS3VB7wDAuMBymmxaAXqWxDQN4cp3Bh8HNCe78U0LrU7jiW+knrfv1FiQ==
   dependencies:
-    "@mapbox/node-pre-gyp" "^1.0.7"
-    telegram "^2.0.14"
+    "@mapbox/node-pre-gyp" "^1.0.8"
+    telegram "^2.4.1"
     wrtc "^0.4.7"
 
 timers-ext@0.1, timers-ext@^0.1.7:
