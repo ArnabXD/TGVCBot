@@ -25,6 +25,7 @@
 | SESSION      | GramJS/Telethon session string of the VC User. [Session Gen](https://ssg.rojser.best)  | True     |
 | MAX_DURATION | Set maximum duration of the stream. Default: `36000` seconds                           | False    |
 | THUMBNAIL    | Direct link for default thumbnail (used if audio has no thumbnails).                   | False    |
+| WATERMARK    | Text to render on bottom left corner of Banner. Default: `TGVCBot`. (10-14 chars)      | False    |
 
 ### Tutorial
 

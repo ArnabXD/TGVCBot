@@ -1,7 +1,11 @@
 {
   "name": "@ArnabXD/TGVCBot",
   "description": "Telegram Bot to Play Music in Voice Chat",
-  "keywords": ["telegram", "vc", "music"],
+  "keywords": [
+    "telegram",
+    "vc",
+    "music"
+  ],
   "repository": "https://github.com/ArnabXD/TGVCBot",
   "logo": "https://telegra.ph/file/dd7933d25477c161b7d52.png",
   "success_url": "https://telegram.dog/xdbots",
@@ -32,6 +36,10 @@
     },
     "MAX_DURATION": {
       "description": "Maximum Duration support for Streams (in seconds). Default 36000",
+      "required": false
+    },
+    "WATERMARK": {
+      "description": "Text to render on bottom left corner of Banner. Default: `TGVCBot`. (10-14 chars)",
       "required": false
     }
   },

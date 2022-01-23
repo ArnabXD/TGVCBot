@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import axios from 'axios';
 import { getImage } from './text-to-image';
+import env from '../env';
 
 export const getBufferFromUrl = async (url: string) => {
   try {
@@ -33,7 +34,7 @@ export const generateBanner = async ({
     lineHeight: 35
   });
   let ArtistText = await getImage(artist || '');
-  const BottomBanner = await getImage('TGVCBot', { fontSize: 14 });
+  const BottomBanner = await getImage(env.WATERMARK, { fontSize: 14 });
 
   let thumbnail = sharp(background)
     .composite([
