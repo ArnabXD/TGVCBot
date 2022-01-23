@@ -8,10 +8,8 @@
 
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
-import { Logger } from 'telegram/extensions';
+import { LogLevel } from 'telegram/extensions/Logger';
 import env from './env';
-
-Logger.setLevel('none');
 
 export const userbot = new TelegramClient(
   new StringSession(env.SESSION),
@@ -21,6 +19,7 @@ export const userbot = new TelegramClient(
 );
 
 export const startUserBot = async () => {
+  userbot.setLogLevel(LogLevel.NONE);
   await userbot.start({ botAuthToken: '' });
   await userbot.sendMessage(env.LOG_CHANNEL, { message: 'UserBot is Running' });
 };
