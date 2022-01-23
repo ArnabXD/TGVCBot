@@ -16,6 +16,7 @@
     "@grammyjs/types": "^2.3.1",
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^15.12.4",
+    "@types/sharp": "^0.29.5",
     "@types/yt-search": "^2.3.2",
     "nodemon": "^2.0.13",
     "prettier": "^2.4.1",
@@ -24,11 +25,13 @@
   },
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.6",
-    "axios": "^0.24.0",
+    "@napi-rs/canvas": "^0.1.19",
+    "axios": "^0.25.0",
     "dotenv": "^10.0.0",
     "envalid": "^7.2.1",
     "grammy": "^1.4.0",
     "html-escaper": "^3.0.3",
+    "sharp": "^0.29.3",
     "tgcalls-next": "^0.0.0-rc.0",
     "yt-search": "^2.10.2"
   },
