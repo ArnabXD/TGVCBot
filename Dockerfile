@@ -1,4 +1,4 @@
-FROM node:16-buster-slim
+FROM node:16.13.2-bullseye-slim
 RUN apt update && apt upgrade -y && apt install ffmpeg git -y
 COPY . /tgvcbot
 WORKDIR /tgvcbot
