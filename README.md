@@ -40,7 +40,6 @@
 ## Bot Usage
 
 - `/jiosaavn | /jsvn <song name>` : Play Song from JioSaavn.
-- `/youtube | /yt <song name | link>`: Play Song from Youtube.
 - `/queue | /q` : Show Queue List
 - `/pause | /p` : Pause the Stream
 - `/resume | /r` : Resume the Stream
