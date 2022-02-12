@@ -17,7 +17,6 @@
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^15.12.4",
     "@types/sharp": "^0.29.5",
-    "@types/yt-search": "^2.3.2",
     "nodemon": "^2.0.13",
     "prettier": "^2.4.1",
     "ts-node": "^10.0.0",
@@ -32,8 +31,7 @@
     "grammy": "^1.4.0",
     "html-escaper": "^3.0.3",
     "sharp": "^0.29.3",
-    "tgcalls-next": "^0.0.0-rc.18",
-    "yt-search": "^2.10.2"
+    "tgcalls-next": "^0.0.0-rc.18"
   },
   "engines": {
     "node": ">=16.x"
