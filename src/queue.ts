@@ -17,7 +17,7 @@ export interface QueueData {
     first_name: string;
   };
   mp3_link: string;
-  provider: 'jiosaavn' | 'telegram';
+  provider: 'jiosaavn' | 'telegram' | 'radio';
 }
 
 class Queues {

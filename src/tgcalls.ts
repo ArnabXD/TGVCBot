@@ -54,6 +54,7 @@ class TGVCCalls {
   }
 
   private async onStreamError(error: Error, chat: Chat): Promise<void> {
+    console.error(error);
     const errorMessage = error.message || String(error);
 
     if (errorMessage.includes('No active call')) {
@@ -170,6 +171,15 @@ class TGVCCalls {
         audioOptions: streamParams
       });
       await sendPlayingMessage(chat, { ...data, image: poster });
+    }
+
+    if (data.provider === 'radio') {
+      let [readable] = await ffmpeg(data.mp3_link);
+      await tgcalls.stream({
+        audio: readable,
+        audioOptions: streamParams
+      });
+      await sendPlayingMessage(chat, data);
     }
   }
 }

@@ -13,11 +13,13 @@ import jiosaavn from './jiosaavn';
 import leave from './leave';
 import play from './play';
 import queue from './queue';
+import radio from './radio';
 import start from './start';
 
 export const InitHandlers = (): void => {
   bot.use(start);
   bot.use(jiosaavn);
+  bot.use(radio);
   bot.use(play);
   bot.use(controls);
   bot.use(queue);

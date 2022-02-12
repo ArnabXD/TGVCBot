@@ -1,4 +1,7 @@
 export const hhmmss = (duration: string): string => {
+  if (!/^d+$/.test(duration)) {
+    return '∞';
+  }
   let sec = parseInt(duration, 10);
   let hms = new Date(1000 * sec).toISOString().substr(11, 8).split(':');
   let str = ``;
