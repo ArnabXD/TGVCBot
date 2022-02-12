@@ -11,7 +11,6 @@ import { userbot } from './userbot';
 import bot from './bot';
 import env from './env';
 import { Chat } from './types/chat';
-import { Ytmp3 } from './types/ytmp3.response';
 import { queue, QueueData } from './queue';
 import { escape } from 'html-escaper';
 import { ffmpeg } from './ffmpeg';
@@ -51,7 +50,7 @@ class TGVCCalls {
       call?.stop();
       return;
     }
-    await tgcalls.streamOrQueue(chat, next);
+    await this.streamOrQueue(chat, next);
   }
 
   private async onStreamError(error: Error, chat: Chat): Promise<void> {
@@ -171,26 +170,6 @@ class TGVCCalls {
         audioOptions: streamParams
       });
       await sendPlayingMessage(chat, { ...data, image: poster });
-    }
-
-    if (data.provider === 'youtube') {
-      let response = (
-        await axios.get<Ytmp3>(
-          'https://apis.arnabxd.me/ytmp3?id=' + data.mp3_link
-        )
-      ).data;
-
-      let audio =
-        response.audio.filter((d) => d.itag === 251).length > 0
-          ? response.audio.filter((d) => d.itag === 251)[0]
-          : response.audio[0];
-      let [readable] = await ffmpeg(audio.url);
-
-      await tgcalls.stream({
-        audio: readable,
-        audioOptions: streamParams
-      });
-      await sendPlayingMessage(chat, data);
     }
   }
 }

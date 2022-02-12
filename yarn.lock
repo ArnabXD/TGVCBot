@@ -2379,10 +2379,10 @@ telegram@^2.4.1:
     bufferutil "^4.0.3"
     utf-8-validate "^5.0.5"
 
-tgcalls-next@^0.0.0-rc.14:
-  version "0.0.0-rc.14"
-  resolved "https://registry.yarnpkg.com/tgcalls-next/-/tgcalls-next-0.0.0-rc.14.tgz#7c9acaf1f98437a9b9093dddfbf885b7240777df"
-  integrity sha512-Jxaw9U2ftBfKdkOK+SOVlaX+cRAuGaS3VB7wDAuMBymmxaAXqWxDQN4cp3Bh8HNCe78U0LrU7jiW+knrfv1FiQ==
+tgcalls-next@^0.0.0-rc.18:
+  version "0.0.0-rc.18"
+  resolved "https://registry.yarnpkg.com/tgcalls-next/-/tgcalls-next-0.0.0-rc.18.tgz#532ea5dd060c35e2df96c25e25f94b97a7040181"
+  integrity sha512-jxi9D7cNpsdLJQM38UbLHiGFkGgxq367jdrhZPaK24CdAtV8600he8SQ/GiFhXaqc0nPb9C622aZzDU9h/ZqVA==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.8"
     telegram "^2.4.1"

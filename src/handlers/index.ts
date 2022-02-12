@@ -14,12 +14,10 @@ import leave from './leave';
 import play from './play';
 import queue from './queue';
 import start from './start';
-import youtube from './youtube';
 
 export const InitHandlers = (): void => {
   bot.use(start);
   bot.use(jiosaavn);
-  bot.use(youtube);
   bot.use(play);
   bot.use(controls);
   bot.use(queue);
