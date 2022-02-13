@@ -8,7 +8,6 @@
 [![stars](https://img.shields.io/github/stars/ArnabXD/TGVCBot)](https://github.com/ArnabXD/TGVCBot/stars)
 
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/ArnabXD/TGVCBot.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ArnabXD/TGVCBot/alerts/)
-
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/ArnabXD/TGVCBot.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/ArnabXD/TGVCBot/context:javascript)
 
 ![LOGO](https://telegra.ph/file/e9dd76aadf0b500e02738.jpg)
@@ -16,8 +15,8 @@
 ### Requirements 💻:  ([wiki](../../wiki/Requirements))
 
 - FFMPEG
-- NodeJs > V14. (Latest is better)
-- Yarn
+- NodeJs >= v16.x (Latest is better)
+- Yarn (already provided by [corepack](https://nodejs.org/api/corepack.html) since 16.9.0)
 
 ### Environment Variables : 
 
@@ -27,14 +26,14 @@
 | API_HASH     | Your telegram app's API_HASH. Get it from https://my.telegram.org/apps                 | True     |
 | BOT_TOKEN    | Bot Token from [@BotFather](https://telegram.dog/BotFather)                            | True     |
 | LOG_CHANNEL  | Chat ID of Channel/Group to keep logs. (Make sure to add VC User and Bot to the group) | True     |
-| SESSION      | GramJS/Telethon session string of the VC User. [Session Gen](https://ssg.rojser.best)  | True     |
+| SESSION      | GramJS/Telethon session string of the VC User. [Session Gen](https://ssg.roj.im)       | True     |
 | MAX_DURATION | Set maximum duration of the stream. Default: `36000` seconds                           | False    |
 | THUMBNAIL    | Direct link for default thumbnail (used if audio has no thumbnails).                   | False    |
 | WATERMARK    | Text to render on bottom left corner of Banner. Default: `TGVCBot`. (10-14 chars)      | False    |
 
 ### Tutorial 🔥: 
 
-- VPS/Local : [Tutorial](https://blog.arnabxd.me/deploy-tgvcbot-in-a-ubuntu-vps)
+- VPS/Local : [Tutorial](https://blog.arnabxd.me/deploy-tgvcbot-in-a-ubuntu-vps), [Video](https://www.youtube.com/watch?v=uc5yWBbrssg) 
 
 ### Memes 🤣: 
 
@@ -45,6 +44,7 @@
 ## Bot Usage 👨‍💻:
 
 - `/jiosaavn | /jsvn <song name>` : Play Song from JioSaavn.
+- `/radio | stream link` : Stream any direct link.
 - `/queue | /q` : Show Queue List
 - `/pause | /p` : Pause the Stream
 - `/resume | /r` : Resume the Stream
@@ -63,5 +63,6 @@
 - [@cachecleanerjeet](https://github.com/cachecleanerjeet) for [JioSaavn API](https://github.com/cachecleanerjeet/JiosaavnAPI)
 - Respective devs of all the packages/libraries used.
 
+---
 **_Loved the project? Consider sponsoring._**
-_ _ _
+___
