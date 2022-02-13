@@ -15,7 +15,6 @@ import { queue, QueueData } from './queue';
 import { escape } from 'html-escaper';
 import { ffmpeg } from './ffmpeg';
 import { sendPlayingMessage, getDownloadLink } from './utils';
-import axios from 'axios';
 
 const streamParams: AudioOptions = {
   bps: 16,
