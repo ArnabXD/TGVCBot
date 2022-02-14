@@ -1,5 +1,5 @@
 export const hhmmss = (duration: string): string => {
-  if (!/^d+$/.test(duration)) {
+  if (!/^\d+$/.test(duration)) {
     return '∞';
   }
   let sec = parseInt(duration, 10);
