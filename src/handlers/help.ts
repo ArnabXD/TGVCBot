@@ -5,9 +5,8 @@ const composer = new Composer();
 export default composer;
 
 const help =
-  `*Commands Available :*\n\n` +
+  `<b>Commands Available :</b>\n\n` +
   `/jiosaavn or /jsvn : Play songs from JioSaavn\n` +
-  `/youtube or /yt : Play songs from YouTube\n` +
   `/play : Reply this command to audio files to play the file\n` +
   `/queue or /q : Check queued songs list\n` +
   `/p : Pause the stream\n` +
@@ -17,6 +16,4 @@ const help =
   `/leave : Leave VC (works if stream is finished but VC user not left)\n` +
   `/help : Show this Menu`;
 
-composer.command('help', (ctx) =>
-  ctx.reply(help, { parse_mode: 'MarkdownV2' })
-);
+composer.command('help', (ctx) => ctx.reply(help, { parse_mode: 'HTML' }));
