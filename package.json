@@ -6,19 +6,31 @@
   "scripts": {
     "dev": "nodemon src/app.ts",
     "test": "tsc --noEmit",
-    "build": "tsc",
+    "build": "rimraf build && tsc",
     "start": "node build/app.js",
-    "prettier": "prettier --write \"**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint . --ext .ts --max-warnings=0",
+    "fix": "npm run lint -- --fix"
   },
-  "author": "ArnabXD <arnabxd@pm.me>",
-  "license": "ISC",
+  "author": {
+    "email": "arnabxd@pm.me",
+    "name": "Arnab XD"
+  },
+  "license": "Apache-2.0",
   "devDependencies": {
+    "@commitlint/config-conventional": "^16.2.1",
     "@grammyjs/types": "^2.3.1",
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^15.12.4",
     "@types/sharp": "^0.29.5",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "commitlint": "^16.2.1",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.5.0",
     "nodemon": "^2.0.13",
     "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.0.0",
     "typescript": "^4.3.4"
   },
