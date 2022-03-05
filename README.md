@@ -1,7 +1,6 @@
 # TGVCBot
 
-[![Deploy to Heroku](https://github.com/ArnabXD/TGVCBot/actions/workflows/heroku.yml/badge.svg?branch=main)](https://github.com/ArnabXD/TGVCBot/actions/workflows/heroku.yml)
-[![TypeScript Build](https://github.com/ArnabXD/TGVCBot/actions/workflows/typescript.yml/badge.svg?branch=main)](https://github.com/ArnabXD/TGVCBot/actions/workflows/typescript.yml)
+[![CI](https://github.com/ArnabXD/TGVCBot/actions/workflows/ci.yml/badge.svg)](https://github.com/ArnabXD/TGVCBot/actions/workflows/ci.yml)
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/ArnabXD/TGVCBot/graphs/commit-activity)
 [![forks](https://img.shields.io/github/forks/ArnabXD/TGVCBot)](https://github.com/ArnabXD/TGVCBot/forks)
