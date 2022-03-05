@@ -13,13 +13,12 @@ import { commandExtractor } from '../utils';
 
 const composer = new Composer();
 
-export default composer;
-
 composer.command([`queue`, `q`], async (ctx) => {
-  let data = queue.getAll(ctx.chat.id);
-  if (!data || data.length === 0)
-    return await ctx.reply('Queue is empty', { parse_mode: 'HTML' });
-
+  const data = queue.getAll(ctx.chat.id);
+  if (!data || !data.length) {
+    await ctx.reply('Queue is empty', { parse_mode: 'HTML' });
+    return;
+  }
   let text = `<b><i>Queue List : </i></b>\n\n`;
   data.forEach((d, i) => {
     text += `<b>${i + 1} :</b> <a href="${d.link}">${escape(
@@ -28,24 +27,25 @@ composer.command([`queue`, `q`], async (ctx) => {
       d.requestedBy.first_name
     )}</a>\n\n`;
   });
-  return await ctx.reply(text, {
+  await ctx.reply(text, {
     disable_web_page_preview: true,
     parse_mode: 'HTML'
   });
 });
 
 composer.command(['delete', 'remove', 'd'], async (ctx) => {
-  let text = commandExtractor(ctx.message?.text!);
-
+  const text = commandExtractor(ctx.message?.text || '');
   if (!text.args || !parseInt(text.args, 10)) {
-    return await ctx.reply('Command Example :\n/del 2');
+    await ctx.reply('Command Example :\n/del 2');
+    return;
   }
-
-  let position = parseInt(text.args, 10);
-  let data = queue.delete(ctx.chat.id, position);
-
-  if (!data) return await ctx.reply('Invalid queue position');
-  return await ctx.reply(
+  const position = parseInt(text.args, 10);
+  const data = queue.delete(ctx.chat.id, position);
+  if (!data) {
+    await ctx.reply('Invalid queue position');
+    return;
+  }
+  await ctx.reply(
     'Deleted <a href="' +
       data[0].link +
       '">' +
@@ -57,3 +57,5 @@ composer.command(['delete', 'remove', 'd'], async (ctx) => {
     }
   );
 });
+
+export default composer;

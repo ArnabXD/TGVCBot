@@ -2,8 +2,6 @@ import { Composer } from 'grammy';
 
 const composer = new Composer();
 
-export default composer;
-
 const help =
   `<b>Commands Available :</b>\n\n` +
   `/jiosaavn or /jsvn : Play songs from JioSaavn\n` +
@@ -17,3 +15,5 @@ const help =
   `/help : Show this Menu`;
 
 composer.command('help', (ctx) => ctx.reply(help, { parse_mode: 'HTML' }));
+
+export default composer;

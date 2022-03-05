@@ -5,7 +5,7 @@ import env from '../env';
 
 export const getBufferFromUrl = async (url: string) => {
   try {
-    let buffer: Buffer = (
+    const buffer: Buffer = (
       await axios({ url: url, responseType: 'arraybuffer' })
     ).data;
     return Buffer.isBuffer(buffer) ? buffer : false;
@@ -25,18 +25,18 @@ export const generateBanner = async ({
   title,
   artist
 }: BannerProps): Promise<Buffer> => {
-  let source = (await getBufferFromUrl(image)) as Buffer;
-  let background = await sharp(source).resize(600, 300).blur(15).toBuffer();
-  let thumb = await sharp(source).resize(180, 180).toBuffer();
+  const source = (await getBufferFromUrl(image)) as Buffer;
+  const background = await sharp(source).resize(600, 300).blur(15).toBuffer();
+  const thumb = await sharp(source).resize(180, 180).toBuffer();
 
-  let TitleText = await getImage(title || '', {
+  const TitleText = await getImage(title || '', {
     fontSize: 26,
     lineHeight: 35
   });
-  let ArtistText = await getImage(artist || '');
+  const ArtistText = await getImage(artist || '');
   const BottomBanner = await getImage(env.WATERMARK, { fontSize: 14 });
 
-  let thumbnail = sharp(background)
+  const thumbnail = sharp(background)
     .composite([
       {
         input: {

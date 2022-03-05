@@ -28,7 +28,7 @@ class Queues {
   }
 
   push(chatId: number, item: QueueData) {
-    let queue = this.queues.get(chatId);
+    const queue = this.queues.get(chatId);
     if (queue) {
       return queue.push(item);
     } else {
@@ -70,7 +70,7 @@ class Queues {
   }
 
   delete(chatId: number, position: number) {
-    let queue = this.queues.get(chatId);
+    const queue = this.queues.get(chatId);
     if (queue && position <= queue.length) {
       return queue.splice(position - 1, 1);
     }

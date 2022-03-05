@@ -13,19 +13,23 @@ import env from '../env';
 
 const composer = new Composer();
 
-export default composer;
-
 composer.command(['radio', 'stream'], async (ctx) => {
   await ctx.api.sendChatAction(ctx.chat.id, 'record_voice');
 
-  if (ctx.chat.type === 'private')
-    return await ctx.reply('This Command works on Group Only');
+  if (ctx.chat.type === 'private' || !ctx.from) {
+    await ctx.reply('This Command works on Group Only');
+    return;
+  }
 
-  let { args: keyword } = commandExtractor(ctx.message!.text);
-  if (!keyword) return await ctx.reply('Please provide a radio/stream link');
+  const { args: keyword } = commandExtractor(ctx.message?.text || '');
+  if (!keyword) {
+    await ctx.reply('Please provide a radio/stream link');
+    return;
+  }
 
   if (!keyword.startsWith('http')) {
-    return await ctx.reply('Invalid');
+    await ctx.reply('Invalid');
+    return;
   }
 
   await tgcalls.streamOrQueue(
@@ -37,11 +41,13 @@ composer.command(['radio', 'stream'], async (ctx) => {
       artist: '...',
       duration: '500',
       requestedBy: {
-        id: ctx.from!.id,
-        first_name: ctx.from!.first_name
+        id: ctx.from.id,
+        first_name: ctx.from.first_name
       },
       mp3_link: keyword,
       provider: 'radio'
     }
   );
 });
+
+export default composer;

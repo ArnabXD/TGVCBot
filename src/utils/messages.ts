@@ -7,7 +7,7 @@ import { InputFile } from 'grammy';
 import { generateBanner } from './banner';
 
 export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
-  let text =
+  const text =
     `Playing <a href="${data.link}">${data.title}</a>\n` +
     `<b>&#10143;</b> Duration : ${hhmmss(data.duration)}\n` +
     `<b>&#10143;</b> Requested by <a href="tg://user?id=${
@@ -39,7 +39,7 @@ export const sendFailedToStreamMessage = async (chat: number, error: Error) => {
 };
 
 export const getMessageLink = (chat: number, message_id: number) => {
-  let chat_id = chat.toString();
+  const chat_id = chat.toString();
   return `https://t.me/c/${chat_id.slice(
     chat_id.startsWith('-100') ? 4 : 1
   )}/${message_id}`;

@@ -293,7 +293,7 @@ export const getImage = async (
   text: string,
   { fontSize, lineHeight }: GetImage = {}
 ) => {
-  let canvas = await generate(text, {
+  const canvas = await generate(text, {
     ...(fontSize && { fontSize: fontSize }),
     ...(lineHeight && { lineHeight: lineHeight }),
     maxWidth: 350,

@@ -42,9 +42,9 @@ class TGVCCalls {
   }
 
   private async onStreamFinish(chat: Chat): Promise<void> {
-    let next = queue.get(chat.id);
+    const next = queue.get(chat.id);
     if (!next) {
-      let call = this.gramTgCalls.get(chat.id);
+      const call = this.gramTgCalls.get(chat.id);
       this.gramTgCalls.delete(chat.id);
       call?.stop();
       return;
@@ -74,8 +74,8 @@ class TGVCCalls {
   }
 
   connected(chat: number) {
-    let tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) return false;
+    const tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) {return false;}
     if (!tgcalls.finished) {
       return true;
     }
@@ -83,14 +83,14 @@ class TGVCCalls {
   }
 
   finished(chat: number) {
-    let tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) return false;
+    const tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) {return false;}
     return !!tgcalls.finished;
   }
 
   pause(chat: number) {
-    let tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) return false;
+    const tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) {return false;}
     if (!tgcalls.finished && tgcalls.pause()) {
       return true;
     }
@@ -98,8 +98,8 @@ class TGVCCalls {
   }
 
   resume(chat: number) {
-    let tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) return false;
+    const tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) {return false;}
     if (!tgcalls.finished && tgcalls.resume()) {
       return true;
     }
@@ -107,15 +107,15 @@ class TGVCCalls {
   }
 
   async stop(chat: number) {
-    let tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) return false;
+    const tgcalls = this.gramTgCalls.get(chat);
+    if (!tgcalls) {return false;}
     if (await tgcalls.stop()) {
       return true;
     }
     return false;
   }
 
-  async streamOrQueue(chat: Chat, data: QueueData, force: boolean = false) {
+  async streamOrQueue(chat: Chat, data: QueueData, force = false) {
     if (parseInt(data.duration, 10) > env.MAX_DURATION) {
       return await bot.api.sendMessage(
         chat.id,
@@ -130,7 +130,7 @@ class TGVCCalls {
     }
 
     if (this.connected(chat.id) && !this.finished(chat.id) && !force) {
-      let position = queue.push(chat.id, data);
+      const position = queue.push(chat.id, data);
       return await bot.api.sendMessage(
         chat.id,
         `<a href="${data.link}">${escape(
@@ -145,12 +145,12 @@ class TGVCCalls {
       );
     }
 
-    let tgcalls = this.gramTgCalls.get(chat.id)
+    const tgcalls = this.gramTgCalls.get(chat.id)
       ? (this.gramTgCalls.get(chat.id) as GramTGCalls)
       : this.init(chat);
 
     if (data.provider === 'jiosaavn') {
-      let [readable] = await ffmpeg(data.mp3_link);
+      const [readable] = await ffmpeg(data.mp3_link);
       await tgcalls.stream({
         audio: readable,
         audioOptions: streamParams
@@ -159,12 +159,12 @@ class TGVCCalls {
     }
 
     if (data.provider === 'telegram') {
-      let mp3_link = await getDownloadLink(data.mp3_link);
-      let poster = data.image.startsWith('http')
+      const mp3_link = await getDownloadLink(data.mp3_link);
+      const poster = data.image.startsWith('http')
         ? data.image
         : await getDownloadLink(data.image);
 
-      let [readable] = await ffmpeg(mp3_link);
+      const [readable] = await ffmpeg(mp3_link);
       await tgcalls.stream({
         audio: readable,
         audioOptions: streamParams
@@ -173,7 +173,7 @@ class TGVCCalls {
     }
 
     if (data.provider === 'radio') {
-      let [readable] = await ffmpeg(data.mp3_link);
+      const [readable] = await ffmpeg(data.mp3_link);
       await tgcalls.stream({
         audio: readable,
         audioOptions: streamParams

@@ -15,7 +15,7 @@ export const ffmpeg = async (
   input: string
 ): Promise<[Readable, () => void]> => {
   return new Promise((resolve, reject) => {
-    let process = spawn('ffmpeg', [
+    const process = spawn('ffmpeg', [
       '-y',
       '-nostdin',
       '-i',
@@ -31,7 +31,9 @@ export const ffmpeg = async (
         () => {
           try {
             process.kill();
-          } catch (e) {}
+          } catch (e) {
+            //
+          }
         }
       ]);
     });
