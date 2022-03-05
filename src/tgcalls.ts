@@ -75,7 +75,9 @@ class TGVCCalls {
 
   connected(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) {return false;}
+    if (!tgcalls) {
+      return false;
+    }
     if (!tgcalls.finished) {
       return true;
     }
@@ -84,13 +86,17 @@ class TGVCCalls {
 
   finished(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) {return false;}
+    if (!tgcalls) {
+      return false;
+    }
     return !!tgcalls.finished;
   }
 
   pause(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) {return false;}
+    if (!tgcalls) {
+      return false;
+    }
     if (!tgcalls.finished && tgcalls.pause()) {
       return true;
     }
@@ -99,7 +105,9 @@ class TGVCCalls {
 
   resume(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) {return false;}
+    if (!tgcalls) {
+      return false;
+    }
     if (!tgcalls.finished && tgcalls.resume()) {
       return true;
     }
@@ -108,7 +116,9 @@ class TGVCCalls {
 
   async stop(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
-    if (!tgcalls) {return false;}
+    if (!tgcalls) {
+      return false;
+    }
     if (await tgcalls.stop()) {
       return true;
     }
