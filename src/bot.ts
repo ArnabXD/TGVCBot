@@ -19,7 +19,7 @@ export const log = async (message: string, parse_mode: ParseMode = 'HTML') => {
     console.log(message);
     return;
   }
-  return await bot.api.sendMessage(env.LOG_CHANNEL!, message, {
+  return await bot.api.sendMessage(env.LOG_CHANNEL, message, {
     parse_mode
   });
 };

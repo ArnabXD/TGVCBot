@@ -13,36 +13,37 @@ import { getMessageLink } from '../utils';
 
 const composer = new Composer();
 
-export default composer;
-
 composer.command(['play', 'pl'], async (ctx) => {
   await ctx.api.sendChatAction(ctx.chat.id, 'record_voice');
 
-  if (ctx.chat.type === 'private')
-    return await ctx.reply('This Command works on Group Only');
+  if (ctx.chat.type === 'private') {
+    await ctx.reply('This Command works on Group Only');
+    return;
+  }
 
-  if (
-    !ctx.message?.reply_to_message ||
-    !('audio' in ctx.message!.reply_to_message)
-  )
-    return await ctx.reply('Please reply this command to a audio file');
-
-  let { reply_to_message: message } = ctx.message;
-
-  await tgcalls.streamOrQueue(
-    { id: ctx.chat.id, name: ctx.chat.title },
-    {
-      title: message.audio!.title!,
-      duration: message.audio!.duration.toString(),
-      image: message.audio!.thumb?.file_id ?? env.THUMBNAIL,
-      artist: message.audio!.performer ?? 'TGVCBot',
-      link: getMessageLink(ctx.chat.id, message.message_id),
-      mp3_link: message.audio!.file_id,
-      provider: 'telegram',
-      requestedBy: {
-        first_name: ctx.from.first_name,
-        id: ctx.from.id
+  if (ctx.message?.reply_to_message && ctx.message.reply_to_message.audio) {
+    const msg = ctx.message.reply_to_message;
+    const audio = ctx.message.reply_to_message.audio;
+    await tgcalls.streamOrQueue(
+      { id: ctx.chat.id, name: ctx.chat.title },
+      {
+        title: audio.title || 'Unknown',
+        duration: audio.duration.toString(),
+        image: audio.thumb?.file_id ?? env.THUMBNAIL,
+        artist: audio.performer ?? 'TGVCBot',
+        link: getMessageLink(ctx.chat.id, msg.message_id),
+        mp3_link: audio.file_id,
+        provider: 'telegram',
+        requestedBy: {
+          first_name: ctx.from.first_name,
+          id: ctx.from.id
+        }
       }
-    }
-  );
+    );
+  } else {
+    await ctx.reply('Please reply this command to a audio file');
+    return;
+  }
 });
+
+export default composer;

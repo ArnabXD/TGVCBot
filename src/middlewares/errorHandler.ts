@@ -14,7 +14,7 @@ export const ErrorHandler: MiddlewareFn<Context> = async (ctx, next) => {
   try {
     await next();
   } catch (err) {
-    let error = String(err);
+    const error = String(err);
     if (
       error.includes('Could not find the input entity') ||
       error.includes('Cannot cast InputPeerChat')

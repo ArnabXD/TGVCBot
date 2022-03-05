@@ -12,32 +12,31 @@ import { queue } from '../queue';
 
 const composer = new Composer();
 
-export default composer;
-
-composer.command(['pause', 'p'], (ctx) => {
-  if (ctx.chat.type === 'private')
-    return ctx.reply('This Command works on Group Only');
-  if (!tgcalls.connected(ctx.chat.id)) return ctx.reply('Inactive VC');
-
-  return ctx.reply(tgcalls.pause(ctx.chat.id) ? 'Paused' : 'Not Playing');
+composer.use(async (ctx, next) => {
+  if (ctx && ctx.chat) {
+    if (ctx.chat.type === 'private') {
+      await ctx.reply('This Command works on Group Only');
+      return;
+    }
+    if (!tgcalls.connected(ctx.chat.id)) {
+      await ctx.reply('Inactive VC');
+      return;
+    }
+    await next();
+  }
 });
 
-composer.command(['resume', 'r'], (ctx) => {
-  if (ctx.chat.type === 'private')
-    return ctx.reply('This Command works on Group Only');
-  if (!tgcalls.connected(ctx.chat.id)) return ctx.reply('Inactive VC');
+composer.command(['pause', 'p'], async (ctx) => {
+  await ctx.reply(tgcalls.pause(ctx.chat.id) ? 'Paused' : 'Not Playing');
+});
 
-  return ctx.reply(tgcalls.resume(ctx.chat.id) ? 'Resumed' : 'Not Paused');
+composer.command(['resume', 'r'], async (ctx) => {
+  await ctx.reply(tgcalls.resume(ctx.chat.id) ? 'Resumed' : 'Not Paused');
 });
 
 composer.command(['skip', 'next'], async (ctx) => {
-  if (ctx.chat.type === 'private')
-    return await ctx.reply('This Command works on Group Only');
-  if (!tgcalls.connected(ctx.chat.id)) return await ctx.reply('Inactive VC');
-
-  let next = queue.get(ctx.chat.id);
-
-  if (next) {
+  const next = queue.get(ctx.chat.id);
+  if (next && 'title' in ctx.chat) {
     tgcalls.pause(ctx.chat.id);
     await tgcalls.streamOrQueue(
       { id: ctx.chat.id, name: ctx.chat.title },
@@ -47,17 +46,11 @@ composer.command(['skip', 'next'], async (ctx) => {
     tgcalls.resume(ctx.chat.id);
     return;
   }
-
   await tgcalls.stop(ctx.chat.id);
 });
 
 composer.command(['shuffle'], async (ctx) => {
-  if (ctx.chat.type === 'private')
-    return await ctx.reply('This Command works on Group Only');
-  if (!tgcalls.connected(ctx.chat.id)) return await ctx.reply('Inactive VC');
-
   const playlist = queue.getAll(ctx.chat.id);
-
   if (playlist && playlist.length) {
     queue.shuffle(ctx.chat.id);
     await ctx.reply('Shuffled the playlist');
@@ -67,13 +60,10 @@ composer.command(['shuffle'], async (ctx) => {
 });
 
 composer.command('stopvc', async (ctx) => {
-  if (ctx.chat.type === 'private')
-    return await ctx.reply('This Command works on Group Only');
-  if (!tgcalls.connected(ctx.chat.id)) return await ctx.reply('Inactive VC');
-
   queue.clear(ctx.chat.id);
-
   if (await tgcalls.stop(ctx.chat.id)) {
-    return await ctx.reply('Stopped');
+    await ctx.reply('Stopped');
   }
 });
+
+export default composer;

@@ -13,8 +13,6 @@ import { tgcalls } from '../tgcalls';
 
 const composer = new Composer();
 
-export default composer;
-
 composer.command('leave', async (ctx) => {
   if (!['group', 'supergroup'].includes(ctx.chat.type)) {
     return await ctx.reply('This Command works on Group Only');
@@ -25,8 +23,12 @@ composer.command('leave', async (ctx) => {
   }
 
   const chat = await getFullChat(userbot, ctx.chat.id);
-  if (!chat.call) return await ctx.reply('No Active Call');
-
+  if (!chat.call) {
+    await ctx.reply('No Active Call');
+    return;
+  }
   await leaveCall(userbot, chat.call);
   await ctx.reply('Left Voice Call');
 });
+
+export default composer;
