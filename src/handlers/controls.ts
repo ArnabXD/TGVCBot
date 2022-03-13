@@ -9,32 +9,19 @@
 import { Composer } from 'grammy';
 import { tgcalls } from '../tgcalls';
 import { queue } from '../queue';
+import { CheckInactiveVcMiddleware } from '../middlewares';
 
 const composer = new Composer();
 
-composer.use(async (ctx, next) => {
-  if (ctx && ctx.chat) {
-    if (ctx.chat.type === 'private') {
-      await ctx.reply('This Command works on Group Only');
-      return;
-    }
-    if (!tgcalls.connected(ctx.chat.id)) {
-      await ctx.reply('Inactive VC');
-      return;
-    }
-    await next();
-  }
-});
-
-composer.command(['pause', 'p'], async (ctx) => {
+composer.command(['pause', 'p'], CheckInactiveVcMiddleware, async (ctx) => {
   await ctx.reply(tgcalls.pause(ctx.chat.id) ? 'Paused' : 'Not Playing');
 });
 
-composer.command(['resume', 'r'], async (ctx) => {
+composer.command(['resume', 'r'], CheckInactiveVcMiddleware, async (ctx) => {
   await ctx.reply(tgcalls.resume(ctx.chat.id) ? 'Resumed' : 'Not Paused');
 });
 
-composer.command(['skip', 'next'], async (ctx) => {
+composer.command(['skip', 'next'], CheckInactiveVcMiddleware, async (ctx) => {
   const next = queue.get(ctx.chat.id);
   if (next && 'title' in ctx.chat) {
     tgcalls.pause(ctx.chat.id);
@@ -49,7 +36,7 @@ composer.command(['skip', 'next'], async (ctx) => {
   await tgcalls.stop(ctx.chat.id);
 });
 
-composer.command(['shuffle'], async (ctx) => {
+composer.command(['shuffle'], CheckInactiveVcMiddleware, async (ctx) => {
   const playlist = queue.getAll(ctx.chat.id);
   if (playlist && playlist.length) {
     queue.shuffle(ctx.chat.id);
@@ -59,7 +46,7 @@ composer.command(['shuffle'], async (ctx) => {
   }
 });
 
-composer.command('stopvc', async (ctx) => {
+composer.command('stopvc', CheckInactiveVcMiddleware, async (ctx) => {
   queue.clear(ctx.chat.id);
   if (await tgcalls.stop(ctx.chat.id)) {
     await ctx.reply('Stopped');

@@ -12,3 +12,5 @@ import bot from '../bot';
 export const InitMiddleWares = (): void => {
   bot.use(ErrorHandler);
 };
+
+export { CheckInactiveVcMiddleware } from './inactiveVc';
