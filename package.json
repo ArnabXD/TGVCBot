@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.8",
-    "@napi-rs/canvas": "^0.1.20",
+    "@napi-rs/canvas": "^0.1.21",
     "axios": "^0.26.0",
     "dotenv": "^16.0.0",
     "envalid": "^7.3.0",
