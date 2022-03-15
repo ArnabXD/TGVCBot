@@ -4,7 +4,7 @@
   "description": "Telegram Bot to Play Music in Voice Chat",
   "main": "build/app.js",
   "scripts": {
-    "dev": "nodemon src/app.ts",
+    "dev": "ts-node src/app.ts",
     "test": "tsc --noEmit",
     "build": "rimraf build && tsc",
     "start": "node build/app.js",
@@ -31,7 +31,6 @@
     "eslint-config-prettier": "^8.5.0",
     "husky": "^7.0.0",
     "lint-staged": "^12.3.5",
-    "nodemon": "^2.0.13",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "ts-node": "^10.0.0",
