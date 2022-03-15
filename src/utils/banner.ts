@@ -23,17 +23,17 @@ interface BannerProps {
 export const generateBanner = async ({
   image,
   title,
-  artist
+  artist = '...'
 }: BannerProps): Promise<Buffer> => {
   const source = (await getBufferFromUrl(image)) as Buffer;
   const background = await sharp(source).resize(600, 300).blur(15).toBuffer();
   const thumb = await sharp(source).resize(180, 180).toBuffer();
 
-  const TitleText = await getImage(title || '', {
+  const TitleText = await getImage(title || 'Music', {
     fontSize: 26,
     lineHeight: 35
   });
-  const ArtistText = await getImage(artist || '');
+  const ArtistText = await getImage(artist);
   const BottomBanner = await getImage(env.WATERMARK, { fontSize: 14 });
 
   const thumbnail = sharp(background)

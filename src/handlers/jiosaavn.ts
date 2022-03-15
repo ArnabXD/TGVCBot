@@ -61,7 +61,7 @@ composer.command(['jiosaavn', 'jsvn'], async (ctx) => {
         link: song.perma_url,
         title: song.song.replace(/&quot;/g, `"`),
         image: song.image,
-        artist: song.singers,
+        artist: song.singers || song.primary_artists,
         duration: song.duration,
         requestedBy: {
           id: ctx.from.id,
