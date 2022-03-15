@@ -8,14 +8,12 @@
 
 import bot, { log } from './bot';
 import { startUserBot } from './userbot';
-import { InitMiddleWares } from './middlewares';
 import { InitHandlers } from './handlers';
 import { TestFFMPEG } from './ffmpeg';
 
 (async () => {
   TestFFMPEG(); // Check if FFMPEG is installed or not
 
-  InitMiddleWares();
   InitHandlers();
 
   await startUserBot();
@@ -23,5 +21,13 @@ import { TestFFMPEG } from './ffmpeg';
   await bot.start({
     drop_pending_updates: true,
     allowed_updates: ['message', 'callback_query']
+  });
+  bot.catch(async (err) => {
+    if (err) {
+      const msg =
+        err.message + `\n<code>${JSON.stringify(err, null, 2)}</code>`;
+      await log(msg, 'HTML');
+      await err.ctx.reply(msg, { parse_mode: 'HTML' });
+    }
   });
 })();

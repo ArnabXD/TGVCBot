@@ -6,11 +6,4 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ErrorHandler } from './errorHandler';
-import bot from '../bot';
-
-export const InitMiddleWares = (): void => {
-  bot.use(ErrorHandler);
-};
-
 export { CheckInactiveVcMiddleware } from './inactiveVc';
