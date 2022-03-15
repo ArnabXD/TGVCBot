@@ -207,7 +207,7 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@grammyjs/types@^2.3.1", "@grammyjs/types@^2.6.0":
+"@grammyjs/types@^2.6.0":
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-2.6.0.tgz#8cfdfb56a87fba3c418dc21ceaa7a03d7f918d73"
   integrity sha512-eWckBf25l6xwSS2YO6Ioyf2BDEO7tyNZhgRLl5PzsdvqlHQR+XYTdKwhevsqLG4Y+zmF6hEXnuNTYu+HF8W8Sg==
@@ -1624,7 +1624,7 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.9.tgz#041b05df45755e587a24942279b9d113146e1c96"
   integrity sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==
 
-grammy@^1.4.0:
+grammy@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/grammy/-/grammy-1.7.0.tgz#68998ee9e3ddfad8e9b580c96be1bffc6084758f"
   integrity sha512-Xs4vRzCkSO+8CrFP8BXXOo4BGfBGWTPoDcbj8V3kz/c01XLNXI738HWv6/qjQ+IuPLnd/Qegjy7MBogbymogUg==
