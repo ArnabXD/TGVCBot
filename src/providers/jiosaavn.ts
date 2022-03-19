@@ -1,0 +1,99 @@
+import StreamProvider from './base';
+import { User } from '@grammyjs/types';
+import { QueueData } from '../queue';
+import { escape } from 'html-escaper';
+
+import axios from 'axios';
+
+export interface JioSaavnSearchResponse {
+  status: boolean;
+  serverTime: number;
+  searchQuery: string;
+  results: Result[];
+}
+
+interface Result {
+  id: string;
+  title: string;
+  image: string;
+  images: { [key: string]: string };
+  album: string;
+  description: string;
+  more_info: {
+    vlink?: string;
+    singers: string;
+    language: string;
+    album_id: string;
+  };
+  perma_url: string;
+  api_url: { [key: string]: string };
+}
+
+export interface JioSaavnSongResponse {
+  status: boolean;
+  serverTime: number;
+  id: string;
+  song: string;
+  album: string;
+  year: number;
+  primary_artists: string;
+  singers: string;
+  image: string;
+  images: { [key: string]: string };
+  duration: string;
+  label: string;
+  albumid: string;
+  language: string;
+  copyright_text: string;
+  has_lyrics: boolean;
+  lyrics: null;
+  media_url: string;
+  media_urls: { [key: string]: string };
+  perma_url: string;
+  album_url: string;
+  release_date: string;
+  api_url: {
+    song: string;
+    album: string;
+  };
+}
+
+type JioSaavnResults = Result[];
+
+class JioSaavn extends StreamProvider<JioSaavnResults> {
+  constructor() {
+    super('jiosaavn');
+  }
+  async search(key: string) {
+    const query = new URLSearchParams({
+      query: key.replace(/\s/g, '+')
+    });
+    const { data } = await axios.get<JioSaavnSearchResponse>(
+      'https://jiosaavn-api-v3.vercel.app/search?' + query.toString()
+    );
+    if (data && data.results && data.results.length) {
+      return data.results;
+    }
+  }
+  async getSong(id: string, from: User): Promise<QueueData> {
+    const resp = await axios.get<JioSaavnSongResponse>(
+      'https://jiosaavn-api-v3.vercel.app/song?id=' + id
+    );
+    const song = resp.data;
+    return {
+      link: song.perma_url,
+      title: escape(song.song.replace(/&quot;/g, `"`)),
+      image: song.image,
+      artist: song.singers || song.primary_artists,
+      duration: song.duration,
+      requestedBy: {
+        id: from.id,
+        first_name: escape(from.first_name)
+      },
+      mp3_link: song.media_urls['96_KBPS'] ?? song.media_url,
+      provider: this.provider
+    };
+  }
+}
+
+export const jiosaavn = new JioSaavn();

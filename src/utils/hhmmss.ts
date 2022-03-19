@@ -1,4 +1,7 @@
 export const hhmmss = (duration: string): string => {
+  if (duration.split(':').length) {
+    return duration;
+  }
   if (!/^\d+$/.test(duration)) {
     return '∞';
   }
