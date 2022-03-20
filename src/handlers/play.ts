@@ -14,13 +14,12 @@ import { getMessageLink } from '../utils';
 const composer = new Composer();
 
 composer.command(['play', 'pl'], async (ctx) => {
-  await ctx.api.sendChatAction(ctx.chat.id, 'record_voice');
-
+  console.log(1);
+  await ctx.api.sendChatAction(ctx.chat.id, 'typing');
   if (ctx.chat.type === 'private') {
     await ctx.reply('This Command works on Group Only');
     return;
   }
-
   if (ctx.message?.reply_to_message && ctx.message.reply_to_message.audio) {
     const msg = ctx.message.reply_to_message;
     const audio = ctx.message.reply_to_message.audio;

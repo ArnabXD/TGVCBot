@@ -155,40 +155,43 @@ class TGVCCalls {
       );
     }
 
-    const tgcalls = this.gramTgCalls.get(chat.id)
+    const _tgcalls = this.gramTgCalls.get(chat.id)
       ? (this.gramTgCalls.get(chat.id) as GramTGCalls)
       : this.init(chat);
 
-    if (data.provider === 'jiosaavn') {
-      const [readable] = await ffmpeg(data.mp3_link);
-      await tgcalls.stream({
-        audio: readable,
-        audioOptions: streamParams
-      });
-      await sendPlayingMessage(chat, data);
-    }
+    switch (data.provider) {
+      case 'jiosaavn': {
+        const [readable] = await ffmpeg(data.mp3_link);
+        await _tgcalls.stream({
+          audio: readable,
+          audioOptions: streamParams
+        });
+        await sendPlayingMessage(chat, data);
+        break;
+      }
+      case 'telegram': {
+        const mp3_link = await getDownloadLink(data.mp3_link);
+        const poster = data.image.startsWith('http')
+          ? data.image
+          : await getDownloadLink(data.image);
 
-    if (data.provider === 'telegram') {
-      const mp3_link = await getDownloadLink(data.mp3_link);
-      const poster = data.image.startsWith('http')
-        ? data.image
-        : await getDownloadLink(data.image);
-
-      const [readable] = await ffmpeg(mp3_link);
-      await tgcalls.stream({
-        audio: readable,
-        audioOptions: streamParams
-      });
-      await sendPlayingMessage(chat, { ...data, image: poster });
-    }
-
-    if (data.provider === 'radio') {
-      const [readable] = await ffmpeg(data.mp3_link);
-      await tgcalls.stream({
-        audio: readable,
-        audioOptions: streamParams
-      });
-      await sendPlayingMessage(chat, data);
+        const [readable] = await ffmpeg(mp3_link);
+        await _tgcalls.stream({
+          audio: readable,
+          audioOptions: streamParams
+        });
+        await sendPlayingMessage(chat, { ...data, image: poster });
+        break;
+      }
+      case 'radio': {
+        const [readable] = await ffmpeg(data.mp3_link);
+        await _tgcalls.stream({
+          audio: readable,
+          audioOptions: streamParams
+        });
+        await sendPlayingMessage(chat, data);
+        break;
+      }
     }
   }
 }

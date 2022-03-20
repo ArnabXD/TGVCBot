@@ -13,18 +13,10 @@ import { TestFFMPEG } from './ffmpeg';
 
 (async () => {
   TestFFMPEG(); // Check if FFMPEG is installed or not
-
   InitHandlers();
-  bot.on('inline_query', (ctx) => ctx.answerInlineQuery([]));
-
   await startUserBot();
 
-  await log('Bot is Running');
-  await bot.start({
-    drop_pending_updates: true,
-    allowed_updates: ['message', 'callback_query', 'inline_query']
-  });
-
+  bot.on('inline_query', (ctx) => ctx.answerInlineQuery([]));
   bot.catch(async (err) => {
     if (err) {
       const msg =
@@ -32,5 +24,11 @@ import { TestFFMPEG } from './ffmpeg';
       await log(msg, 'HTML');
       await err.ctx.reply(msg, { parse_mode: 'HTML' });
     }
+  });
+
+  await log('Bot is Running');
+  await bot.start({
+    drop_pending_updates: true,
+    allowed_updates: ['message', 'callback_query', 'inline_query']
   });
 })();
