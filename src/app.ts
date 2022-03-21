@@ -19,6 +19,9 @@ import { TestFFMPEG } from './ffmpeg';
   bot.on('inline_query', (ctx) => ctx.answerInlineQuery([]));
   bot.catch(async (err) => {
     if (err) {
+      if (err.message.match("'sendChatAction' failed!")) {
+        await err.ctx.leaveChat();
+      }
       const msg =
         err.message + `\n<code>${JSON.stringify(err, null, 2)}</code>`;
       await log(msg, 'HTML');
