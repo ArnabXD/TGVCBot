@@ -24,7 +24,7 @@
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^15.12.4",
     "@types/sharp": "^0.30.0",
-    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.15.0",
     "commitlint": "^16.2.3",
     "eslint": "^8.10.0",
