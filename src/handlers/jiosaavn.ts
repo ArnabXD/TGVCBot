@@ -59,7 +59,9 @@ composer.command(['jiosaavnsearch', 'jsvnsearch', 'jsvnsr'], async (ctx) => {
   result.forEach((res, index) => {
     index++;
     text +=
-      `${index} <b><a href="${res.perma_url}">${escape(res.title)}</a></b>\n` +
+      `${('00' + index).slice(-2)} : <b><a href="${res.perma_url}">${escape(
+        res.title
+      )}</a></b>\n` +
       `<b>Artist :</b> ${escape(res.more_info.singers || '')}\n\n`;
     keyboard.text(`${index}`, 'jsvn:' + ctx.from?.id + ':' + res.id);
     if (!(index % 5)) {
