@@ -80,7 +80,10 @@ class JioSaavn extends StreamProvider<JioSaavnResults> {
       'https://jiosaavn-api-v3.vercel.app/search?' + query.toString()
     );
     if (data && data.results && data.results.length) {
-      return data.results;
+      return data.results.map((_data) => ({
+        ..._data,
+        title: _data.title.replace(/&quot;/g, `"`)
+      }));
     }
   }
   async getSong(id: string, from: User): Promise<QueueData> {
