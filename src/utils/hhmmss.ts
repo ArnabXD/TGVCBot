@@ -1,5 +1,5 @@
 export const hhmmss = (duration: string): string => {
-  if (duration.split(':').length) {
+  if (duration.split(':').length > 1) {
     return duration;
   }
   if (!/^\d+$/.test(duration)) {
