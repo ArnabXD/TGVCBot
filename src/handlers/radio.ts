@@ -39,7 +39,7 @@ composer.command(['radio', 'stream'], async (ctx) => {
       title: 'Radio',
       image: env.THUMBNAIL,
       artist: '...',
-      duration: '500',
+      duration: '',
       requestedBy: {
         id: ctx.from.id,
         first_name: ctx.from.first_name
