@@ -77,6 +77,7 @@ class Queues {
   }
 
   clear(chatId: number) {
+    this.queues.set(chatId, []);
     return this.queues.delete(chatId);
   }
 }
