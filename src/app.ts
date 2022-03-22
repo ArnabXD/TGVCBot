@@ -16,14 +16,15 @@ import { TestFFMPEG } from './ffmpeg';
   InitHandlers();
   await startUserBot();
 
-  bot.on('inline_query', (ctx) => ctx.answerInlineQuery([]));
   bot.catch(async (err) => {
     if (err) {
-      if (err.message.match("'sendChatAction' failed!")) {
-        await err.ctx.leaveChat();
-      }
       const msg =
         err.message + `\n<code>${JSON.stringify(err, null, 2)}</code>`;
+      if (err.message.match("'sendChatAction' failed!")) {
+        await err.ctx.leaveChat();
+        await log(msg, 'HTML');
+        return;
+      }
       await log(msg, 'HTML');
       await err.ctx.reply(msg, { parse_mode: 'HTML' });
     }
@@ -32,6 +33,6 @@ import { TestFFMPEG } from './ffmpeg';
   await log('Bot is Running');
   await bot.start({
     drop_pending_updates: true,
-    allowed_updates: ['message', 'callback_query', 'inline_query']
+    allowed_updates: ['message', 'callback_query']
   });
 })();
