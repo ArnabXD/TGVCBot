@@ -9,7 +9,6 @@
 import StreamProvider from './base';
 import { User } from '@grammyjs/types';
 import { QueueData } from '../queue';
-import { escape } from 'html-escaper';
 
 import axios from 'axios';
 
@@ -68,11 +67,11 @@ export interface JioSaavnSongResponse {
 
 type JioSaavnResults = Result[];
 
-class JioSaavn extends StreamProvider<JioSaavnResults> {
+class JioSaavn extends StreamProvider {
   constructor() {
     super('jiosaavn');
   }
-  async search(key: string) {
+  async search(key: string): Promise<JioSaavnResults | undefined> {
     const query = new URLSearchParams({
       query: key.replace(/\s/g, '+')
     });
@@ -93,13 +92,13 @@ class JioSaavn extends StreamProvider<JioSaavnResults> {
     const song = resp.data;
     return {
       link: song.perma_url,
-      title: escape(song.song.replace(/&quot;/g, `"`)),
+      title: song.song.replace(/&quot;/g, `"`),
       image: song.image,
       artist: song.singers || song.primary_artists,
       duration: song.duration,
       requestedBy: {
         id: from.id,
-        first_name: escape(from.first_name)
+        first_name: from.first_name
       },
       mp3_link: song.media_urls['96_KBPS'] ?? song.media_url,
       provider: this.provider

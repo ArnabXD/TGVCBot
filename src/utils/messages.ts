@@ -8,7 +8,7 @@ import { generateBanner } from './banner';
 
 export const sendPlayingMessage = async (chat: Chat, data: QueueData) => {
   const text =
-    `Playing <a href="${data.link}">${data.title}</a>\n` +
+    `Playing <a href="${data.link}">${escape(data.title)}</a>\n` +
     `<b>&#10143;</b> Duration : ${hhmmss(data.duration)}\n` +
     `<b>&#10143;</b> Requested by <a href="tg://user?id=${
       data.requestedBy.id
