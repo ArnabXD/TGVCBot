@@ -7,3 +7,4 @@
  */
 
 export { CheckInactiveVcMiddleware } from './inactiveVc';
+export { errorHandler } from './errorHandler';

@@ -9,31 +9,17 @@
 import bot, { log } from './bot';
 import { startUserBot } from './userbot';
 import { InitHandlers } from './handlers';
+import { errorHandler } from './middlewares';
 import { TestFFMPEG } from './ffmpeg';
-import { escape } from 'html-escaper';
 
 (async () => {
   TestFFMPEG(); // Check if FFMPEG is installed or not
   InitHandlers();
   await startUserBot();
-
-  bot.catch(async (err) => {
-    if (err) {
-      const msg =
-        err.message + `\n<code>${escape(JSON.stringify(err, null, 2))}</code>`;
-      if (err.message.match("'sendChatAction' failed!")) {
-        await err.ctx.leaveChat();
-        await log(msg, 'HTML');
-        return;
-      }
-      await log(msg, 'HTML');
-      await err.ctx.reply(msg, { parse_mode: 'HTML' });
-    }
-  });
-
-  await log('Bot is Running');
+  bot.catch(errorHandler);
   await bot.start({
     drop_pending_updates: true,
+    onStart: async () => await log('Bot is Running'),
     allowed_updates: ['message', 'callback_query']
   });
 })();
