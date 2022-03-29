@@ -8,13 +8,13 @@
 
 import { Composer, InlineKeyboard } from 'grammy';
 import { commandExtractor } from '../utils';
-import { jiosaavn } from '../providers/jiosaavn';
+import { yt } from '../providers/youtube';
 import { tgcalls } from '../tgcalls';
 import { escape } from 'html-escaper';
 
 const composer = new Composer();
 
-composer.command(['jiosaavn', 'jsvn'], async (ctx) => {
+composer.command(['youtube', 'yt'], async (ctx) => {
   await ctx.api.sendChatAction(ctx.chat.id, 'typing');
   if (ctx?.chat?.type === 'private') {
     return await ctx.reply('This Command works on Group Only');
@@ -24,13 +24,13 @@ composer.command(['jiosaavn', 'jsvn'], async (ctx) => {
     await ctx.reply('Please Provide Search Keyword');
     return;
   }
-  const result = await jiosaavn.search(keyword);
+  const result = await yt.search(keyword);
   if (!result) {
     await ctx.reply('No Results Found');
     return;
   }
   if ('title' in ctx.chat && ctx.from) {
-    const songData = await jiosaavn.getSong(result[0].id, ctx.from);
+    const songData = await yt.getSong(result[0].id, ctx.from);
     await tgcalls.streamOrQueue(
       { id: ctx.chat.id, name: ctx.chat.title },
       songData
@@ -38,7 +38,7 @@ composer.command(['jiosaavn', 'jsvn'], async (ctx) => {
   }
 });
 
-composer.command(['jiosaavnsearch', 'jsvnsearch', 'jsvnsr'], async (ctx) => {
+composer.command(['ytsr', 'ytsearch'], async (ctx) => {
   await ctx.api.sendChatAction(ctx.chat.id, 'typing');
   if (ctx?.chat?.type === 'private') {
     return await ctx.reply('This Command works on Group Only');
@@ -48,21 +48,22 @@ composer.command(['jiosaavnsearch', 'jsvnsearch', 'jsvnsr'], async (ctx) => {
     await ctx.reply('Please Provide Search Keyword');
     return;
   }
-  let result = await jiosaavn.search(args);
+  let result = await yt.search(args);
   if (!result) {
     await ctx.reply('No Results Found');
     return;
   }
   result = result.slice(0, 10);
-  let text = `Search Results for <b>${args}</b>\n\n`;
+  let text = `Search Results for <b>${escape(args)}</b>\n\n`;
   const keyboard = new InlineKeyboard();
   result.forEach((res, index) => {
     index++;
     text +=
-      `${('00' + index).slice(-2)} : <b><a href="${res.perma_url}">${escape(
-        res.title
-      )}</a></b>\n` + `<b>By :</b> ${escape(res.more_info.singers || '')}\n\n`;
-    keyboard.text(`${index}`, 'jsvn:' + ctx.from?.id + ':' + res.id);
+      `${('00' + index).slice(-2)} : <b><a href="https://youtu.be/${
+        res.id
+      }">${escape(res.title)}</a> (${res.durationFormatted})</b>\n` +
+      `<b>By :</b> ${escape(res.artist)}\n\n`;
+    keyboard.text(`${index}`, 'yt:' + ctx.from?.id + ':' + res.id);
     if (!(index % 5)) {
       keyboard.row();
     }
@@ -74,7 +75,7 @@ composer.command(['jiosaavnsearch', 'jsvnsearch', 'jsvnsr'], async (ctx) => {
   });
 });
 
-composer.callbackQuery(/^jsvn:\d+:[a-zA-Z0-9.\-_]/, async (ctx) => {
+composer.callbackQuery(/^yt:\d+:[a-zA-Z0-9.\-_]/, async (ctx) => {
   const query = ctx.callbackQuery.data.split(':');
   const supportedUser = parseInt(query[1], 10);
   const songId = query[2];
@@ -86,7 +87,7 @@ composer.callbackQuery(/^jsvn:\d+:[a-zA-Z0-9.\-_]/, async (ctx) => {
     });
   }
   if (ctx.chat && 'title' in ctx.chat && ctx.from) {
-    const songData = await jiosaavn.getSong(songId, ctx.from);
+    const songData = await yt.getSong(songId, ctx.from);
     await tgcalls.streamOrQueue(
       {
         id: ctx.chat.id,

@@ -7,12 +7,13 @@
  */
 
 import { GramTGCalls, AudioOptions } from 'tgcalls-next';
-import { userbot } from './userbot';
+import { escape } from 'html-escaper';
+import ytdl from 'ytdl-core';
+
 import bot from './bot';
-import env from './env';
+import { userbot } from './userbot';
 import { Chat } from './types/chat';
 import { queue, QueueData } from './queue';
-import { escape } from 'html-escaper';
 import { ffmpeg } from './ffmpeg';
 import { sendPlayingMessage, getDownloadLink } from './utils';
 
@@ -126,19 +127,6 @@ class TGVCCalls {
   }
 
   async streamOrQueue(chat: Chat, data: QueueData, force = false) {
-    if (parseInt(data.duration, 10) > env.MAX_DURATION) {
-      return await bot.api.sendMessage(
-        chat.id,
-        `<a href="${data.link}">${escape(
-          data.title
-        )}</> exceeded maximum supported duration, Skipped`,
-        {
-          parse_mode: 'HTML',
-          disable_web_page_preview: true
-        }
-      );
-    }
-
     if (this.connected(chat.id) && !this.finished(chat.id) && !force) {
       const position = queue.push(chat.id, data);
       return await bot.api.sendMessage(
@@ -185,6 +173,20 @@ class TGVCCalls {
       }
       case 'radio': {
         const [readable] = await ffmpeg(data.mp3_link);
+        await _tgcalls.stream({
+          audio: readable,
+          audioOptions: streamParams
+        });
+        await sendPlayingMessage(chat, data);
+        break;
+      }
+      case 'youtube': {
+        const video = await ytdl.getInfo(data.mp3_link);
+        let [audio] = video.formats.filter((v) => v.itag === 251);
+        if (!audio) {
+          audio = video.formats[0];
+        }
+        const [readable] = await ffmpeg(audio.url);
         await _tgcalls.stream({
           audio: readable,
           audioOptions: streamParams

@@ -45,7 +45,9 @@
     "grammy": "^1.7.1",
     "html-escaper": "^3.0.3",
     "sharp": "^0.30.3",
-    "tgcalls-next": "^0.0.0-rc.18"
+    "tgcalls-next": "^0.0.0-rc.18",
+    "youtube-sr": "^4.1.15",
+    "ytdl-core": "^4.11.0"
   },
   "engines": {
     "node": ">=16.x"

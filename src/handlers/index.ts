@@ -15,10 +15,12 @@ import play from './play';
 import queue from './queue';
 import radio from './radio';
 import start from './start';
+import youtube from './youtube';
 
 export const InitHandlers = (): void => {
   bot.use(start);
   bot.use(jiosaavn);
+  bot.use(youtube);
   bot.use(radio);
   bot.use(play);
   bot.use(controls);

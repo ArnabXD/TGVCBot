@@ -10,6 +10,7 @@ import bot, { log } from './bot';
 import { startUserBot } from './userbot';
 import { InitHandlers } from './handlers';
 import { TestFFMPEG } from './ffmpeg';
+import { escape } from 'html-escaper';
 
 (async () => {
   TestFFMPEG(); // Check if FFMPEG is installed or not
@@ -19,7 +20,7 @@ import { TestFFMPEG } from './ffmpeg';
   bot.catch(async (err) => {
     if (err) {
       const msg =
-        err.message + `\n<code>${JSON.stringify(err, null, 2)}</code>`;
+        err.message + `\n<code>${escape(JSON.stringify(err, null, 2))}</code>`;
       if (err.message.match("'sendChatAction' failed!")) {
         await err.ctx.leaveChat();
         await log(msg, 'HTML');
