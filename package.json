@@ -57,5 +57,8 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "resolutions": {
+    "telegram": "^2.6.9"
   }
 }
