@@ -19,7 +19,9 @@ import { TestFFMPEG } from './ffmpeg';
   bot.catch(errorHandler);
   await bot.start({
     drop_pending_updates: true,
-    onStart: async () => await log('Bot is Running'),
+    onStart: async () => {
+      await log('Bot is Running');
+    },
     allowed_updates: ['message', 'callback_query']
   });
 })();

@@ -42,7 +42,7 @@
     "axios": "^0.26.0",
     "dotenv": "^16.0.0",
     "envalid": "^7.3.1",
-    "grammy": "^1.7.1",
+    "grammy": "^1.7.3",
     "html-escaper": "^3.0.3",
     "sharp": "^0.30.3",
     "tgcalls-next": "^0.0.0-rc.18",
