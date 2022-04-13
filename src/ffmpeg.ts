@@ -9,7 +9,7 @@
 import { spawn } from 'child_process';
 import { Readable } from 'stream';
 
-const audioArgs = '-acodec pcm_s16le -f s16le -ac 1 -ar 48000 pipe:1';
+const audioArgs = '-acodec pcm_s16le -f s16le -ac 1 -ar 65000 pipe:1';
 
 export const ffmpeg = async (
   input: string
