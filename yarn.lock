@@ -207,10 +207,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@grammyjs/types@^2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-2.6.0.tgz#8cfdfb56a87fba3c418dc21ceaa7a03d7f918d73"
-  integrity sha512-eWckBf25l6xwSS2YO6Ioyf2BDEO7tyNZhgRLl5PzsdvqlHQR+XYTdKwhevsqLG4Y+zmF6hEXnuNTYu+HF8W8Sg==
+"@grammyjs/types@^2.6.0", "@grammyjs/types@^2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-2.7.0.tgz#7887ea949a65b9c544d36044bbd1d8649cfc9c98"
+  integrity sha512-XgncCsNRwly8J+2d50dV2E4jAawtNxCfKaFjV+ynXC/vmyVFO6hsZYtXFP1CGDUD/QmSG2agP9dYWxsgRjZuHA==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
