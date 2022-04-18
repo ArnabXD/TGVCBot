@@ -207,10 +207,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@grammyjs/types@^2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-2.6.0.tgz#8cfdfb56a87fba3c418dc21ceaa7a03d7f918d73"
-  integrity sha512-eWckBf25l6xwSS2YO6Ioyf2BDEO7tyNZhgRLl5PzsdvqlHQR+XYTdKwhevsqLG4Y+zmF6hEXnuNTYu+HF8W8Sg==
+"@grammyjs/types@^2.6.0", "@grammyjs/types@^2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-2.7.0.tgz#7887ea949a65b9c544d36044bbd1d8649cfc9c98"
+  integrity sha512-XgncCsNRwly8J+2d50dV2E4jAawtNxCfKaFjV+ynXC/vmyVFO6hsZYtXFP1CGDUD/QmSG2agP9dYWxsgRjZuHA==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"
@@ -1547,12 +1547,12 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.9.tgz#041b05df45755e587a24942279b9d113146e1c96"
   integrity sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==
 
-grammy@^1.7.3:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/grammy/-/grammy-1.7.3.tgz#d37509d6dfd8d1ffb0d473593d3867f41a0bc784"
-  integrity sha512-vODORSFt3lHInoHB5dWKXKF1zwGAd4JogQrtkczCVCyjLkqhED3OZjOOxeMI2mQxuGYiiCPyjUomRpzqP+KoTQ==
+grammy@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/grammy/-/grammy-1.8.0.tgz#ac10fa0beb6f157bd81933d55c068eb5f9b5b99c"
+  integrity sha512-CG+Eq60crEjX8aqm/FeBadgfDwFaDoc3UaUwiPrxEX94D/1rRCeaj2JtaLBcDLXe9UQLENfWEEErMbkfiMR/Rg==
   dependencies:
-    "@grammyjs/types" "^2.6.0"
+    "@grammyjs/types" "^2.7.0"
     abort-controller "^3.0.0"
     debug "^4.3.4"
     node-fetch "^2.6.7"
