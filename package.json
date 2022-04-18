@@ -20,7 +20,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@commitlint/config-conventional": "^16.2.1",
-    "@grammyjs/types": "^2.6.0",
+    "@grammyjs/types": "^2.7.0",
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^15.12.4",
     "@types/sharp": "^0.30.2",
