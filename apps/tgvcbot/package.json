@@ -9,7 +9,6 @@
     "test": "tsc --noEmit",
     "build": "rimraf build && tsc",
     "start": "node build/app.js",
-    "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint . --ext .ts --max-warnings=0",
     "fix": "npm run lint -- --fix",
     "prepare": "husky install"
