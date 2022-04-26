@@ -1,64 +1,42 @@
 {
-  "name": "tgvcbot",
-  "version": "0.2.5",
+  "name": "tgvcbot-turborepo",
+  "version": "0.0.0",
   "description": "Telegram Bot to Play Music in Voice Chat",
-  "main": "build/app.js",
+  "private": true,
   "scripts": {
-    "dev": "ts-node src/app.ts",
-    "test": "tsc --noEmit",
-    "build": "rimraf build && tsc",
-    "start": "node build/app.js",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint . --ext .ts --max-warnings=0",
-    "fix": "npm run lint -- --fix",
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "format": "prettier --write \"apps/**/*.{ts,js}\"",
+    "lint": "turbo run lint",
     "prepare": "husky install"
   },
   "author": {
     "email": "arnabxd@pm.me",
     "name": "Arnab XD"
   },
+  "workspaces": [
+    "apps/*"
+  ],
   "license": "Apache-2.0",
   "devDependencies": {
     "@commitlint/config-conventional": "^16.2.1",
-    "@grammyjs/types": "^2.7.0",
-    "@types/html-escaper": "^3.0.0",
-    "@types/node": "^15.12.4",
-    "@types/sharp": "^0.30.2",
-    "@typescript-eslint/eslint-plugin": "^5.15.0",
-    "@typescript-eslint/parser": "^5.15.0",
     "commitlint": "^16.2.3",
-    "eslint": "^8.14.0",
-    "eslint-config-prettier": "^8.5.0",
     "husky": "^7.0.0",
     "lint-staged": "^12.4.0",
     "prettier": "^2.6.2",
-    "rimraf": "^3.0.2",
-    "ts-node": "^10.0.0",
-    "typescript": "^4.6.3"
-  },
-  "dependencies": {
-    "@mapbox/node-pre-gyp": "^1.0.9",
-    "@napi-rs/canvas": "^0.1.21",
-    "axios": "^0.27.1",
-    "dotenv": "^16.0.0",
-    "envalid": "^7.3.1",
-    "grammy": "^1.8.0",
-    "html-escaper": "^3.0.3",
-    "sharp": "^0.30.4",
-    "tgcalls-next": "^0.0.0-rc.18",
-    "youtube-sr": "^4.1.17",
-    "ytdl-core": "^4.11.0"
+    "turbo": "^1.2.5",
+    "eslint": "^8.14.0",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0",
+    "eslint-config-prettier": "^8.5.0"
   },
   "engines": {
     "node": ">=16.x"
   },
   "lint-staged": {
-    "src/**/*.ts": [
+    "**/*.ts": [
       "eslint --fix",
       "prettier --write"
     ]
-  },
-  "resolutions": {
-    "telegram": "^2.6.9"
   }
 }
