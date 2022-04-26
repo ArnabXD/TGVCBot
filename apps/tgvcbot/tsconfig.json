@@ -4,7 +4,7 @@
     "module": "commonjs",
     "allowJs": true,
     // "checkJs": true,
-    "outDir": "./build",
+    "outDir": "./dist",
     "strict": true,
     "alwaysStrict": true,
     "esModuleInterop": true,
