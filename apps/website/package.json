@@ -8,6 +8,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^2.9.5"
+    "vite": "^2.9.5",
+    "vite-plugin-windicss": "^1.8.4",
+    "windicss": "^3.5.1"
   }
 }
