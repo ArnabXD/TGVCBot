@@ -43,14 +43,17 @@ class TGVCCalls {
   }
 
   private async onStreamFinish(chat: Chat): Promise<void> {
-    const next = queue.get(chat.id);
+    const next = await queue.get(chat.id);
     if (!next) {
       const call = this.gramTgCalls.get(chat.id);
       this.gramTgCalls.delete(chat.id);
       call?.stop();
       return;
     }
-    await this.streamOrQueue(chat, next);
+    await this.streamOrQueue(chat, {
+      ...next,
+      requestedBy: { id: next.req_by_id, first_name: next.req_by_fname }
+    });
   }
 
   private async onStreamError(error: Error, chat: Chat): Promise<void> {
@@ -128,7 +131,7 @@ class TGVCCalls {
 
   async streamOrQueue(chat: Chat, data: QueueData, force = false) {
     if (this.connected(chat.id) && !this.finished(chat.id) && !force) {
-      const position = queue.push(chat.id, data);
+      const position = await queue.push(chat.id, data);
       return await bot.api.sendMessage(
         chat.id,
         `<a href="${data.link}">${escape(
@@ -143,57 +146,62 @@ class TGVCCalls {
       );
     }
 
-    const _tgcalls = this.gramTgCalls.get(chat.id)
-      ? (this.gramTgCalls.get(chat.id) as GramTGCalls)
-      : this.init(chat);
+    try {
+      const _tgcalls = this.gramTgCalls.get(chat.id)
+        ? (this.gramTgCalls.get(chat.id) as GramTGCalls)
+        : this.init(chat);
 
-    switch (data.provider) {
-      case 'jiosaavn': {
-        const [readable] = await ffmpeg(data.mp3_link);
-        await _tgcalls.stream({
-          audio: readable,
-          audioOptions: streamParams
-        });
-        await sendPlayingMessage(chat, data);
-        break;
-      }
-      case 'telegram': {
-        const mp3_link = await getDownloadLink(data.mp3_link);
-        const poster = data.image.startsWith('http')
-          ? data.image
-          : await getDownloadLink(data.image);
-
-        const [readable] = await ffmpeg(mp3_link);
-        await _tgcalls.stream({
-          audio: readable,
-          audioOptions: streamParams
-        });
-        await sendPlayingMessage(chat, { ...data, image: poster });
-        break;
-      }
-      case 'radio': {
-        const [readable] = await ffmpeg(data.mp3_link);
-        await _tgcalls.stream({
-          audio: readable,
-          audioOptions: streamParams
-        });
-        await sendPlayingMessage(chat, data);
-        break;
-      }
-      case 'youtube': {
-        const video = await ytdl.getInfo(data.mp3_link);
-        let [audio] = video.formats.filter((v) => v.itag === 251);
-        if (!audio) {
-          audio = video.formats[0];
+      switch (data.provider) {
+        case 'jiosaavn': {
+          const [readable] = await ffmpeg(data.mp3_link);
+          await _tgcalls.stream({
+            audio: readable,
+            audioOptions: streamParams
+          });
+          await sendPlayingMessage(chat, data);
+          break;
         }
-        const [readable] = await ffmpeg(audio.url);
-        await _tgcalls.stream({
-          audio: readable,
-          audioOptions: streamParams
-        });
-        await sendPlayingMessage(chat, data);
-        break;
+        case 'telegram': {
+          const mp3_link = await getDownloadLink(data.mp3_link);
+          const poster = data.image.startsWith('http')
+            ? data.image
+            : await getDownloadLink(data.image);
+
+          const [readable] = await ffmpeg(mp3_link);
+          await _tgcalls.stream({
+            audio: readable,
+            audioOptions: streamParams
+          });
+          await sendPlayingMessage(chat, { ...data, image: poster });
+          break;
+        }
+        case 'radio': {
+          const [readable] = await ffmpeg(data.mp3_link);
+          await _tgcalls.stream({
+            audio: readable,
+            audioOptions: streamParams
+          });
+          await sendPlayingMessage(chat, data);
+          break;
+        }
+        case 'youtube': {
+          const video = await ytdl.getInfo(data.mp3_link);
+          let [audio] = video.formats.filter((v) => v.itag === 251);
+          if (!audio) {
+            audio = video.formats[0];
+          }
+          const [readable] = await ffmpeg(audio.url);
+          await _tgcalls.stream({
+            audio: readable,
+            audioOptions: streamParams
+          });
+          await sendPlayingMessage(chat, data);
+          break;
+        }
       }
+      await queue.setCurrent(chat.id, data);
+    } catch (e) {
+      //
     }
   }
 }

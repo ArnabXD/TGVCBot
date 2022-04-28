@@ -22,12 +22,24 @@ composer.command(['resume', 'r'], CheckInactiveVcMiddleware, async (ctx) => {
 });
 
 composer.command(['skip', 'next'], CheckInactiveVcMiddleware, async (ctx) => {
-  const next = queue.get(ctx.chat.id);
+  const next = await queue.get(ctx.chat.id);
   if (next && 'title' in ctx.chat) {
     tgcalls.pause(ctx.chat.id);
     await tgcalls.streamOrQueue(
       { id: ctx.chat.id, name: ctx.chat.title },
-      next,
+      {
+        title: next.title,
+        artist: next.artist,
+        link: next.link,
+        duration: next.duration,
+        image: next.image,
+        mp3_link: next.mp3_link,
+        provider: next.provider,
+        requestedBy: {
+          id: next.req_by_id,
+          first_name: next.req_by_fname
+        }
+      },
       true
     );
     tgcalls.resume(ctx.chat.id);
@@ -37,7 +49,7 @@ composer.command(['skip', 'next'], CheckInactiveVcMiddleware, async (ctx) => {
 });
 
 composer.command(['shuffle'], CheckInactiveVcMiddleware, async (ctx) => {
-  const playlist = queue.getAll(ctx.chat.id);
+  const playlist = await queue.getAll(ctx.chat.id);
   if (playlist && playlist.length) {
     queue.shuffle(ctx.chat.id);
     await ctx.reply('Shuffled the playlist');
@@ -46,8 +58,8 @@ composer.command(['shuffle'], CheckInactiveVcMiddleware, async (ctx) => {
   }
 });
 
-composer.command('stopvc', CheckInactiveVcMiddleware, async (ctx) => {
-  queue.clear(ctx.chat.id);
+composer.command('stopvc', async (ctx) => {
+  await queue.clear(ctx.chat.id);
   if (await tgcalls.stop(ctx.chat.id)) {
     await ctx.reply('Stopped');
   }

@@ -6,6 +6,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import knex from './knex';
+
 export interface QueueData {
   link: string;
   title: string;
@@ -20,65 +22,157 @@ export interface QueueData {
   provider: 'jiosaavn' | 'youtube' | 'telegram' | 'radio';
 }
 
-class Queues {
-  queues: Map<number, QueueData[]>;
+interface KnexQueue {
+  id: number;
+  chat_id: number;
+  link: string;
+  title: string;
+  image: string;
+  artist: string;
+  duration: string;
+  req_by_id: number;
+  req_by_fname: string;
+  mp3_link: string;
+  provider: 'jiosaavn' | 'youtube' | 'telegram' | 'radio';
+}
 
+export class Queues {
   constructor() {
-    this.queues = new Map<number, QueueData[]>();
+    //
   }
 
-  push(chatId: number, item: QueueData) {
-    const queue = this.queues.get(chatId);
-    if (queue) {
-      return queue.push(item);
-    } else {
-      this.queues.set(chatId, [item]);
-      return 1;
+  static async init() {
+    if (!(await knex.schema.hasTable('queue'))) {
+      await knex.schema.createTable('queue', (queue) => {
+        queue.increments('id');
+        queue.integer('chat_id');
+        queue.string('link', 255);
+        queue.string('title', 255);
+        queue.string('image', 255);
+        queue.string('artist', 255);
+        queue.string('duration', 7);
+        queue.integer('req_by_id');
+        queue.string('req_by_fname', 255);
+        queue.string('mp3_link', 255);
+        queue.enum('provider', ['jiosaavn', 'youtube', 'telegram', 'radio']);
+      });
+    }
+    if (!(await knex.schema.hasTable('current'))) {
+      await knex.schema.createTable('current', (current) => {
+        current.increments('id');
+        current.integer('chat_id').unique();
+        current.string('link', 255);
+        current.string('title', 255);
+        current.string('image', 255);
+        current.string('artist', 255);
+        current.string('duration', 7);
+        current.integer('req_by_id');
+        current.string('req_by_fname', 255);
+        current.string('mp3_link', 255);
+        current.enum('provider', ['jiosaavn', 'youtube', 'telegram', 'radio']);
+      });
     }
   }
 
-  get(chatId: number) {
-    const queue = this.queues.get(chatId);
-    if (queue) {
-      const current = queue.shift();
-      return current;
+  async push(
+    chatId: number,
+    {
+      artist,
+      title,
+      link,
+      image,
+      duration,
+      mp3_link,
+      provider,
+      requestedBy
+    }: QueueData
+  ) {
+    await knex<KnexQueue>('queue').insert({
+      chat_id: chatId,
+      title,
+      link,
+      artist,
+      image,
+      duration,
+      mp3_link,
+      provider,
+      req_by_id: requestedBy.id,
+      req_by_fname: requestedBy.first_name
+    });
+
+    return (await knex<KnexQueue>('queue').where({ chat_id: chatId })).length;
+  }
+
+  async get(chatId: number) {
+    const queue = await knex<KnexQueue>('queue')
+      .where({ chat_id: chatId })
+      .orderBy('id', 'asc');
+    if (queue.length) {
+      await knex<KnexQueue>('queue').where(queue[0]).first().del();
+      return queue[0];
     }
   }
 
-  has(chatId: number) {
-    return !!this.queues.get(chatId);
+  async setCurrent(chatId: number, data: QueueData) {
+    await knex<KnexQueue>('queue')
+      .insert({
+        chat_id: chatId,
+        title: data.title,
+        artist: data.artist,
+        duration: data.duration,
+        image: data.image,
+        link: data.link,
+        mp3_link: data.mp3_link,
+        provider: data.provider,
+        req_by_id: data.requestedBy.id,
+        req_by_fname: data.requestedBy.first_name
+      })
+      .onConflict('chat_id')
+      .merge();
   }
 
-  getAll(chatId: number) {
-    return this.queues.get(chatId);
+  async has(chatId: number) {
+    return (await knex<KnexQueue>('queue').where({ chat_id: chatId })).length;
   }
 
-  shuffle(chatId: number) {
-    const all = this.queues.get(chatId);
-    if (!all) {
+  async getAll(chatId: number) {
+    return await knex<KnexQueue>('queue').where({ chat_id: chatId });
+  }
+
+  async shuffle(chatId: number) {
+    const all = await knex<KnexQueue>('queue').where({ chat_id: chatId });
+    if (!all.length) {
       return;
     }
 
+    console.log(all);
     // https://en.wikipedia.org/wiki/Schwartzian_transform
-    this.queues.set(
-      chatId,
-      all
-        .map((value) => ({ value, sort: Math.random() }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value)
+    const shuffled = all
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+    console.log(shuffled);
+
+    await knex<KnexQueue>('queue').where({ chat_id: chatId }).del();
+    await knex<KnexQueue>('queue').insert(
+      shuffled.map(({ id: _id, ...rest }) => rest)
     );
   }
 
-  delete(chatId: number, position: number) {
-    const queue = this.queues.get(chatId);
+  async delete(chatId: number, position: number) {
+    const queue = await knex<KnexQueue>('queue').where({ chat_id: chatId });
     if (queue && position <= queue.length) {
-      return queue.splice(position - 1, 1);
+      const [sel] = queue.splice(position - 1, 1);
+      await knex<KnexQueue>('queue')
+        .where({ ...sel })
+        .first()
+        .del();
+      return sel;
     }
   }
 
-  clear(chatId: number) {
-    this.queues.set(chatId, []);
-    return this.queues.delete(chatId);
+  async clear(chatId: number) {
+    return await knex<KnexQueue>('queue').where({ chat_id: chatId }).del();
   }
 }
 
