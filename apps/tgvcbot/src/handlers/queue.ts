@@ -14,7 +14,7 @@ import { commandExtractor } from '../utils';
 const composer = new Composer();
 
 composer.command([`queue`, `q`], async (ctx) => {
-  const data = queue.getAll(ctx.chat.id);
+  const data = await queue.getAll(ctx.chat.id);
   if (!data || !data.length) {
     await ctx.reply('Queue is empty', { parse_mode: 'HTML' });
     return;
@@ -23,8 +23,8 @@ composer.command([`queue`, `q`], async (ctx) => {
   data.forEach((d, i) => {
     text += `<b>${i + 1} :</b> <a href="${d.link}">${escape(
       d.title
-    )}</a>\nRequested by : <a href="tg://user?id=${d.requestedBy.id}">${escape(
-      d.requestedBy.first_name
+    )}</a>\nRequested by : <a href="tg://user?id=${d.req_by_id}">${escape(
+      d.req_by_fname
     )}</a>\n\n`;
   });
   await ctx.reply(text, {
@@ -40,17 +40,13 @@ composer.command(['delete', 'remove', 'd'], async (ctx) => {
     return;
   }
   const position = parseInt(text.args, 10);
-  const data = queue.delete(ctx.chat.id, position);
+  const data = await queue.delete(ctx.chat.id, position);
   if (!data) {
     await ctx.reply('Invalid queue position');
     return;
   }
   await ctx.reply(
-    'Deleted <a href="' +
-      data[0].link +
-      '">' +
-      data[0].title +
-      '</a> from queue',
+    'Deleted <a href="' + data.link + '">' + data.title + '</a> from queue',
     {
       parse_mode: 'HTML',
       disable_web_page_preview: true

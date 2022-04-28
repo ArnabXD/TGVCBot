@@ -10,11 +10,13 @@ import bot, { log } from './bot';
 import { startUserBot } from './userbot';
 import { InitHandlers } from './handlers';
 import { errorHandler } from './middlewares';
+import { Queues } from './queue';
 import { TestFFMPEG } from './ffmpeg';
 
 (async () => {
   TestFFMPEG(); // Check if FFMPEG is installed or not
   InitHandlers();
+  await Queues.init();
   await startUserBot();
   bot.catch(errorHandler);
   await bot.start({
