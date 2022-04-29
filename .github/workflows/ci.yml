@@ -18,13 +18,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Run Linter
-        run: yarn run lint
+        run: pnpm run lint
 
   build:
     runs-on: ubuntu-latest
@@ -35,13 +35,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Build
-        run: yarn run build
+        run: pnpm run build
   
   release:
     runs-on: ubuntu-latest
@@ -52,14 +52,14 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          cache: yarn
+          cache: pnpm
           node-version: '17.x'
 
       - name: Install dependencies
-        run: yarn
+        run: pnpm
       
       - name: Build TGVCBot
-        run: yarn run build --filter=tgvcbot
+        run: pnpm run build --filter=tgvcbot
       
       - name: Pack Build
         run: |
