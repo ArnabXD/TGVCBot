@@ -15,7 +15,20 @@
 
 - FFMPEG
 - NodeJs >= v16.x (Latest is better)
-- Yarn (already provided by [corepack](https://nodejs.org/api/corepack.html) since 16.9.0)
+
+### Installation
+
+- Windows
+
+```ps1
+iwr https://raw.githubusercontent.com/ArnabXD/TGVCBot/main/scripts/install.ps1 -useb | iex
+```
+
+- Linux
+
+```bash
+wget -qO- https://raw.githubusercontent.com/ArnabXD/TGVCBot/main/scripts/install.sh | sh
+```
 
 ### Environment Variables :
 
@@ -32,12 +45,6 @@
 ### Tutorial 🔥:
 
 - VPS/Local : [Tutorial](https://blog.arnabxd.me/deploy-tgvcbot-in-a-ubuntu-vps), [Video](https://www.youtube.com/watch?v=uc5yWBbrssg)
-
-<!-- ### Memes 🤣:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-[![Deploy on Railway](https://railway.app/button.svg)](<https://railway.app/new/template?template=https://github.com/ArnabXD/TGVCBot&envs=API_ID,API_HASH,BOT_TOKEN,LOG_CHANNEL,SESSION,CODEC,MAX_DURATION&optionalEnvs=CODEC,MAX_DURATION&API_IDDesc=Get%20API_ID%20from%20https://my.telegram.org/apps.&API_HASHDesc=Get%20API_HASH%20from%20https://my.telegram.org/apps.&BOT_TOKENDesc=Bot%20Token%20from%20@BotFather&LOG_CHANNELDesc=LOG%20Channel%20ID%20(Make%20sure%20bot%20and%20VC%20User%20are%20added%20in%20the%20group)&SESSIONDesc=GramJS/Telethon%20Session%20of%20the%20VC%20User%22&THUMBNAILDesc=Direct%20link%20for%20default%20thumbnail&MAX_DURATIONDesc=Maximum%20Duration%20Support%20for%20Each%20Stream>) -->
 
 ## Bot Usage 👨‍💻:
 
@@ -63,6 +70,10 @@
 
 ---
 
-**_Loved the project? Consider sponsoring._**
+## Loved the project? Consider sponsoring.
+
+- UPI : `aparyali@fbl`
+- [BuyMeACoffe](https://www.buymeacoffee.com/arnabxd)
+- Crypto (USDT) : `0xe4236562c34760c0dd063826f2f9d73802df6ed2` (BEP20)
 
 ---
