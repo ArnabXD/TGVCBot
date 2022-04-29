@@ -70,7 +70,7 @@ jobs:
       - name: Pack Build
         run: |
           cd apps/tgvcbot
-          mv $(pnpm pack) archive.tgz
+          mv $(pnpm pack) ../../archive.tgz
       - uses: softprops/action-gh-release@v1
         with:
           files: archive.tgz
