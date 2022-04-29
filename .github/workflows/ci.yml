@@ -69,7 +69,8 @@ jobs:
       
       - name: Pack Build
         run: |
-          ARCHIVE=$(npm pack)
+          cd apps/tgvcbot
+          ARCHIVE=$(pnpm pack)
           mv $ARCHIVE archive.tgz
       - uses: softprops/action-gh-release@v1
         with:
