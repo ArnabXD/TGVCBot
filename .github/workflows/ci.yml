@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
+    tags:
+      - '*'
   pull_request:
-  tags:
-    - '*'
   workflow_dispatch:
 
 jobs:
