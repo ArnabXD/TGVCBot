@@ -1,6 +1,6 @@
 {
   "name": "tgvcbot",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta.2",
   "description": "Telegram Bot to Play Music in Voice Chat",
   "private": true,
   "main": "build/app.js",
