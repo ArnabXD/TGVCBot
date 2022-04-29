@@ -91,7 +91,7 @@ class TGVCCalls {
   finished(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) {
-      return false;
+      return true;
     }
     return !!tgcalls.finished;
   }
@@ -119,7 +119,9 @@ class TGVCCalls {
   }
 
   async stop(chat: number) {
+    await queue.clear(chat);
     const tgcalls = this.gramTgCalls.get(chat);
+    this.gramTgCalls.delete(chat);
     if (!tgcalls) {
       return false;
     }
@@ -130,6 +132,8 @@ class TGVCCalls {
   }
 
   async streamOrQueue(chat: Chat, data: QueueData, force = false) {
+    console.log(this.connected(chat.id));
+    console.log(!this.finished(chat.id));
     if (this.connected(chat.id) && !this.finished(chat.id) && !force) {
       const position = await queue.push(chat.id, data);
       return await bot.api.sendMessage(
