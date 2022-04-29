@@ -2,10 +2,9 @@ name: CI
 
 on:
   push:
-    branches-ignore: [gh-pages]
-    paths-ignore: ["**.md"]
   pull_request:
-    branches-ignore: [gh-pages]
+  tags:
+    - '*'
   workflow_dispatch:
 
 jobs:
@@ -61,10 +60,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: pnpm
-          node-version: '17.x'
+          node-version: '16'
 
       - name: Install dependencies
-        run: pnpm
+        run: pnpm install
       
       - name: Build TGVCBot
         run: pnpm run build --filter=tgvcbot
