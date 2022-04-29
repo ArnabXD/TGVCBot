@@ -42,10 +42,6 @@ wget -qO- https://raw.githubusercontent.com/ArnabXD/TGVCBot/main/scripts/install
 | THUMBNAIL   | Direct link for default thumbnail (used if audio has no thumbnails).                   | False    |
 | WATERMARK   | Text to render on bottom left corner of Banner. Default: `TGVCBot`. (10-14 chars)      | False    |
 
-### Tutorial 🔥:
-
-- VPS/Local : [Tutorial](https://blog.arnabxd.me/deploy-tgvcbot-in-a-ubuntu-vps), [Video](https://www.youtube.com/watch?v=uc5yWBbrssg)
-
 ## Bot Usage 👨‍💻:
 
 - `/jiosaavn | /jsvn <song name>` : Play Song from JioSaavn.
@@ -73,7 +69,7 @@ wget -qO- https://raw.githubusercontent.com/ArnabXD/TGVCBot/main/scripts/install
 ## Loved the project? Consider sponsoring.
 
 - UPI : `aparyali@fbl`
-- [BuyMeACoffe](https://www.buymeacoffee.com/arnabxd)
+- [BuyMeACoffee](https://www.buymeacoffee.com/arnabxd)
 - Crypto (USDT) : `0xe4236562c34760c0dd063826f2f9d73802df6ed2` (BEP20)
 
 ---
