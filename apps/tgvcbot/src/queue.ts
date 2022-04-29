@@ -6,6 +6,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import Database from 'better-sqlite3';
 import knex from './knex';
 
 export interface QueueData {
@@ -42,6 +43,8 @@ export class Queues {
   }
 
   static async init() {
+    const db = new Database('./db/tgvc.sqlite');
+    db.close();
     if (!(await knex.schema.hasTable('queue'))) {
       await knex.schema.createTable('queue', (queue) => {
         queue.increments('id');
