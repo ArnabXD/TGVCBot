@@ -9,3 +9,4 @@ node_modules
 /build/
 /public/build
 /api/index.js
+/app/styles/*.css
