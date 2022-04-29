@@ -21,6 +21,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@grammyjs/types": "^2.7.0",
+    "@types/better-sqlite3": "^7.5.0",
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^16.11.31",
     "@types/sharp": "^0.30.2",
@@ -41,6 +42,7 @@
     "html-escaper": "^3.0.3",
     "knex": "^2.0.0",
     "sharp": "^0.30.4",
+    "telegram": "^2.6.21",
     "tgcalls-next": "^0.0.0-rc.18",
     "youtube-sr": "^4.1.17",
     "ytdl-core": "^4.11.0"
@@ -53,8 +55,5 @@
       "eslint --fix",
       "prettier --write"
     ]
-  },
-  "resolutions": {
-    "telegram": "^2.6.9"
   }
 }
