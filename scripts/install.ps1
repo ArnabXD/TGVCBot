@@ -4,7 +4,6 @@ Remove-Item archive.tgz -Force
 Move-Item package tgvcbot
 
 cd tgvcbot
-cp .env.sample .env
 npm install --production
 
 echo "Success."

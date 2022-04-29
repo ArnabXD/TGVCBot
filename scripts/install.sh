@@ -6,7 +6,6 @@ rm archive.tgz
 mv package tgvcbot
 
 cd tgvcbot
-cp .env.sample .env
 npm install --production
 
 echo "Success."
