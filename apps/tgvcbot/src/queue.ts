@@ -43,8 +43,11 @@ export class Queues {
   }
 
   static async init() {
+    // Create sqlite file if doesn't exist
     const db = new Database('./db/tgvc.sqlite');
     db.close();
+
+    // Create or Truncate Table `queue`
     if (!(await knex.schema.hasTable('queue'))) {
       await knex.schema.createTable('queue', (queue) => {
         queue.increments('id');
@@ -59,7 +62,11 @@ export class Queues {
         queue.string('mp3_link', 255);
         queue.enum('provider', ['jiosaavn', 'youtube', 'telegram', 'radio']);
       });
+    } else {
+      await knex('queue').truncate();
     }
+
+    // Create or Truncate Table `current`
     if (!(await knex.schema.hasTable('current'))) {
       await knex.schema.createTable('current', (current) => {
         current.increments('id');
@@ -74,6 +81,8 @@ export class Queues {
         current.string('mp3_link', 255);
         current.enum('provider', ['jiosaavn', 'youtube', 'telegram', 'radio']);
       });
+    } else {
+      await knex('current').truncate();
     }
   }
 
