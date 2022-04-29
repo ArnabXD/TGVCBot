@@ -3,7 +3,7 @@
 wget https://github.com/ArnabXD/TGVCBot/releases/latest/download/archive.tgz
 tar xf archive.tgz
 rm archive.tgz
-mv package tgvcbot
+mv -f package tgvcbot
 
 cd tgvcbot
 npm install --production
