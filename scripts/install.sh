@@ -4,7 +4,7 @@ wget https://github.com/ArnabXD/TGVCBot/releases/latest/download/archive.tgz
 tar xf archive.tgz
 rm archive.tgz
 
-if [-d "tgvcbot"]
+if [ -d "tgvcbot" ]
 then
   cp -r package/* tgvcbot/
   rm -rf package
