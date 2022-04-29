@@ -1,8 +1,7 @@
 {
   "name": "tgvcweb",
   "private": true,
-  "description": "",
-  "license": "",
+  "description": "website for tgvcbot",
   "sideEffects": false,
   "scripts": {
     "build": "npm run build:css && remix build",
