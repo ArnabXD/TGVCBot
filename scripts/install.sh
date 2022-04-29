@@ -7,6 +7,6 @@ mv package tgvcbot
 
 cd tgvcbot
 cp .env.sample .env
-pnpm install --prod
+npm install --production
 
 echo "Success."
