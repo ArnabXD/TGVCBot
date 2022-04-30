@@ -1,6 +1,6 @@
 # Credits - https://github.com/xorgram/xor
 
-wget https://github.com/ArnabXD/TGVCBot/releases/latest/download/archive.tgz
+wget --no-check-certificate https://github.com/ArnabXD/TGVCBot/releases/latest/download/archive.tgz
 tar xf archive.tgz
 rm archive.tgz
 
