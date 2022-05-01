@@ -19,7 +19,7 @@ import { sendPlayingMessage, getDownloadLink } from './utils';
 
 const streamParams: AudioOptions = {
   bps: 16,
-  bitrate: 65000,
+  bitrate: 48000,
   channels: 1
 };
 
