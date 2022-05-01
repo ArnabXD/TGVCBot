@@ -7,40 +7,19 @@
  */
 
 import { spawn } from 'child_process';
-import { Readable } from 'stream';
+import ffmpeg from 'fluent-ffmpeg';
+import { PassThrough } from 'stream';
 
-const audioArgs = '-acodec pcm_s16le -f s16le -ac 1 -ar 65000 pipe:1';
+// Credits - https://github.com/callsmusic/remix/blob/main/src/bot/convert.ts
+export function getReadable(input: string) {
+  return ffmpeg(input)
+    .format('s16le')
+    .audioFrequency(48000)
+    .audioChannels(1)
+    .pipe() as PassThrough;
+}
 
-export const ffmpeg = async (
-  input: string
-): Promise<[Readable, () => void]> => {
-  return new Promise((resolve, reject) => {
-    const process = spawn('ffmpeg', [
-      '-y',
-      '-nostdin',
-      '-i',
-      `${input}`,
-      ...audioArgs.split(/\s/g)
-    ]);
-
-    process.stderr.once('error', (e) => reject(e.message));
-
-    process.stdout.once('readable', () => {
-      resolve([
-        process.stdout,
-        () => {
-          try {
-            process.kill();
-          } catch (e) {
-            //
-          }
-        }
-      ]);
-    });
-  });
-};
-
-export const TestFFMPEG = (): void => {
+export function TestFFMPEG() {
   const ffmpeg = spawn('ffmpeg');
   ffmpeg.once('error', (e) => {
     switch (e.message) {
@@ -53,4 +32,4 @@ export const TestFFMPEG = (): void => {
     }
     process.exit();
   });
-};
+}

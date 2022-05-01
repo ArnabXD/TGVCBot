@@ -22,6 +22,7 @@
   "devDependencies": {
     "@grammyjs/types": "^2.7.0",
     "@types/better-sqlite3": "^7.5.0",
+    "@types/fluent-ffmpeg": "^2.1.20",
     "@types/html-escaper": "^3.0.0",
     "@types/node": "^16.11.31",
     "@types/sharp": "^0.30.2",
@@ -38,6 +39,7 @@
     "better-sqlite3": "^7.5.1",
     "dotenv": "^16.0.0",
     "envalid": "^7.3.1",
+    "fluent-ffmpeg": "^2.1.2",
     "grammy": "^1.8.2",
     "html-escaper": "^3.0.3",
     "knex": "^2.0.0",

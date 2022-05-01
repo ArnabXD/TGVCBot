@@ -14,7 +14,7 @@ import bot from './bot';
 import { userbot } from './userbot';
 import { Chat } from './types/chat';
 import { queue, QueueData } from './queue';
-import { ffmpeg } from './ffmpeg';
+import { getReadable } from './ffmpeg';
 import { sendPlayingMessage, getDownloadLink } from './utils';
 
 const streamParams: AudioOptions = {
@@ -132,8 +132,6 @@ class TGVCCalls {
   }
 
   async streamOrQueue(chat: Chat, data: QueueData, force = false) {
-    console.log(this.connected(chat.id));
-    console.log(!this.finished(chat.id));
     if (this.connected(chat.id) && !this.finished(chat.id) && !force) {
       const position = await queue.push(chat.id, data);
       return await bot.api.sendMessage(
@@ -157,7 +155,7 @@ class TGVCCalls {
 
       switch (data.provider) {
         case 'jiosaavn': {
-          const [readable] = await ffmpeg(data.mp3_link);
+          const readable = getReadable(data.mp3_link);
           await _tgcalls.stream({
             audio: readable,
             audioOptions: streamParams
@@ -171,7 +169,7 @@ class TGVCCalls {
             ? data.image
             : await getDownloadLink(data.image);
 
-          const [readable] = await ffmpeg(mp3_link);
+          const readable = getReadable(mp3_link);
           await _tgcalls.stream({
             audio: readable,
             audioOptions: streamParams
@@ -180,7 +178,7 @@ class TGVCCalls {
           break;
         }
         case 'radio': {
-          const [readable] = await ffmpeg(data.mp3_link);
+          const readable = getReadable(data.mp3_link);
           await _tgcalls.stream({
             audio: readable,
             audioOptions: streamParams
@@ -194,7 +192,7 @@ class TGVCCalls {
           if (!audio) {
             audio = video.formats[0];
           }
-          const [readable] = await ffmpeg(audio.url);
+          const readable = getReadable(audio.url);
           await _tgcalls.stream({
             audio: readable,
             audioOptions: streamParams
