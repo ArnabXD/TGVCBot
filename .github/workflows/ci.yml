@@ -19,7 +19,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -39,7 +38,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
@@ -58,7 +56,6 @@ jobs:
           version: 6.11.0
       - uses: actions/setup-node@v3
         with:
-          cache: pnpm
           node-version: '16'
 
       - name: Install dependencies
