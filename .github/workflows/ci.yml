@@ -72,4 +72,4 @@ jobs:
         with:
           files: archive.tgz
           generate_release_notes: true
-          prelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
