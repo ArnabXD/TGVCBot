@@ -9,7 +9,6 @@
 import { Composer } from 'grammy';
 import { queue } from '../queue';
 import { escape } from 'html-escaper';
-import { commandExtractor } from '../utils';
 
 const composer = new Composer();
 
@@ -33,25 +32,25 @@ composer.command([`queue`, `q`], async (ctx) => {
   });
 });
 
-composer.command(['delete', 'remove', 'd'], async (ctx) => {
-  const text = commandExtractor(ctx.message?.text || '');
-  if (!text.args || !parseInt(text.args, 10)) {
-    await ctx.reply('Command Example :\n/del 2');
-    return;
-  }
-  const position = parseInt(text.args, 10);
-  const data = await queue.delete(ctx.chat.id, position);
-  if (!data) {
-    await ctx.reply('Invalid queue position');
-    return;
-  }
-  await ctx.reply(
-    'Deleted <a href="' + data.link + '">' + data.title + '</a> from queue',
-    {
-      parse_mode: 'HTML',
-      disable_web_page_preview: true
-    }
-  );
-});
+// composer.command(['delete', 'remove', 'd'], async (ctx) => {
+//   const text = ctx.match;
+//   if (!text || !parseInt(text, 10)) {
+//     await ctx.reply('Command Example :\n/del 2');
+//     return;
+//   }
+//   const position = parseInt(text, 10);
+//   const data = await queue.delete(ctx.chat.id, position);
+//   if (!data) {
+//     await ctx.reply('Invalid queue position');
+//     return;
+//   }
+//   await ctx.reply(
+//     'Deleted <a href="' + data.link + '">' + data.title + '</a> from queue',
+//     {
+//       parse_mode: 'HTML',
+//       disable_web_page_preview: true
+//     }
+//   );
+// });
 
 export default composer;

@@ -7,7 +7,6 @@
  */
 
 import { Composer, InlineKeyboard } from 'grammy';
-import { commandExtractor } from '../utils';
 import { yt } from '../providers/youtube';
 import { tgcalls } from '../tgcalls';
 import { escape } from 'html-escaper';
@@ -19,12 +18,11 @@ composer.command(['youtube', 'yt'], async (ctx) => {
   if (ctx?.chat?.type === 'private') {
     return await ctx.reply('This Command works on Group Only');
   }
-  const { args: keyword } = commandExtractor(ctx.message?.text || '');
-  if (!keyword) {
+  if (!ctx.match) {
     await ctx.reply('Please Provide Search Keyword');
     return;
   }
-  const result = await yt.search(keyword);
+  const result = await yt.search(ctx.match);
   if (!result) {
     await ctx.reply('No Results Found');
     return;
@@ -39,22 +37,21 @@ composer.command(['youtube', 'yt'], async (ctx) => {
 });
 
 composer.command(['ytsr', 'ytsearch'], async (ctx) => {
-  await ctx.api.sendChatAction(ctx.chat.id, 'typing');
   if (ctx?.chat?.type === 'private') {
     return await ctx.reply('This Command works on Group Only');
   }
-  const { args } = commandExtractor(ctx.message?.text || '');
-  if (!args) {
+  if (!ctx.match) {
     await ctx.reply('Please Provide Search Keyword');
     return;
   }
-  let result = await yt.search(args);
+  await ctx.api.sendChatAction(ctx.chat.id, 'typing');
+  let result = await yt.search(ctx.match);
   if (!result) {
     await ctx.reply('No Results Found');
     return;
   }
   result = result.slice(0, 10);
-  let text = `Search Results for <b>${escape(args)}</b>\n\n`;
+  let text = `Search Results for <b>${escape(ctx.match)}</b>\n\n`;
   const keyboard = new InlineKeyboard();
   result.forEach((res, index) => {
     index++;
