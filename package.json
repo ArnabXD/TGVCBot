@@ -14,9 +14,6 @@
     "email": "arnabxd@pm.me",
     "name": "Arnab XD"
   },
-  "workspaces": [
-    "apps/*"
-  ],
   "license": "Apache-2.0",
   "devDependencies": {
     "@commitlint/config-conventional": "^16.2.4",
