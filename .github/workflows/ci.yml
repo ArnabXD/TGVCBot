@@ -21,7 +21,7 @@ jobs:
           node-version: "16"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run Linter
         run: pnpm run lint
@@ -40,7 +40,7 @@ jobs:
           node-version: "16"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build
         run: pnpm run build
@@ -59,7 +59,7 @@ jobs:
           node-version: '16'
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
       
       - name: Build TGVCBot
         run: pnpm run build --filter=tgvcbot
