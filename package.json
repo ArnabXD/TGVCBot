@@ -18,7 +18,7 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^16.2.4",
     "commitlint": "^16.2.4",
-    "husky": "^7.0.0",
+    "husky": "^8.0.1",
     "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
     "turbo": "^1.2.5",
