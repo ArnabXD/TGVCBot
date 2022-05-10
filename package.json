@@ -30,5 +30,13 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@mdx-js/react",
+        "webpack"
+      ]
+    }
   }
 }
