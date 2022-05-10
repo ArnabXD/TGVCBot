@@ -36,7 +36,7 @@ importers:
       '@typescript-eslint/parser': 5.23.0
       axios: 0.27.2
       better-sqlite3: 7.5.1
-      dotenv: 16.0.0
+      dotenv: 16.0.1
       envalid: 7.3.1
       eslint: 8.15.0
       fluent-ffmpeg: 2.1.2
@@ -56,7 +56,7 @@ importers:
       '@napi-rs/canvas': 0.1.21
       axios: 0.27.2
       better-sqlite3: 7.5.1
-      dotenv: 16.0.0
+      dotenv: 16.0.1
       envalid: 7.3.1
       fluent-ffmpeg: 2.1.2
       grammy: 1.8.3
@@ -1847,8 +1847,8 @@ packages:
       is-obj: 2.0.0
     dev: true
 
-  /dotenv/16.0.0:
-    resolution: {integrity: sha512-qD9WU0MPM4SWLPJy/r2Be+2WgQj8plChsyrCNQzW/0WjvcJQiKQJ9mH3ZgB3fxbUUxgc/11ZJ0Fi5KiimWGz2Q==}
+  /dotenv/16.0.1:
+    resolution: {integrity: sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==}
     engines: {node: '>=12'}
     dev: false
 
