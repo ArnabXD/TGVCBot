@@ -35,7 +35,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.23.0
       '@typescript-eslint/parser': 5.23.0
       axios: 0.27.2
-      better-sqlite3: 7.5.1
+      better-sqlite3: 7.5.2
       dotenv: 16.0.1
       envalid: 7.3.1
       eslint: 8.15.0
@@ -55,13 +55,13 @@ importers:
       '@mapbox/node-pre-gyp': 1.0.9
       '@napi-rs/canvas': 0.1.21
       axios: 0.27.2
-      better-sqlite3: 7.5.1
+      better-sqlite3: 7.5.2
       dotenv: 16.0.1
       envalid: 7.3.1
       fluent-ffmpeg: 2.1.2
       grammy: 1.8.3
       html-escaper: 3.0.3
-      knex: 2.0.0_better-sqlite3@7.5.1
+      knex: 2.0.0_better-sqlite3@7.5.2
       sharp: 0.30.4
       telegram: 2.7.32
       tgcalls-next: 0.0.0-rc.18
@@ -1231,8 +1231,8 @@ packages:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
     dev: false
 
-  /better-sqlite3/7.5.1:
-    resolution: {integrity: sha512-+i6tH1y9KEIol1iYpZJrqDwBDQZGHioDENU49Rnidorp3bSXvw/QTYDjQGq9+TFF7RX4q0YV1sEOIRq4vDZdRg==}
+  /better-sqlite3/7.5.2:
+    resolution: {integrity: sha512-qJHsZRS3bo0zC/pBbhE7yuRMMLGVCGukqdWvs+EpcrT/ZDnvLiiCv+RNqu7YuiE3qpDqHdsm+IkwCU9dXZsh+Q==}
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
@@ -3104,7 +3104,7 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /knex/2.0.0_better-sqlite3@7.5.1:
+  /knex/2.0.0_better-sqlite3@7.5.2:
     resolution: {integrity: sha512-LchC8/GLfreMz8d4kCwh/ymXttsoJG8zO1O0AJBjnxdyr2oT/k2ik77hP1PpZkZH9mDQrq6WsQcIu18Pnqppzg==}
     engines: {node: '>=12'}
     hasBin: true
@@ -3132,7 +3132,7 @@ packages:
       tedious:
         optional: true
     dependencies:
-      better-sqlite3: 7.5.1
+      better-sqlite3: 7.5.2
       colorette: 2.0.16
       commander: 9.2.0
       debug: 4.3.4
