@@ -42,7 +42,7 @@ importers:
       fluent-ffmpeg: 2.1.2
       grammy: 1.8.3
       html-escaper: 3.0.3
-      knex: 2.0.0
+      knex: 2.1.0
       rimraf: 3.0.2
       sharp: 0.30.5
       telegram: 2.8.4
@@ -61,7 +61,7 @@ importers:
       fluent-ffmpeg: 2.1.2
       grammy: 1.8.3
       html-escaper: 3.0.3
-      knex: 2.0.0_better-sqlite3@7.5.3
+      knex: 2.1.0_better-sqlite3@7.5.3
       sharp: 0.30.5
       telegram: 2.8.4
       tgcalls-next: 0.0.0-rc.18
@@ -3165,8 +3165,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /knex/2.0.0_better-sqlite3@7.5.3:
-    resolution: {integrity: sha512-LchC8/GLfreMz8d4kCwh/ymXttsoJG8zO1O0AJBjnxdyr2oT/k2ik77hP1PpZkZH9mDQrq6WsQcIu18Pnqppzg==}
+  /knex/2.1.0_better-sqlite3@7.5.3:
+    resolution: {integrity: sha512-vVsnD6UJdSJy55TvCXfFF9syfwyXNxfE9mvr2hJL/4Obciy2EPGoqjDpgRSlMruHuPWDOeYAG25nyrGvU+jJog==}
     engines: {node: '>=12'}
     hasBin: true
     peerDependencies:
