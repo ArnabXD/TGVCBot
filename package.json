@@ -16,13 +16,13 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@commitlint/config-conventional": "16.2.4",
-    "commitlint": "16.2.4",
+    "@commitlint/config-conventional": "17.0.0",
+    "commitlint": "17.0.1",
     "husky": "8.0.1",
-    "lint-staged": "12.4.1",
+    "lint-staged": "12.4.2",
     "prettier": "2.6.2",
-    "turbo": "1.2.8",
-    "eslint": "8.15.0",
+    "turbo": "1.2.14",
+    "eslint": "8.16.0",
     "eslint-config-prettier": "8.5.0"
   },
   "lint-staged": {
