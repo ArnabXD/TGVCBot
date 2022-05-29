@@ -24,7 +24,7 @@ importers:
 
   apps/tgvcbot:
     specifiers:
-      '@grammyjs/types': 2.7.1
+      '@grammyjs/types': 2.7.2
       '@mapbox/node-pre-gyp': 1.0.9
       '@napi-rs/canvas': 0.1.21
       '@types/better-sqlite3': 7.5.0
@@ -68,7 +68,7 @@ importers:
       youtube-sr: 4.1.17
       ytdl-core: 4.11.0
     devDependencies:
-      '@grammyjs/types': 2.7.1
+      '@grammyjs/types': 2.7.2
       '@types/better-sqlite3': 7.5.0
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
@@ -340,8 +340,8 @@ packages:
       - supports-color
     dev: true
 
-  /@grammyjs/types/2.7.1:
-    resolution: {integrity: sha512-6U6yeEXueDX82tf2JmCBo+MRpH6xMW3hieZS30LFfSiBonqOlQUVbwtIwqC47KZn28oD9eccORCj0dugmu5uAg==}
+  /@grammyjs/types/2.7.2:
+    resolution: {integrity: sha512-zaZH34j/tXhz9fmCv+7dUkvHgp4q/uIuQ2SEWn7hJ7TEuUUa764bNguVHillqTwTgOL1XkbaTSMczbbCnjeB4Q==}
 
   /@humanwhocodes/config-array/0.9.5:
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==}
@@ -2713,7 +2713,7 @@ packages:
     resolution: {integrity: sha512-3esAETA0HXR9wb8x65uYeAt1AbCQsJC5l6iuxSRXZR2cSxEf+61vIbJ5qUvw7TfMkgPuH71Gi7AHSFGZ+F1eqQ==}
     engines: {node: ^12.20.0 || >=14.13.1}
     dependencies:
-      '@grammyjs/types': 2.7.1
+      '@grammyjs/types': 2.7.2
       abort-controller: 3.0.0
       debug: 4.3.4
       node-fetch: 2.6.7
@@ -5251,37 +5251,6 @@ packages:
     engines: {node: '>=8.0.0'}
     dev: false
 
-  /ts-node/10.8.0_l47be6km5p57gglrggidw5gsgm:
-    resolution: {integrity: sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.31
-      acorn: 8.7.1
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.6.4
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    dev: true
-
   /ts-node/10.8.0_4vcxniz6c2zf6q742nqxy3egzi:
     resolution: {integrity: sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==}
     hasBin: true
@@ -5309,6 +5278,37 @@ packages:
       diff: 4.0.2
       make-error: 1.3.6
       typescript: 4.7.2
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    dev: true
+
+  /ts-node/10.8.0_l47be6km5p57gglrggidw5gsgm:
+    resolution: {integrity: sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 17.0.31
+      acorn: 8.7.1
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.6.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
