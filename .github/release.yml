@@ -2,3 +2,4 @@ changelog:
   exclude:
     labels:
       - dependencies
+    authors: ["renovate", "renovate[bot]", "renovate-bot"]
