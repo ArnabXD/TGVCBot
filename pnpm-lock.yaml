@@ -30,7 +30,7 @@ importers:
       '@types/better-sqlite3': 7.5.0
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
-      '@types/node': 16.11.36
+      '@types/node': 16.11.38
       '@types/sharp': 0.30.2
       '@typescript-eslint/eslint-plugin': 5.27.0
       '@typescript-eslint/parser': 5.27.0
@@ -72,13 +72,13 @@ importers:
       '@types/better-sqlite3': 7.5.0
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
-      '@types/node': 16.11.36
+      '@types/node': 16.11.38
       '@types/sharp': 0.30.2
       '@typescript-eslint/eslint-plugin': 5.27.0_dszb5tb7atwkjjijmmov4qhi7i
       '@typescript-eslint/parser': 5.27.0_xztl6dhthcahlo6akmb2bmjmle
       eslint: 8.16.0
       rimraf: 3.0.2
-      ts-node: 10.8.0_4vcxniz6c2zf6q742nqxy3egzi
+      ts-node: 10.8.0_bduezlpfhhu2salo6sf734d7nq
       typescript: 4.7.2
 
   apps/website:
@@ -762,8 +762,8 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
-  /@types/node/16.11.36:
-    resolution: {integrity: sha512-FR5QJe+TaoZ2GsMHkjuwoNabr+UrJNRr2HNOo+r/7vhcuntM6Ee/pRPOnRhhL2XE9OOvX9VLEq+BcXl3VjNoWA==}
+  /@types/node/16.11.38:
+    resolution: {integrity: sha512-hjO/0K140An3GWDw2HJfq7gko3wWeznbjXgg+rzPdVzhe198hp4x2i1dgveAOEiFKd8sOilAxzoSJiVv5P/CUg==}
     dev: true
 
   /@types/node/17.0.30:
@@ -5286,7 +5286,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dev: false
 
-  /ts-node/10.8.0_4vcxniz6c2zf6q742nqxy3egzi:
+  /ts-node/10.8.0_bduezlpfhhu2salo6sf734d7nq:
     resolution: {integrity: sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==}
     hasBin: true
     peerDependencies:
@@ -5305,7 +5305,7 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 16.11.36
+      '@types/node': 16.11.38
       acorn: 8.7.1
       acorn-walk: 8.2.0
       arg: 4.1.3
