@@ -22,7 +22,7 @@
     "lint-staged": "13.0.0",
     "prettier": "2.6.2",
     "turbo": "1.2.15",
-    "eslint": "8.16.0",
+    "eslint": "8.17.0",
     "eslint-config-prettier": "8.5.0"
   },
   "lint-staged": {
