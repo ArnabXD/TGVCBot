@@ -86,7 +86,7 @@ importers:
       '@mdx-js/loader': 2.1.1
       '@next/mdx': 12.1.6
       '@types/node': 17.0.30
-      '@types/react': 18.0.10
+      '@types/react': 18.0.11
       '@types/react-dom': 18.0.5
       autoprefixer: 10.4.7
       eslint: 8.17.0
@@ -105,7 +105,7 @@ importers:
       react-dom: 18.1.0_react@18.1.0
     devDependencies:
       '@types/node': 17.0.30
-      '@types/react': 18.0.10
+      '@types/react': 18.0.11
       '@types/react-dom': 18.0.5
       autoprefixer: 10.4.7_postcss@8.4.14
       eslint: 8.17.0
@@ -789,11 +789,11 @@ packages:
   /@types/react-dom/18.0.5:
     resolution: {integrity: sha512-OWPWTUrY/NIrjsAPkAk1wW9LZeIjSvkXRhclsFO8CZcZGCOg2G0YZy4ft+rOyYxy8B7ui5iZzi9OkDebZ7/QSA==}
     dependencies:
-      '@types/react': 18.0.10
+      '@types/react': 18.0.11
     dev: true
 
-  /@types/react/18.0.10:
-    resolution: {integrity: sha512-dIugadZuIPrRzvIEevIu7A1smqOAjkSMv8qOfwPt9Ve6i6JT/FQcCHyk2qIAxwsQNKZt5/oGR0T4z9h2dXRAkg==}
+  /@types/react/18.0.11:
+    resolution: {integrity: sha512-JxSwm54IgMW4XTR+zFF5QpNx4JITmFbB4WHR2J0vg9RpjNeyqEMlODXsD2e64br6GX70TL0UYjZJETpyyC1WdA==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
