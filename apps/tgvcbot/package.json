@@ -22,7 +22,7 @@
     "@types/fluent-ffmpeg": "2.1.20",
     "@types/html-escaper": "3.0.0",
     "@types/node": "16.11.38",
-    "@types/sharp": "0.30.2",
+    "@types/sharp": "0.30.4",
     "@typescript-eslint/eslint-plugin": "5.27.1",
     "@typescript-eslint/parser": "5.27.1",
     "eslint": "8.17.0",

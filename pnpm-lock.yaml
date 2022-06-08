@@ -31,7 +31,7 @@ importers:
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
       '@types/node': 16.11.38
-      '@types/sharp': 0.30.2
+      '@types/sharp': 0.30.4
       '@typescript-eslint/eslint-plugin': 5.27.1
       '@typescript-eslint/parser': 5.27.1
       axios: 0.27.2
@@ -73,7 +73,7 @@ importers:
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
       '@types/node': 16.11.38
-      '@types/sharp': 0.30.2
+      '@types/sharp': 0.30.4
       '@typescript-eslint/eslint-plugin': 5.27.1_q77yjsiugkqncyqvb2gsrjioay
       '@typescript-eslint/parser': 5.27.1_l7s6xsljbkeyelcecm6suqju3a
       eslint: 8.17.0
@@ -804,8 +804,8 @@ packages:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
     dev: true
 
-  /@types/sharp/0.30.2:
-    resolution: {integrity: sha512-uLCBwjDg/BTcQit0dpNGvkIjvH3wsb8zpaJePCjvONBBSfaKHoxXBIuq1MT8DMQEfk2fKYnpC9QExCgFhkGkMQ==}
+  /@types/sharp/0.30.4:
+    resolution: {integrity: sha512-6oJEzKt7wZeS7e+6x9QFEOWGs0T/6of00+0onZGN1zSmcSjcTDZKgIGZ6YWJnHowpaKUCFBPH52mYljWqU32Eg==}
     dependencies:
       '@types/node': 17.0.31
     dev: true
