@@ -45,7 +45,7 @@ importers:
       knex: 2.1.0
       rimraf: 3.0.2
       sharp: 0.30.6
-      telegram: 2.8.4
+      telegram: 2.8.6
       tgcalls-next: 0.0.0-rc.18
       ts-node: 10.8.1
       typescript: 4.7.2
@@ -63,7 +63,7 @@ importers:
       html-escaper: 3.0.3
       knex: 2.1.0_better-sqlite3@7.5.3
       sharp: 0.30.6
-      telegram: 2.8.4
+      telegram: 2.8.6
       tgcalls-next: 0.0.0-rc.18
       youtube-sr: 4.1.17
       ytdl-core: 4.11.0
@@ -1998,7 +1998,7 @@ packages:
     dev: false
 
   /es6-iterator/2.0.3:
-    resolution: {integrity: sha1-p96IkUGgWpSwhUQDstCg+/qY87c=}
+    resolution: {integrity: sha512-zw4SRzoUkd+cl+ZoE15A9o1oQd920Bb0iOJMQkQhl3jNc03YqVjAhG7scf9C5KWRU/R13Orf588uCC6525o02g==}
     dependencies:
       d: 1.0.1
       es5-ext: 0.10.61
@@ -2921,7 +2921,7 @@ packages:
     dev: false
 
   /ip/1.1.5:
-    resolution: {integrity: sha1-vd7XARQpCCjAoDnnLvJfWq7ENUo=}
+    resolution: {integrity: sha512-rBtCAQAJm8A110nbwn6YdveUnuZH3WrC36IwkRXxDnq53JvXA2NVQvB7IHyKomxK1MJ4VDNw3UtFDdXQ+AvLYA==}
     dev: false
 
   /is-alphabetical/2.0.1:
@@ -3106,7 +3106,7 @@ packages:
     dev: true
 
   /is-typedarray/1.0.0:
-    resolution: {integrity: sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=}
+    resolution: {integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==}
     dev: false
 
   /is-weakref/1.0.2:
@@ -4921,7 +4921,7 @@ packages:
     dev: true
 
   /slide/1.1.6:
-    resolution: {integrity: sha1-VusCfWW00tzmyy4tMsTUr8nh1wc=}
+    resolution: {integrity: sha512-NwrtjCg+lZoqhFU8fOwl4ay2ei8PaqCBOUV3/ektPY9trO1yQ1oXEfmHAhKArUVUr/hOHvy5f6AdP17dCM0zMw==}
     dev: false
 
   /smart-buffer/4.2.0:
@@ -5232,8 +5232,8 @@ packages:
     engines: {node: '>=8.0.0'}
     dev: false
 
-  /telegram/2.8.4:
-    resolution: {integrity: sha512-XGnxGCCBJFoDsp7DpoX1RTT0rWgiAckmEXmifMON3RogoLeb8Xa+jOw3BrNXlntzjyv44EHeoUW1JOQ9q2hkLA==}
+  /telegram/2.8.6:
+    resolution: {integrity: sha512-9tmj7E3n/U2XpthmQFLUJKtJjxXsKle33vt18wsMptscrOQ9xQs9A4XLBMzWROA5awTXW7+w23hSbKP3k8RA5A==}
     dependencies:
       '@cryptography/aes': 0.1.1
       async-mutex: 0.3.2
@@ -5268,7 +5268,7 @@ packages:
     resolution: {integrity: sha512-jxi9D7cNpsdLJQM38UbLHiGFkGgxq367jdrhZPaK24CdAtV8600he8SQ/GiFhXaqc0nPb9C622aZzDU9h/ZqVA==}
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.9
-      telegram: 2.8.4
+      telegram: 2.8.6
       wrtc: 0.4.7
     transitivePeerDependencies:
       - encoding
@@ -5838,7 +5838,7 @@ packages:
     resolution: {integrity: sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=}
 
   /write-file-atomic/1.3.4:
-    resolution: {integrity: sha1-+Aek8LHZ6ROuekgRLmzDrxmRtF8=}
+    resolution: {integrity: sha512-SdrHoC/yVBPpV0Xq/mUZQIpW2sWXAShb/V4pomcJXh92RuaO+f3UTWItiR3Px+pLnV2PvC2/bfn5cwr5X6Vfxw==}
     dependencies:
       graceful-fs: 4.2.10
       imurmurhash: 0.1.4
@@ -5870,7 +5870,7 @@ packages:
     dev: true
 
   /yaeti/0.0.6:
-    resolution: {integrity: sha1-8m9ITXJoTPQr7ft2lwqhYI+/lXc=}
+    resolution: {integrity: sha512-MvQa//+KcZCUkBTIC9blM+CU9J2GzuTytsOUwf2lidtvkx/6gnEp1QvJv34t9vdjhFmha/mUiNDbN0D0mJWdug==}
     engines: {node: '>=0.10.32'}
     dev: false
 
