@@ -9,5 +9,8 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[css]": {
+    "editor.formatOnSave": false
+  },
   "eslint.workingDirectories": ["apps/tgvcbot", "apps/website"]
 }
