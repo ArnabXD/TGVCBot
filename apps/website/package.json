@@ -3,10 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "pnpm run build:css && eleventy",
-    "build:css": "tailwindcss -m -i ./src/css/input.css -o ./src/css/styles.css",
-    "dev": "concurrently \"npm run dev:css\" \"eleventy --serve\"",
-    "dev:css": "tailwindcss -w -i ./src/css/input.css -o ./src/css/styles.css"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@mdx-js/loader": "2.1.2",
+    "@next/mdx": "12.1.6",
+    "next": "12.1.6",
+    "react": "18.1.0",
+    "react-dom": "18.1.0"
   },
   "keywords": [],
   "author": "",
