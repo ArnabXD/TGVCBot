@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
-    "format": "prettier --write \"apps/**/*.{ts,js}\"",
+    "format": "prettier --write \"apps/**/*.{ts,js,css}\"",
     "lint": "turbo run lint",
     "prepare": "husky install"
   },
