@@ -16,6 +16,7 @@ class YouTube extends StreamProvider {
   constructor() {
     super('youtube');
   }
+
   async search(key: string) {
     const resp = await ytsr.search(key, {
       type: 'video',
@@ -30,6 +31,7 @@ class YouTube extends StreamProvider {
       duration: res.durationFormatted
     }));
   }
+
   async getSong(id: string, from: User): Promise<QueueData> {
     const song = await ytsr.searchOne(id);
     return {

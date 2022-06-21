@@ -30,6 +30,12 @@ class TGVCCalls {
     this.gramTgCalls = new Map<number, GramTGCalls>();
   }
 
+  /**
+   * Creates TGCalls instance for a chat
+   *
+   * @param chat Chat
+   * @returns void
+   */
   private init(chat: Chat) {
     const _TGCALLS = new GramTGCalls(userbot, chat.id);
     _TGCALLS.addListener('audio-finish', () => {
@@ -42,6 +48,12 @@ class TGVCCalls {
     return this.gramTgCalls.get(chat.id) as GramTGCalls;
   }
 
+  /**
+   * onStreamFinish is called when the stream is finished
+   *
+   * @param chat
+   * @returns Promise<void>
+   */
   private async onStreamFinish(chat: Chat): Promise<void> {
     const next = await queue.get(chat.id);
     if (!next) {
@@ -56,6 +68,13 @@ class TGVCCalls {
     });
   }
 
+  /**
+   * onStreamError is called when the tgcalls stream encounters an error
+   *
+   * @param error Error
+   * @param chat Chat
+   * @returns Promise<void>
+   */
   private async onStreamError(error: Error, chat: Chat): Promise<void> {
     console.error(error);
     const errorMessage = error.message || String(error);
@@ -69,14 +88,32 @@ class TGVCCalls {
     await this.onStreamFinish(chat);
   }
 
+  /**
+   * Checks if tgcalls has been initialized for the chat
+   *
+   * @param chat Chat
+   * @returns boolean
+   */
   has(chat: number) {
     return this.gramTgCalls.has(chat);
   }
 
+  /**
+   * Deletes the tgcalls instance for the chat
+   *
+   * @param chat number
+   * @returns boolean
+   */
   delete(chat: number) {
     return this.gramTgCalls.delete(chat);
   }
 
+  /**
+   * Checks whether the stream is playing or not
+   *
+   * @param chat number
+   * @returns boolean
+   */
   connected(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) {
@@ -88,6 +125,12 @@ class TGVCCalls {
     return false;
   }
 
+  /**
+   * Checks if the stream is finished
+   *
+   * @param chat number
+   * @returns boolean
+   */
   finished(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) {
@@ -96,6 +139,12 @@ class TGVCCalls {
     return !!tgcalls.finished;
   }
 
+  /**
+   * Pause the stream if it is playing
+   *
+   * @param chat number
+   * @returns boolean
+   */
   pause(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) {
@@ -107,6 +156,12 @@ class TGVCCalls {
     return false;
   }
 
+  /**
+   * Resume the stream if it is paused
+   *
+   * @param chat number
+   * @returns boolean
+   */
   resume(chat: number) {
     const tgcalls = this.gramTgCalls.get(chat);
     if (!tgcalls) {
@@ -118,6 +173,12 @@ class TGVCCalls {
     return false;
   }
 
+  /**
+   * Destroy the stream and remove tgcalls instance
+   *
+   * @param chat number
+   * @returns boolean
+   */
   async stop(chat: number) {
     await queue.clear(chat);
     const tgcalls = this.gramTgCalls.get(chat);
@@ -131,6 +192,14 @@ class TGVCCalls {
     return false;
   }
 
+  /**
+   * If the stream is playing the queue the song otherwise play the song.
+   *
+   * @param chat Chat
+   * @param data QueueData
+   * @param force boolean - Force the song to play
+   * @returns
+   */
   async streamOrQueue(chat: Chat, data: QueueData, force = false) {
     if (this.connected(chat.id) && !this.finished(chat.id) && !force) {
       const position = await queue.push(chat.id, data);

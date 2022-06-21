@@ -71,6 +71,7 @@ class JioSaavn extends StreamProvider {
   constructor() {
     super('jiosaavn');
   }
+
   async search(key: string): Promise<JioSaavnResults | undefined> {
     const query = new URLSearchParams({
       query: key.replace(/\s/g, '+')
@@ -85,6 +86,7 @@ class JioSaavn extends StreamProvider {
       }));
     }
   }
+
   async getSong(id: string, from: User): Promise<QueueData> {
     const resp = await axios.get<JioSaavnSongResponse>(
       'https://jiosaavn-api-v3.vercel.app/song?id=' + id
