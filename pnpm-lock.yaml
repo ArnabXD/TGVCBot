@@ -40,7 +40,7 @@ importers:
       envalid: 7.3.1
       eslint: 8.18.0
       fluent-ffmpeg: 2.1.2
-      grammy: 1.8.3
+      grammy: 1.9.0
       html-escaper: 3.0.3
       knex: 2.1.0
       rimraf: 3.0.2
@@ -59,7 +59,7 @@ importers:
       dotenv: 16.0.1
       envalid: 7.3.1
       fluent-ffmpeg: 2.1.2
-      grammy: 1.8.3
+      grammy: 1.9.0
       html-escaper: 3.0.3
       knex: 2.1.0_better-sqlite3@7.5.3
       sharp: 0.30.6
@@ -2605,8 +2605,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /grammy/1.8.3:
-    resolution: {integrity: sha512-3esAETA0HXR9wb8x65uYeAt1AbCQsJC5l6iuxSRXZR2cSxEf+61vIbJ5qUvw7TfMkgPuH71Gi7AHSFGZ+F1eqQ==}
+  /grammy/1.9.0:
+    resolution: {integrity: sha512-aIUONCSbUtHVw+YuVB0kQEgoKXbYspihk2a0xFeWa7hk76PbRSBP/n3q3gHq+O4MHy6DsIjP3WrezsA1qyuQ4w==}
     engines: {node: ^12.20.0 || >=14.13.1}
     dependencies:
       '@grammyjs/types': 2.8.0
@@ -5084,7 +5084,7 @@ packages:
     dev: true
 
   /tr46/0.0.3:
-    resolution: {integrity: sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=}
+    resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
     dev: false
 
   /tree-kill/1.2.2:
@@ -5456,7 +5456,7 @@ packages:
     dev: true
 
   /webidl-conversions/3.0.1:
-    resolution: {integrity: sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=}
+    resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
     dev: false
 
   /webidl-conversions/4.0.2:
@@ -5479,7 +5479,7 @@ packages:
     dev: false
 
   /whatwg-url/5.0.0:
-    resolution: {integrity: sha1-lmRU6HZUYuN2RNNib2dCzotwll0=}
+    resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
     dependencies:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
