@@ -41,7 +41,7 @@
     "grammy": "1.9.0",
     "html-escaper": "3.0.3",
     "knex": "2.1.0",
-    "sharp": "0.30.6",
+    "sharp": "0.30.7",
     "telegram": "2.9.2",
     "tgcalls-next": "0.0.0-rc.18",
     "youtube-sr": "4.1.17",
