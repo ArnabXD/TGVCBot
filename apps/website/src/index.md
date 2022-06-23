@@ -32,13 +32,13 @@ title: Stream Music on Telegram Group Voice Chat
 
 ## Install
 
-- Windows
+- #### Windows
 
   ```powershell
   iwr https://raw.githubusercontent.com/ArnabXD/TGVCBot/main/scripts/install.ps1 -useb | iex
   ```
 
-- Linux
+- #### Linux
 
   ```bash
   wget -qO- https://raw.githubusercontent.com/ArnabXD/TGVCBot/main/scripts/install.sh | sh
