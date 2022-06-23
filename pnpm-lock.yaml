@@ -24,7 +24,7 @@ importers:
 
   apps/tgvcbot:
     specifiers:
-      '@grammyjs/types': 2.8.0
+      '@grammyjs/types': 2.8.1
       '@mapbox/node-pre-gyp': 1.0.9
       '@napi-rs/canvas': 0.1.23
       '@types/better-sqlite3': 7.5.0
@@ -68,7 +68,7 @@ importers:
       youtube-sr: 4.1.17
       ytdl-core: 4.11.0
     devDependencies:
-      '@grammyjs/types': 2.8.0
+      '@grammyjs/types': 2.8.1
       '@types/better-sqlite3': 7.5.0
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
@@ -389,8 +389,8 @@ packages:
       - supports-color
     dev: true
 
-  /@grammyjs/types/2.8.0:
-    resolution: {integrity: sha512-su7pK6oP5co+fqopY79zV2KIlWUN6baT/RW1kGLUfMB0b8pdkeKbGtAjxZ/ccxfXVPsqIn+53ERARLT65g+6xw==}
+  /@grammyjs/types/2.8.1:
+    resolution: {integrity: sha512-cdeagnRnpahbwxyM4XOQR3EQwKnsmEsIktwRlQNyDz3IXI9YBvbRq2lDtufHxO4t6X07mm1+DiwjKEeYCec5bA==}
 
   /@humanwhocodes/config-array/0.9.5:
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==}
@@ -2609,7 +2609,7 @@ packages:
     resolution: {integrity: sha512-aIUONCSbUtHVw+YuVB0kQEgoKXbYspihk2a0xFeWa7hk76PbRSBP/n3q3gHq+O4MHy6DsIjP3WrezsA1qyuQ4w==}
     engines: {node: ^12.20.0 || >=14.13.1}
     dependencies:
-      '@grammyjs/types': 2.8.0
+      '@grammyjs/types': 2.8.1
       abort-controller: 3.0.0
       debug: 4.3.4
       node-fetch: 2.6.7
