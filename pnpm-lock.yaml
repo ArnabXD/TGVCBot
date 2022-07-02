@@ -47,7 +47,7 @@ importers:
       sharp: 0.30.7
       telegram: 2.9.2
       tgcalls-next: 0.0.0-rc.18
-      ts-node: 10.8.1
+      ts-node: 10.8.2
       typescript: 4.7.4
       youtube-sr: 4.1.17
       ytdl-core: 4.11.0
@@ -78,7 +78,7 @@ importers:
       '@typescript-eslint/parser': 5.30.3_b5e7v2qnwxfo6hmiq56u52mz3e
       eslint: 8.18.0
       rimraf: 3.0.2
-      ts-node: 10.8.1_qqpsu5gwjto2muvbbvmj4ndcmu
+      ts-node: 10.8.2_qqpsu5gwjto2muvbbvmj4ndcmu
       typescript: 4.7.4
 
   apps/website:
@@ -5170,8 +5170,8 @@ packages:
       yn: 3.1.1
     dev: true
 
-  /ts-node/10.8.1_qqpsu5gwjto2muvbbvmj4ndcmu:
-    resolution: {integrity: sha512-Wwsnao4DQoJsN034wePSg5nZiw4YKXf56mPIAeD6wVmiv+RytNSWqc2f3fKvcUoV+Yn2+yocD71VOfQHbmVX4g==}
+  /ts-node/10.8.2_qqpsu5gwjto2muvbbvmj4ndcmu:
+    resolution: {integrity: sha512-LYdGnoGddf1D6v8REPtIH+5iq/gTDuZqv2/UJUU7tKjuEU8xVZorBM+buCGNjj+pGEud+sOoM4CX3/YzINpENA==}
     hasBin: true
     peerDependencies:
       '@swc/core': '>=1.2.50'
