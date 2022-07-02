@@ -84,18 +84,20 @@ importers:
   apps/website:
     specifiers:
       '@11ty/eleventy': ^1.0.1
-      '@11ty/eleventy-plugin-syntaxhighlight': ^4.0.0
+      '@11ty/eleventy-plugin-syntaxhighlight': ^4.1.0
       '@tailwindcss/typography': ^0.5.2
       autoprefixer: ^10.4.7
       concurrently: ^7.2.2
+      markdown-it: ^13.0.1
       postcss: ^8.4.14
       tailwindcss: ^3.1.3
     devDependencies:
       '@11ty/eleventy': 1.0.1
-      '@11ty/eleventy-plugin-syntaxhighlight': 4.0.0
+      '@11ty/eleventy-plugin-syntaxhighlight': 4.1.0
       '@tailwindcss/typography': 0.5.2_tailwindcss@3.1.3
       autoprefixer: 10.4.7_postcss@8.4.14
       concurrently: 7.2.2
+      markdown-it: 13.0.1
       postcss: 8.4.14
       tailwindcss: 3.1.3
 
@@ -105,8 +107,8 @@ packages:
     resolution: {integrity: sha512-5R+DsT9LJ9tXiSQ4y+KLFppCkQyXhzAm1AIuBWE/sbU0hSXY5pkhoqQYEcPJQFg/nglL+wD55iv2j+7O96UAvg==}
     dev: true
 
-  /@11ty/eleventy-plugin-syntaxhighlight/4.0.0:
-    resolution: {integrity: sha512-t95DIZQ7MnaspgpmXyKIgz2TpyN7EshMt9+SFfqVUYKTISU3+T3FTXFscoLownyNWb/5EC0od69BnCZwEcMzCg==}
+  /@11ty/eleventy-plugin-syntaxhighlight/4.1.0:
+    resolution: {integrity: sha512-bLpV8DKFZRgh0kToh8JPCjABfalL5ydyP6rxj/aUgrlR2v9TheLGRNqoKMhfgwUETOas2nMo/rd7sCE4kSvBNQ==}
     dependencies:
       linkedom: 0.13.7
       prismjs: 1.28.0
@@ -1575,8 +1577,6 @@ packages:
       finalhandler: 1.1.0
       parseurl: 1.3.3
       utils-merge: 1.0.1
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /console-control-strings/1.1.0:
@@ -1721,11 +1721,6 @@ packages:
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
     dependencies:
       ms: 2.0.0
 
@@ -1750,6 +1745,7 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
+    dev: true
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -2369,8 +2365,6 @@ packages:
       parseurl: 1.3.3
       statuses: 1.3.1
       unpipe: 1.0.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /find-up/4.1.0:
@@ -3184,6 +3178,12 @@ packages:
       uc.micro: 1.0.6
     dev: true
 
+  /linkify-it/4.0.1:
+    resolution: {integrity: sha512-C7bfi1UZmoj8+PQx22XyeXCuBlokoyWQL5pWSP+EI6nzRylyThouddufc2c1NDIcP9k5agmN9fLpA7VNJfIiqw==}
+    dependencies:
+      uc.micro: 1.0.6
+    dev: true
+
   /lint-staged/13.0.3:
     resolution: {integrity: sha512-9hmrwSCFroTSYLjflGI8Uk+GWAwMB4OlpU4bMJEAT5d/llQwtYKoim4bLOyLCuWFAhWEupE0vkIFqtw/WIsPug==}
     engines: {node: ^14.13.1 || >=16.0.0}
@@ -3346,6 +3346,17 @@ packages:
       argparse: 2.0.1
       entities: 2.1.0
       linkify-it: 3.0.3
+      mdurl: 1.0.1
+      uc.micro: 1.0.6
+    dev: true
+
+  /markdown-it/13.0.1:
+    resolution: {integrity: sha512-lTlxriVoy2criHP0JKRhO2VDG9c2ypWCsT237eDiLqi09rmbKoUetyGHq2uOIRoRS//kfoJckS0eUzzkDR+k2Q==}
+    hasBin: true
+    dependencies:
+      argparse: 2.0.1
+      entities: 3.0.1
+      linkify-it: 4.0.1
       mdurl: 1.0.1
       uc.micro: 1.0.6
     dev: true
@@ -4420,8 +4431,6 @@ packages:
     dependencies:
       debug: 2.6.9
       minimatch: 3.1.2
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /restore-cursor/3.1.0:
@@ -4535,8 +4544,6 @@ packages:
       on-finished: 2.3.0
       range-parser: 1.2.1
       statuses: 1.4.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /serve-index/1.9.1:
@@ -4550,8 +4557,6 @@ packages:
       http-errors: 1.6.3
       mime-types: 2.1.35
       parseurl: 1.3.3
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /serve-static/1.13.2:
@@ -4562,8 +4567,6 @@ packages:
       escape-html: 1.0.3
       parseurl: 1.3.3
       send: 0.16.2
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /server-destroy/1.0.1:

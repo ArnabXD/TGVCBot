@@ -28,7 +28,7 @@ title: Stream Music on Telegram Group Voice Chat
 
   - #### Windows
 
-    Download from https://www.gyan.dev/ffmpeg/builds and set path for FFMPEG so that FFMPEG can be accessed through command.
+    Download prebuilt binaries from [gyan.dev](https://www.gyan.dev/ffmpeg/builds) and set path for FFMPEG so that FFMPEG can be accessed through command.
 
 ## Install
 
@@ -44,7 +44,7 @@ title: Stream Music on Telegram Group Voice Chat
   wget -qO- https://raw.githubusercontent.com/ArnabXD/TGVCBot/main/scripts/install.sh | sh
   ```
 
-Now fill the .env file and start the bot using `npm run start`.
+Now fill the `.env` file and start the bot using `npm run start`.
 
 ## Environment Variables
 
