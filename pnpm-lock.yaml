@@ -40,7 +40,7 @@ importers:
       envalid: 7.3.1
       eslint: 8.19.0
       fluent-ffmpeg: 2.1.2
-      grammy: 1.9.0
+      grammy: 1.9.1
       html-escaper: 3.0.3
       knex: 2.1.0
       rimraf: 3.0.2
@@ -59,7 +59,7 @@ importers:
       dotenv: 16.0.1
       envalid: 7.3.1
       fluent-ffmpeg: 2.1.2
-      grammy: 1.9.0
+      grammy: 1.9.1
       html-escaper: 3.0.3
       knex: 2.1.0_better-sqlite3@7.6.0
       sharp: 0.30.7
@@ -2616,8 +2616,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /grammy/1.9.0:
-    resolution: {integrity: sha512-aIUONCSbUtHVw+YuVB0kQEgoKXbYspihk2a0xFeWa7hk76PbRSBP/n3q3gHq+O4MHy6DsIjP3WrezsA1qyuQ4w==}
+  /grammy/1.9.1:
+    resolution: {integrity: sha512-gdLHwDFrurCf2acoqiWRIfHbLE2iujCb8/USwENLwrXj26LVuQvEWmU9jWrPtHq+Psotd6RtqgQJh+75WWSotA==}
     engines: {node: ^12.20.0 || >=14.13.1}
     dependencies:
       '@grammyjs/types': 2.8.1
