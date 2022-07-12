@@ -49,7 +49,7 @@ importers:
       tgcalls-next: 0.0.0-rc.18
       ts-node: 10.8.2
       typescript: 4.7.4
-      youtube-sr: 4.1.17
+      youtube-sr: 4.1.18
       ytdl-core: 4.11.0
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.9
@@ -65,7 +65,7 @@ importers:
       sharp: 0.30.7
       telegram: 2.9.8
       tgcalls-next: 0.0.0-rc.18
-      youtube-sr: 4.1.17
+      youtube-sr: 4.1.18
       ytdl-core: 4.11.0
     devDependencies:
       '@grammyjs/types': 2.8.1
@@ -5707,8 +5707,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /youtube-sr/4.1.17:
-    resolution: {integrity: sha512-d517Loy3GB0Z+gGJxd+k6SbiaePb1OMPah5ZWMLACle9THS9VluU4OzSKv/vL9Dafx1fCCCmkkJ2kumUlWMoRg==}
+  /youtube-sr/4.1.18:
+    resolution: {integrity: sha512-dTAE2RpIeCDWNe36PKWfryRp+LV2ml3N2kHflhdq7BDSeUZRok8806aF7sENCgAgxwXfFBGno5cwih/9CFOSTQ==}
     dev: false
 
   /ytdl-core/4.11.0:
