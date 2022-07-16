@@ -77,7 +77,7 @@ class JioSaavn extends StreamProvider {
       query: key.replace(/\s/g, '+')
     });
     const { data } = await axios.get<JioSaavnSearchResponse>(
-      'https://jiosaavn-api-v3.vercel.app/search?' + query.toString()
+      'https://jsvn-tgvc.vercel.app/search?' + query.toString()
     );
     if (data && data.results && data.results.length) {
       return data.results.map((_data) => ({
@@ -89,7 +89,7 @@ class JioSaavn extends StreamProvider {
 
   async getSong(id: string, from: User): Promise<QueueData> {
     const resp = await axios.get<JioSaavnSongResponse>(
-      'https://jiosaavn-api-v3.vercel.app/song?id=' + id
+      'https://jsvn-tgvc.vercel.app/song?id=' + id
     );
     const song = resp.data;
     return {
