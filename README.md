@@ -11,7 +11,9 @@
 
 ![LOGO](https://telegra.ph/file/e9dd76aadf0b500e02738.jpg)
 
-### Docs - https://tgvcbot.vercel.app
+### Docs
+
+[tgvcbot.vercel.app](https://tgvcbot.vercel.app)
 
 ### For Support :
 
