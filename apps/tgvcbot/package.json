@@ -40,7 +40,7 @@
     "fluent-ffmpeg": "2.1.2",
     "grammy": "1.9.1",
     "html-escaper": "3.0.3",
-    "knex": "2.1.0",
+    "knex": "2.2.0",
     "sharp": "0.30.7",
     "telegram": "2.9.8",
     "tgcalls-next": "0.0.0-rc.18",
