@@ -38,7 +38,7 @@
     "dotenv": "16.0.1",
     "envalid": "7.3.1",
     "fluent-ffmpeg": "2.1.2",
-    "grammy": "1.9.0",
+    "grammy": "1.9.1",
     "html-escaper": "3.0.3",
     "knex": "2.1.0",
     "sharp": "0.30.7",
