@@ -42,7 +42,7 @@ importers:
       fluent-ffmpeg: 2.1.2
       grammy: 1.9.1
       html-escaper: 3.0.3
-      knex: 2.1.0
+      knex: 2.2.0
       rimraf: 3.0.2
       sharp: 0.30.7
       telegram: 2.9.8
@@ -61,7 +61,7 @@ importers:
       fluent-ffmpeg: 2.1.2
       grammy: 1.9.1
       html-escaper: 3.0.3
-      knex: 2.1.0_better-sqlite3@7.6.2
+      knex: 2.2.0_better-sqlite3@7.6.2
       sharp: 0.30.7
       telegram: 2.9.8
       tgcalls-next: 0.0.0-rc.18
@@ -1472,13 +1472,13 @@ packages:
       color-string: 1.9.1
     dev: false
 
-  /colorette/2.0.16:
-    resolution: {integrity: sha512-hUewv7oMjCp+wkBv5Rm0v87eJhq4woh5rSR+42YSQJKecCqgIqNkZ6lAlQms/BwHPJA5NKMRlpxPRv0n8HQW6g==}
-    dev: false
-
   /colorette/2.0.17:
     resolution: {integrity: sha512-hJo+3Bkn0NCHybn9Tu35fIeoOKGOk5OCC32y4Hz2It+qlCO2Q3DeQ1hRn/tDDMQKRYUEzqsl7jbF6dYKjlE60g==}
     dev: true
+
+  /colorette/2.0.19:
+    resolution: {integrity: sha512-3tlv/dIP7FWvj3BsbHrGLJ6l/oKh1O3TcgBqMn+yyCagOxc23fyzDS6HypQbgxWbkpDnf52p1LuR4eWDQ/K9WQ==}
+    dev: false
 
   /combined-stream/1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
@@ -1496,15 +1496,9 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /commander/9.2.0:
-    resolution: {integrity: sha512-e2i4wANQiSXgnrBlIatyHtP1odfUp0BbV5Y5nEGbxtIrStkEOAAzCUirvLBNXHLr7kwLvJl6V+4V3XV9x7Wd9w==}
-    engines: {node: ^12.20.0 || >=14}
-    dev: false
-
   /commander/9.3.0:
     resolution: {integrity: sha512-hv95iU5uXPbK83mjrJKuZyFM/LBAoCV/XhVGkS5Je6tl7sxr6A0ITMw5WoRV46/UaJ46Nllm3Xt7IaJhXTIkzw==}
     engines: {node: ^12.20.0 || >=14}
-    dev: true
 
   /commitlint/17.0.3:
     resolution: {integrity: sha512-/KbIyrd6nmrRvu5zj8KKrjoC4z5V6hBmYphHgCFu75kPjHODg1XTtGFgbnb0AdSGBHlGMzmDvykO7ETs8wBKFg==}
@@ -3102,8 +3096,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /knex/2.1.0_better-sqlite3@7.6.2:
-    resolution: {integrity: sha512-vVsnD6UJdSJy55TvCXfFF9syfwyXNxfE9mvr2hJL/4Obciy2EPGoqjDpgRSlMruHuPWDOeYAG25nyrGvU+jJog==}
+  /knex/2.2.0_better-sqlite3@7.6.2:
+    resolution: {integrity: sha512-yhm1Qe9Ok0TeXBq3nNHqZYJPrQ4Iw2tq9k/HxjrZ/EWec2ifOjJlkNHr26v8cQrWtk5iG3iwfUazTIWy+VKG5g==}
     engines: {node: '>=12'}
     hasBin: true
     peerDependencies:
@@ -3131,8 +3125,8 @@ packages:
         optional: true
     dependencies:
       better-sqlite3: 7.6.2
-      colorette: 2.0.16
-      commander: 9.2.0
+      colorette: 2.0.19
+      commander: 9.3.0
       debug: 4.3.4
       escalade: 3.1.1
       esm: 3.2.25
