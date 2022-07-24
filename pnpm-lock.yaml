@@ -45,7 +45,7 @@ importers:
       knex: 2.2.0
       rimraf: 3.0.2
       sharp: 0.30.7
-      telegram: 2.9.8
+      telegram: 2.10.2
       tgcalls-next: 0.0.0-rc.18
       ts-node: 10.9.1
       typescript: 4.7.4
@@ -63,7 +63,7 @@ importers:
       html-escaper: 3.0.3
       knex: 2.2.0_better-sqlite3@7.6.2
       sharp: 0.30.7
-      telegram: 2.9.8
+      telegram: 2.10.2
       tgcalls-next: 0.0.0-rc.18
       youtube-sr: 4.2.0
       ytdl-core: 4.11.0
@@ -5027,8 +5027,8 @@ packages:
     engines: {node: '>=8.0.0'}
     dev: false
 
-  /telegram/2.9.8:
-    resolution: {integrity: sha512-zEAi4GZRfRs7dqRNdUD9hmerrfHEGjHKuTZY2DkSTdiYPybAingghH+kSuCmp5kAj5qaDibr9r7BPL7zv4tuRQ==}
+  /telegram/2.10.2:
+    resolution: {integrity: sha512-kDbtxoJy2Lz+WFbSuXTylF0VipDojGyZQK4ZiylCW3HrMInrG9YWC4wIidgCSsaM0wAn2gaSeOvaDtLygkh9MQ==}
     dependencies:
       '@cryptography/aes': 0.1.1
       async-mutex: 0.3.2
@@ -5070,7 +5070,7 @@ packages:
     resolution: {integrity: sha512-jxi9D7cNpsdLJQM38UbLHiGFkGgxq367jdrhZPaK24CdAtV8600he8SQ/GiFhXaqc0nPb9C622aZzDU9h/ZqVA==}
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.9
-      telegram: 2.9.8
+      telegram: 2.10.2
       wrtc: 0.4.7
     transitivePeerDependencies:
       - encoding
