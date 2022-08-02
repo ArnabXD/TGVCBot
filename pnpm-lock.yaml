@@ -40,7 +40,7 @@ importers:
       envalid: 7.3.1
       eslint: 8.20.0
       fluent-ffmpeg: 2.1.2
-      grammy: 1.9.1
+      grammy: 1.10.1
       html-escaper: 3.0.3
       knex: 2.2.0
       rimraf: 3.0.2
@@ -59,7 +59,7 @@ importers:
       dotenv: 16.0.1
       envalid: 7.3.1
       fluent-ffmpeg: 2.1.2
-      grammy: 1.9.1
+      grammy: 1.10.1
       html-escaper: 3.0.3
       knex: 2.2.0_better-sqlite3@7.6.2
       sharp: 0.30.7
@@ -393,6 +393,11 @@ packages:
 
   /@grammyjs/types/2.8.1:
     resolution: {integrity: sha512-cdeagnRnpahbwxyM4XOQR3EQwKnsmEsIktwRlQNyDz3IXI9YBvbRq2lDtufHxO4t6X07mm1+DiwjKEeYCec5bA==}
+    dev: true
+
+  /@grammyjs/types/2.8.2:
+    resolution: {integrity: sha512-RNYVxg5+yOOeDN9PY05KGEA/82vNXd7QMQPtEMCT8neg1jl7Keg/cbUElHOU8zYQUvVChu3uYSkfkviLAxvDSg==}
+    dev: false
 
   /@humanwhocodes/config-array/0.9.5:
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==}
@@ -2610,11 +2615,11 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /grammy/1.9.1:
-    resolution: {integrity: sha512-gdLHwDFrurCf2acoqiWRIfHbLE2iujCb8/USwENLwrXj26LVuQvEWmU9jWrPtHq+Psotd6RtqgQJh+75WWSotA==}
+  /grammy/1.10.1:
+    resolution: {integrity: sha512-HFcFFq/9MsjQODGWL0EZKaamxNIQpHOzGsj0c/0mjQgtF7l1fJ8YK18A9CYWDXm7gYcJhY+jFMly+I0VN97LSw==}
     engines: {node: ^12.20.0 || >=14.13.1}
     dependencies:
-      '@grammyjs/types': 2.8.1
+      '@grammyjs/types': 2.8.2
       abort-controller: 3.0.0
       debug: 4.3.4
       node-fetch: 2.6.7
