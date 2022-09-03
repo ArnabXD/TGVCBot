@@ -42,7 +42,7 @@
     "html-escaper": "3.0.3",
     "knex": "2.2.0",
     "sharp": "0.30.7",
-    "telegram": "2.9.8",
+    "telegram": "2.11.5",
     "tgcalls-next": "0.0.0-rc.18",
     "youtube-sr": "4.2.0",
     "ytdl-core": "4.11.0"
