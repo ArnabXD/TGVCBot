@@ -30,7 +30,7 @@ importers:
       '@types/better-sqlite3': 7.5.0
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
-      '@types/node': 16.11.43
+      '@types/node': 16.11.58
       '@types/sharp': 0.30.4
       '@typescript-eslint/eslint-plugin': 5.30.6
       '@typescript-eslint/parser': 5.30.6
@@ -72,13 +72,13 @@ importers:
       '@types/better-sqlite3': 7.5.0
       '@types/fluent-ffmpeg': 2.1.20
       '@types/html-escaper': 3.0.0
-      '@types/node': 16.11.43
+      '@types/node': 16.11.58
       '@types/sharp': 0.30.4
       '@typescript-eslint/eslint-plugin': 5.30.6_b7n364ggt6o4xlkgyoaww3ph3q
       '@typescript-eslint/parser': 5.30.6_he2ccbldppg44uulnyq4rwocfa
       eslint: 8.20.0
       rimraf: 3.0.2
-      ts-node: 10.9.1_5qlmdbhxrylc4rhzh7wamif4di
+      ts-node: 10.9.1_blrqoobwf2eqte46qefu7nm2oe
       typescript: 4.7.4
 
   apps/website:
@@ -99,7 +99,7 @@ importers:
       concurrently: 7.2.2
       markdown-it: 13.0.1
       postcss: 8.4.14
-      tailwindcss: 3.1.3
+      tailwindcss: 3.1.3_postcss@8.4.14
 
 packages:
 
@@ -592,7 +592,7 @@ packages:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
-      tailwindcss: 3.1.3
+      tailwindcss: 3.1.3_postcss@8.4.14
     dev: true
 
   /@tsconfig/node10/1.0.8:
@@ -651,8 +651,8 @@ packages:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
     dev: true
 
-  /@types/node/16.11.43:
-    resolution: {integrity: sha512-GqWykok+3uocgfAJM8imbozrqLnPyTrpFlrryURQlw1EesPUCx5XxTiucWDSFF9/NUEXDuD4bnvHm8xfVGWTpQ==}
+  /@types/node/16.11.58:
+    resolution: {integrity: sha512-uMVxJ111wpHzkx/vshZFb6Qni3BOMnlWLq7q9jrwej7Yw/KvjsEbpxCCxw+hLKxexFMc8YmpG8J9tnEe/rKsIg==}
     dev: true
 
   /@types/node/17.0.31:
@@ -1608,8 +1608,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -4946,10 +4946,12 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /tailwindcss/3.1.3:
+  /tailwindcss/3.1.3_postcss@8.4.14:
     resolution: {integrity: sha512-PRJNYdSIthrb8hjmAyymEyEN8Yo61TMXpzyFUpxULeeyRn3Y3gpvuw6FlRTKrJvK7thSGKRnhT36VovVx4WeMA==}
     engines: {node: '>=12.13.0'}
     hasBin: true
+    peerDependencies:
+      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -5163,7 +5165,7 @@ packages:
       yn: 3.1.1
     dev: true
 
-  /ts-node/10.9.1_5qlmdbhxrylc4rhzh7wamif4di:
+  /ts-node/10.9.1_blrqoobwf2eqte46qefu7nm2oe:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -5182,7 +5184,7 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 16.11.43
+      '@types/node': 16.11.58
       acorn: 8.7.1
       acorn-walk: 8.2.0
       arg: 4.1.3
