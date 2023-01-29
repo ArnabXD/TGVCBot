@@ -1,6 +1,6 @@
 {
   "name": "tgvcbot",
-  "version": "1.1.7",
+  "version": "1.1.9",
   "description": "Telegram Bot to Play Music in Voice Chat",
   "private": true,
   "main": "build/app.js",
@@ -17,12 +17,12 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@grammyjs/types": "2.8.1",
-    "@types/better-sqlite3": "7.5.0",
+    "@grammyjs/types": "2.11.2",
+    "@types/better-sqlite3": "7.6.3",
     "@types/fluent-ffmpeg": "2.1.20",
     "@types/html-escaper": "3.0.0",
     "@types/node": "16.11.43",
-    "@types/sharp": "0.30.4",
+    "@types/sharp": "0.31.1",
     "@typescript-eslint/eslint-plugin": "5.30.6",
     "@typescript-eslint/parser": "5.30.6",
     "eslint": "8.20.0",
@@ -31,21 +31,21 @@
     "typescript": "4.7.4"
   },
   "dependencies": {
-    "@mapbox/node-pre-gyp": "1.0.9",
-    "@napi-rs/canvas": "0.1.25",
-    "axios": "0.27.2",
-    "better-sqlite3": "7.6.2",
+    "@mapbox/node-pre-gyp": "1.0.10",
+    "@napi-rs/canvas": "0.1.34",
+    "axios": "1.2.6",
+    "better-sqlite3": "8.0.1",
     "dotenv": "16.0.1",
     "envalid": "7.3.1",
     "fluent-ffmpeg": "2.1.2",
-    "grammy": "1.9.1",
+    "grammy": "1.13.1",
     "html-escaper": "3.0.3",
-    "knex": "2.2.0",
-    "sharp": "0.30.7",
-    "telegram": "2.9.8",
+    "knex": "2.4.2",
+    "sharp": "0.31.3",
+    "telegram": "2.15.5",
     "tgcalls-next": "0.0.0-rc.18",
-    "youtube-sr": "4.2.0",
-    "ytdl-core": "4.11.0"
+    "youtube-sr": "4.3.4",
+    "ytdl-core": "4.11.2"
   },
   "engines": {
     "node": ">=16.x"
