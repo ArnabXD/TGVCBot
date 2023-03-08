@@ -6,4 +6,4 @@ RUN rm archive.tgz
 RUN mv -f package tgvcbot
 RUN cd tgvcbot && yarn install
 WORKDIR /tgvcbot
-RUN yarn run start
+CMD yarn run start
