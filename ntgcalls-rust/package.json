@@ -1,0 +1,9 @@
+{
+  "name": "ntgcalls-napi",
+  "version": "1.0.0",
+  "description": "Thread-safe Rust N-API native bindings for libntgcalls",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "private": false
+}

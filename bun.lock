@@ -9,6 +9,7 @@
         "@napi-rs/canvas": "^1.0.0",
         "@ybd-project/ytdl-core": "^6.0.8",
         "envalid": "^8.1.1",
+        "ntgcalls-napi": "file:./ntgcalls-rust",
         "sharp": "^0.34.5",
         "youtube-sr": "^4.3.4",
       },
@@ -224,6 +225,8 @@
     "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
 
     "node-localstorage": ["node-localstorage@3.0.5", "", { "dependencies": { "write-file-atomic": "^5.0.1" } }, "sha512-GCwtK33iwVXboZWYcqQHu3aRvXEBwmPkAMRBLeaX86ufhqslyUkLGsi4aW3INEfdQYpUB5M9qtYf3eHvAk2VBg=="],
+
+    "ntgcalls-napi": ["ntgcalls-napi@file:ntgcalls-rust", {}],
 
     "nwsapi": ["nwsapi@2.2.23", "", {}, "sha512-7wfH4sLbt4M0gCDzGE6vzQBo0bfTKjU7Sfpqy/7gs1qBfYz2vEJH6vXcBKpO3+6Yu1telwd0t9HpyOoLEQQbIQ=="],
 

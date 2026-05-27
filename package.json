@@ -17,6 +17,7 @@
     "@napi-rs/canvas": "^1.0.0",
     "@ybd-project/ytdl-core": "^6.0.8",
     "envalid": "^8.1.1",
+    "ntgcalls-napi": "file:./ntgcalls-rust",
     "sharp": "^0.34.5",
     "youtube-sr": "^4.3.4"
   },

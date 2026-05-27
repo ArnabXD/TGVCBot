@@ -1,18 +1,13 @@
 /**
  * Downloads the prebuilt libntgcalls shared library for the current platform
- * from the ntgcalls GitHub releases and extracts it to ./lib/.
+ * from the ntgcalls GitHub releases and extracts it to ./ntgcalls-rust/lib/.
  *
- * Sets NTGCALLS_LIB_PATH in .env automatically if not already set.
- *
- * Run via:
- *   bun scripts/download-ntgcalls.ts
- *
- * Also runs automatically as a postinstall hook (bun install).
+ * Runs automatically as a postinstall hook (bun install).
  */
 
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 
 // ── Platform detection ────────────────────────────────────────────────────────
 
@@ -61,49 +56,16 @@ async function fetchLatestRelease(): Promise<GithubRelease> {
   return res.json() as Promise<GithubRelease>;
 }
 
-// ── .env patching ─────────────────────────────────────────────────────────────
-
-async function patchEnvFile(libPath: string): Promise<void> {
-  const envFile = join(import.meta.dir, "../.env");
-  if (!existsSync(envFile)) return;
-
-  const content = await Bun.file(envFile).text();
-  const already = content
-    .split("\n")
-    .some(
-      (l) =>
-        l.startsWith("NTGCALLS_LIB_PATH=") && l.trim() !== "NTGCALLS_LIB_PATH=",
-    );
-
-  if (already) {
-    console.log("  ↳ .env already has NTGCALLS_LIB_PATH set, skipping patch");
-    return;
-  }
-
-  const patched = content.replace(
-    /^NTGCALLS_LIB_PATH=.*$/m,
-    `NTGCALLS_LIB_PATH=${libPath}`,
-  );
-
-  // If key wasn't in file at all, append it
-  const final = patched.includes("NTGCALLS_LIB_PATH=")
-    ? patched
-    : `${content}\nNTGCALLS_LIB_PATH=${libPath}\n`;
-
-  await Bun.write(envFile, final);
-  console.log(`  ↳ Patched .env: NTGCALLS_LIB_PATH=${libPath}`);
-}
-
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 const platform = detectPlatform();
 const libFile = libFilename(platform);
-const outDir = join(import.meta.dir, "../lib");
+const outDir = join(import.meta.dir, "../ntgcalls-rust/lib");
 const outPath = join(outDir, libFile);
 
-// ── Shim build ────────────────────────────────────────────────────────────────
+// ── Addon build ────────────────────────────────────────────────────────────────
 
-async function buildRustAddon(libDir: string): Promise<void> {
+async function buildRustAddon(): Promise<void> {
   console.log("[ntgcalls] Building Rust N-API addon...");
   const manifestPath = join(import.meta.dir, "../ntgcalls-rust/Cargo.toml");
   const proc = Bun.spawn(
@@ -122,19 +84,28 @@ async function buildRustAddon(libDir: string): Promise<void> {
         : "libntgcalls.so";
 
   const srcPath = join(targetDir, nativeLib);
-  const destPath = join(libDir, "ntgcalls.node");
+  const destPath = join(import.meta.dir, "../ntgcalls-rust/ntgcalls.node");
 
   console.log(`[ntgcalls] Copying ${srcPath} -> ${destPath}`);
   const copyProc = Bun.spawn(["cp", srcPath, destPath]);
   await copyProc.exited;
-  if (copyProc.exitCode !== 0) throw new Error("Failed to copy compiled addon to lib/");
+  if (copyProc.exitCode !== 0) throw new Error("Failed to copy compiled addon to package root");
+
+  // Also copy to node_modules/ntgcalls-napi/ if it exists (for local file: installation resolution)
+  const nodeModulesPath = join(import.meta.dir, "../node_modules/ntgcalls-napi/ntgcalls.node");
+  const nodeModulesLibDir = join(import.meta.dir, "../node_modules/ntgcalls-napi/lib");
+  if (existsSync(dirname(nodeModulesPath))) {
+    console.log("[ntgcalls] Copying compiled addon and libraries to node_modules/ntgcalls-napi/");
+    await Bun.spawn(["cp", destPath, nodeModulesPath]).exited;
+    await mkdir(nodeModulesLibDir, { recursive: true });
+    await Bun.spawn(["cp", join(outDir, libFile), join(nodeModulesLibDir, libFile)]).exited;
+  }
   console.log("[ntgcalls] Rust N-API addon built and installed successfully!");
 }
 
 if (existsSync(outPath)) {
   console.log(`[ntgcalls] Already downloaded: ${outPath}`);
-  await patchEnvFile(outPath);
-  await buildRustAddon(outDir);
+  await buildRustAddon();
   process.exit(0);
 }
 
@@ -162,19 +133,21 @@ await mkdir(outDir, { recursive: true });
 await Bun.write(zipPath, zipBytes);
 
 console.log(`[ntgcalls] Extracting ${libFile}...`);
-const proc = Bun.spawn(["unzip", "-jo", zipPath, `lib/${libFile}`, "-d", outDir], {
+const unzipProc = Bun.spawn(["unzip", "-jo", zipPath, `lib/${libFile}`, "-d", outDir], {
   stdout: "pipe",
   stderr: "pipe",
 });
-await proc.exited;
-if (proc.exitCode !== 0) {
-  const err = await new Response(proc.stderr).text();
+await unzipProc.exited;
+if (unzipProc.exitCode !== 0) {
+  const err = await new Response(unzipProc.stderr).text();
   throw new Error(`unzip failed: ${err}`);
 }
 
 // Clean up zip
-await Bun.file(zipPath).exists() && Bun.spawn(["rm", zipPath]);
+if (await Bun.file(zipPath).exists()) {
+  const rmProc = Bun.spawn(["rm", zipPath]);
+  await rmProc.exited;
+}
 
 console.log(`[ntgcalls] Installed: ${outPath}`);
-await patchEnvFile(outPath);
-await buildShim(outDir);
+await buildRustAddon();

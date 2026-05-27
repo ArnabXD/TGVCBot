@@ -1,26 +1,19 @@
 import EventEmitter from "node:events";
-import { createRequire } from "node:module";
-import { join } from "node:path";
-import env from "../env";
-
-const require = createRequire(import.meta.url);
-const addonPath = join(env.NTGCALLS_LIB_PATH, "../ntgcalls.node");
-const { NtgCalls: NativeNtgCalls } = require(addonPath);
+import { NtgCalls as NativeNtgCalls } from "ntgcalls-napi";
 
 export class NTgCalls extends EventEmitter {
-  // biome-ignore lint/suspicious/noExplicitAny: native addon instance
-  private readonly native: any;
+  private readonly native: NativeNtgCalls;
 
   constructor() {
     super();
     this.native = new NativeNtgCalls();
 
     // Register callbacks from the native thread safely
-    this.native.onStreamEnd((chatId: number) => {
+    this.native.on_stream_end((chatId: number) => {
       this.emit("stream-end", chatId);
     });
 
-    this.native.onConnectionChange(
+    this.native.on_connection_change(
       (chatId: number, kind: number, state: number) => {
         this.emit("connection-change", chatId, { kind, state });
       },
@@ -40,7 +33,7 @@ export class NTgCalls extends EventEmitter {
   }
 
   async setAudioSource(chatId: number, ffmpegCmd: string): Promise<void> {
-    return this.native.setAudioSource(chatId, ffmpegCmd);
+    return this.native.set_audio_source(chatId, ffmpegCmd);
   }
 
   async pause(chatId: number): Promise<void> {

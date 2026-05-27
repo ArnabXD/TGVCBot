@@ -438,11 +438,6 @@ impl NtgCalls {
 impl Drop for NtgCalls {
   fn drop(&mut self) {
     unsafe {
-      // Clear out native callbacks in C to prevent background calls during/after destruction
-      let null_cb: NtgStreamCallback = std::mem::transmute(std::ptr::null::<()>() as *const ());
-      let null_conn_cb: NtgConnectionCallback = std::mem::transmute(std::ptr::null::<()>() as *const ());
-      ntg_on_stream_end(self.handle, null_cb, std::ptr::null_mut());
-      ntg_on_connection_change(self.handle, null_conn_cb, std::ptr::null_mut());
       ntg_destroy(self.handle);
     }
   }
