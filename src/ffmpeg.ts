@@ -19,7 +19,7 @@ export function buildFfmpegCmd(input: string): string {
   // -ar 48000  — sample rate required by Telegram voice chats
   // -ac 1      — mono (NTgCalls default; stereo wastes bandwidth)
   // -          — write to stdout
-  return `ffmpeg -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -i "${input}" -vn -f s16le -ar 48000 -ac 1 -`;
+  return `ffmpeg -loglevel quiet -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -i "${input}" -vn -f s16le -ar 48000 -ac 1 -`;
 }
 
 /**

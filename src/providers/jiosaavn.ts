@@ -1,63 +1,94 @@
 import type { QueueData } from "../queue";
 import StreamProvider, { type RequestedBy } from "./base";
 
-// ── API types ─────────────────────────────────────────────────────────────────
+// ── API types (saavn.sumit.co / saavn.dev schema) ─────────────────────────────
+
+interface QualityUrl {
+  quality: string;
+  url: string;
+}
+
+interface Artist {
+  name: string;
+}
 
 interface SearchResult {
   id: string;
-  title: string;
-  image: string;
-  more_info: { singers: string };
-  perma_url: string;
+  name: string;
+  url: string;
+  duration: number | null;
+  artists: { primary: Artist[] };
+  image: QualityUrl[];
+  downloadUrl: QualityUrl[];
 }
 
 interface SearchResponse {
-  results: SearchResult[];
+  success: boolean;
+  data: { results: SearchResult[] };
 }
 
 interface SongResponse {
-  song: string;
-  singers: string;
-  primary_artists: string;
-  image: string;
-  duration: string;
-  perma_url: string;
-  media_urls: Record<string, string>;
-  media_url: string;
+  success: boolean;
+  data: SearchResult[];
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function bestDownloadUrl(urls: QualityUrl[]): string | undefined {
+  // Prefer 160kbps, fall back to highest available
+  return (
+    urls.find((u) => u.quality === "160kbps")?.url ??
+    urls.find((u) => u.quality === "96kbps")?.url ??
+    urls.at(-1)?.url
+  );
+}
+
+function formatDuration(seconds: number | null): string {
+  if (!seconds) return "Unknown";
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 class JioSaavn extends StreamProvider {
-  private readonly base = "https://jsvn-tgvc.vercel.app";
+  private readonly base = "https://saavn.sumit.co";
 
   constructor() {
     super("jiosaavn");
   }
 
   async search(key: string): Promise<SearchResult[]> {
-    const params = new URLSearchParams({ query: key.replace(/\s/g, "+") });
-    const res = await fetch(`${this.base}/search?${params}`);
+    const params = new URLSearchParams({ query: key, limit: "10" });
+    const res = await fetch(`${this.base}/api/search/songs?${params}`);
     if (!res.ok) return [];
     const data = (await res.json()) as SearchResponse;
-    return (data.results ?? []).map((r) => ({
-      ...r,
-      title: r.title.replace(/&quot;/g, `"`),
-    }));
+    return data.data?.results ?? [];
   }
 
   async getSong(id: string, from: RequestedBy): Promise<QueueData> {
-    const res = await fetch(`${this.base}/song?id=${id}`);
+    const res = await fetch(`${this.base}/api/songs/${id}`);
     if (!res.ok) throw new Error(`JioSaavn getSong failed: ${res.status}`);
-    const song = (await res.json()) as SongResponse;
+    const body = (await res.json()) as SongResponse;
+    const song = body.data[0];
+    if (!song) throw new Error("JioSaavn: empty song response");
+
+    const mp3_link = bestDownloadUrl(song.downloadUrl);
+    if (!mp3_link) throw new Error("JioSaavn: no download URL available");
+
+    const artist =
+      song.artists.primary.map((a) => a.name).join(", ") || "Unknown";
+    const image = song.image.at(-1)?.url ?? "";
+
     return {
-      link: song.perma_url,
-      title: song.song.replace(/&quot;/g, `"`),
-      image: song.image,
-      artist: song.singers || song.primary_artists,
-      duration: song.duration,
+      link: song.url,
+      title: song.name,
+      image,
+      artist,
+      duration: formatDuration(song.duration),
       requestedBy: { id: from.id, first_name: from.first_name },
-      mp3_link: song.media_urls["96_KBPS"] ?? song.media_url,
+      mp3_link,
       provider: this.provider,
     };
   }

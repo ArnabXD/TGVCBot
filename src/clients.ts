@@ -10,6 +10,7 @@
  */
 
 import { Client, StorageLocalStorage } from "@mtkruto/node";
+import { deviceConfig } from "./device";
 import env from "./env";
 
 export const bot = new Client({
@@ -22,6 +23,7 @@ export const userbot = new Client({
   apiId: env.API_ID,
   apiHash: env.API_HASH,
   storage: new StorageLocalStorage("./db/userbot-session"),
+  ...deviceConfig,
 });
 
 /**

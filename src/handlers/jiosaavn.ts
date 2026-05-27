@@ -68,9 +68,10 @@ composer.command(["jsvnsearch", "jiosaavnsearch", "jsvnsr"], async (ctx) => {
 
   results.forEach((res, i) => {
     const n = i + 1;
+    const singers = res.artists.primary.map((a) => a.name).join(", ");
     text +=
-      `${String(n).padStart(2, "0")}. <b><a href="${res.perma_url}">${Bun.escapeHTML(res.title)}</a></b>\n` +
-      `By: ${Bun.escapeHTML(res.more_info.singers)}\n\n`;
+      `${String(n).padStart(2, "0")}. <b><a href="${res.url}">${Bun.escapeHTML(res.name)}</a></b>\n` +
+      `By: ${Bun.escapeHTML(singers)}\n\n`;
     row.push({
       type: "callbackData",
       text: String(n),

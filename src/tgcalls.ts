@@ -12,7 +12,7 @@
  *   - Pop next from queue and play, or leave VC + stop NTgCalls if empty.
  */
 
-import ytdl from "@distube/ytdl-core";
+import { YtdlCore } from "@ybd-project/ytdl-core";
 import { bot, log, userbot } from "./clients";
 import { buildFfmpegCmd } from "./ffmpeg";
 import { ntgCalls } from "./ntgcalls";
@@ -30,6 +30,9 @@ export interface ChatInfo {
 class TGVCCalls {
   /** chatId → video-chat id (the string id used by MTKruto VC methods) */
   private readonly vcIds = new Map<number, string>();
+
+  /** Cache group chat names for log formatting */
+  private readonly chatNames = new Map<number, string>();
 
   /** chatIds currently connected via NTgCalls */
   private readonly active = new Set<number>();
@@ -59,6 +62,8 @@ class TGVCCalls {
     data: QueueData,
     force = false,
   ): Promise<void> {
+    this.chatNames.set(chat.id, chat.name);
+
     if (this.isActive(chat.id) && !force) {
       const position = queue.push(chat.id, data);
       await bot.sendMessage(
@@ -86,10 +91,22 @@ class TGVCCalls {
     return true;
   }
 
-  /** Skip the current track (triggers stream-end → auto-advance). */
+  /** Skip the current track. */
   async skip(chatId: number): Promise<boolean> {
     if (!this.isActive(chatId)) return false;
-    await ntgCalls.stop(chatId);
+
+    // Pop the next track from the queue
+    const next = queue.pop(chatId);
+
+    if (next) {
+      // Play the next track (will hot-swap seamlessly)
+      const chatName = this.chatNames.get(chatId) ?? String(chatId);
+      await this.play({ id: chatId, name: chatName }, next);
+    } else {
+      // No more tracks in queue — stop calls, clear current, and leave VC
+      await this.stop(chatId);
+    }
+
     return true;
   }
 
@@ -114,7 +131,10 @@ class TGVCCalls {
   ): Promise<string> {
     switch (data.provider) {
       case "youtube": {
-        const info = await ytdl.getInfo(data.mp3_link);
+        const ytdl = new YtdlCore();
+        const info = await ytdl.getFullInfo(
+          `https://www.youtube.com/watch?v=${data.mp3_link}`,
+        );
         // Prefer opus (itag 251) for best quality; fall back to first format
         const audio =
           info.formats.find((f) => f.itag === 251) ?? info.formats[0];
@@ -146,17 +166,46 @@ class TGVCCalls {
       // 1. Resolve ffmpeg command (may involve network calls)
       const ffmpegCmd = await this.resolveFfmpegCmd(data, chat.id);
 
+      if (this.isActive(chat.id)) {
+        // Hot-swap the audio source instantly without resetting WebRTC connection
+        await ntgCalls.setAudioSource(chat.id, ffmpegCmd);
+        queue.setCurrent(chat.id, data);
+
+        // Send now-playing message (best-effort)
+        await this.sendPlayingMessage(chat, data);
+
+        console.log(
+          `[TGVCBot][${chat.name}] Playing (Hot-Swapped) — ${data.title}`,
+        );
+        return;
+      }
+
       // 2. Generate WebRTC offer
       const offer = await ntgCalls.create(chat.id);
 
       // 3. Ensure VC is running and we have its id
       const vcId = await this.ensureVcId(chat.id);
 
-      // 4. Join VC with the offer → get server answer
-      const answer = await userbot.joinVideoChat(vcId, offer, {
-        isAudioEnabled: true,
-        isVideoEnabled: false,
-      });
+      // 4. Join VC with the offer → get server answer.
+      // Telegram occasionally returns -503 Timeout even when the join succeeds;
+      // wait briefly and retry once before giving up.
+      let answer: string;
+      try {
+        answer = await userbot.joinVideoChat(vcId, offer, {
+          isAudioEnabled: true,
+          isVideoEnabled: false,
+        });
+      } catch (err) {
+        if (String(err).includes("-503") || String(err).includes("Timeout")) {
+          await new Promise((r) => setTimeout(r, 2000));
+          answer = await userbot.joinVideoChat(vcId, offer, {
+            isAudioEnabled: true,
+            isVideoEnabled: false,
+          });
+        } else {
+          throw err;
+        }
+      }
 
       // 5. Complete WebRTC handshake
       await ntgCalls.connect(chat.id, answer);
@@ -213,7 +262,7 @@ class TGVCCalls {
     const next = queue.pop(chatId);
     if (next) {
       // Play next — but we need a chat name; use id as fallback
-      const chatName = String(chatId);
+      const chatName = this.chatNames.get(chatId) ?? String(chatId);
       await this.play({ id: chatId, name: chatName }, next);
     } else {
       queue.clearCurrent(chatId);

@@ -11,6 +11,7 @@
  */
 
 import { Client } from "@mtkruto/node";
+import { deviceConfig } from "../src/device";
 
 const apiId = Number(process.env.API_ID);
 const apiHash = process.env.API_HASH;
@@ -21,7 +22,7 @@ if (!apiId || !apiHash) {
   process.exit(1);
 }
 
-const client = new Client({ apiId, apiHash });
+const client = new Client({ apiId, apiHash, ...deviceConfig });
 
 await client.start({
   phone: () => {
