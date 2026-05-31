@@ -13,7 +13,7 @@ export async function errorHandler(
   try {
     const msg = Bun.escapeHTML(String(err));
     await log(`[Error] ${msg}`);
-    await ctx?.reply?.(`⚠️ Something went wrong:\n<code>${msg}</code>`, {
+    await ctx?.reply?.(`✖ Something went wrong:\n<code>${msg}</code>`, {
       parseMode: "HTML",
     });
   } catch (e) {

@@ -306,9 +306,9 @@ class TGVCCalls {
   ): Promise<void> {
     const caption =
       `Playing <a href="${data.link}">${Bun.escapeHTML(data.title)}</a>\n` +
-      `<b>&#10143;</b> Artist: ${Bun.escapeHTML(data.artist)}\n` +
-      `<b>&#10143;</b> Duration: ${data.duration}\n` +
-      `<b>&#10143;</b> Requested by <a href="tg://user?id=${data.requestedBy.id}">${Bun.escapeHTML(data.requestedBy.first_name)}</a>`;
+      `<b>▸</b> Artist: ${Bun.escapeHTML(data.artist)}\n` +
+      `<b>▸</b> Duration: ${data.duration}\n` +
+      `<b>▸</b> Requested by <a href="tg://user?id=${data.requestedBy.id}">${Bun.escapeHTML(data.requestedBy.first_name)}</a>`;
 
     try {
       // Dynamic import avoids circular deps; banner module created in Phase 7

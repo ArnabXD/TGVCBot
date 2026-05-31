@@ -13,5 +13,5 @@ initHandlers(bot);
 // ── Connect both clients and start receiving updates ─────────────────────────
 
 await startClients();
-await log("🚀 TGVCBot is running");
+await log("♫ TGVCBot is running");
 console.log("[TGVCBot] Started");

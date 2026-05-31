@@ -12,7 +12,7 @@ composer.command(["pause", "p"], checkInactiveVc, async (ctx) => {
 
 composer.command(["resume", "r"], checkInactiveVc, async (ctx) => {
   const ok = await tgcalls.resume(ctx.chat!.id);
-  await ctx.reply(ok ? "▶️ Resumed." : "Not paused.");
+  await ctx.reply(ok ? "▶ Resumed." : "Not paused.");
 });
 
 composer.command(["skip", "next"], checkInactiveVc, async (ctx) => {
@@ -27,7 +27,7 @@ composer.command("shuffle", checkInactiveVc, async (ctx) => {
     return;
   }
   queue.shuffle(chatId);
-  await ctx.reply("🔀 Queue shuffled.");
+  await ctx.reply("⇄ Queue shuffled.");
 });
 
 composer.command("stopvc", async (ctx) => {
