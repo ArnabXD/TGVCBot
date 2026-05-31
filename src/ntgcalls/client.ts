@@ -13,16 +13,18 @@ export class NTgCalls extends EventEmitter {
 
     // Register callbacks from the native thread safely
     this.native.on_stream_end((chatId: bigint) => {
-      logger.debug(`Stream ended for chatId=${chatId}`);
-      this.emit("stream-end", chatId);
+      const id = Number(chatId);
+      logger.debug(`Stream ended for chatId=${id}`);
+      this.emit("stream-end", id);
     });
 
     this.native.on_connection_change(
       (chatId: bigint, kind: number, state: number) => {
+        const id = Number(chatId);
         logger.debug(
-          `Connection change for chatId=${chatId} — kind=${kind} state=${state}`,
+          `Connection change for chatId=${id} — kind=${kind} state=${state}`,
         );
-        this.emit("connection-change", chatId, { kind, state });
+        this.emit("connection-change", id, { kind, state });
       },
     );
   }
