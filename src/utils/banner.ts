@@ -26,12 +26,12 @@ async function fetchImageBuffer(url: string): Promise<Buffer | null> {
   try {
     const res = await fetch(url);
     if (!res.ok) {
-      logger.warn(`image fetch failed: HTTP ${res.status} url=${url}`);
+      logger.warn(`Image fetch failed — HTTP ${res.status} for url=${url}`);
       return null;
     }
     return Buffer.from(await res.arrayBuffer());
   } catch (err) {
-    logger.warn(`image fetch error: ${err} url=${url}`);
+    logger.warn(`Image fetch error for url=${url}`, err);
     return null;
   }
 }

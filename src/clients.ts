@@ -52,6 +52,6 @@ export async function log(text: string): Promise<void> {
   try {
     await bot.sendMessage(env.LOG_CHANNEL, text);
   } catch {
-    logger.error("Failed to send log message:", text);
+    logger.error("Failed to send log message to LOG_CHANNEL", text);
   }
 }

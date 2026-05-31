@@ -66,7 +66,7 @@ class JioSaavn extends StreamProvider {
     const params = new URLSearchParams({ query: key, limit: "10" });
     const res = await fetch(`${this.base}/api/search/songs?${params}`);
     if (!res.ok) {
-      logger.warn(`search failed: HTTP ${res.status} for query="${key}"`);
+      logger.warn(`Search failed — HTTP ${res.status} for query="${key}"`);
       return [];
     }
     const data = (await res.json()) as SearchResponse;
@@ -74,7 +74,6 @@ class JioSaavn extends StreamProvider {
   }
 
   async getSong(id: string, from: RequestedBy): Promise<QueueData> {
-    logger.debug(`getSong id=${id} requestedBy=${from.id}`);
     const res = await fetch(`${this.base}/api/songs/${id}`);
     if (!res.ok)
       throw new Error(

@@ -20,6 +20,6 @@ export async function errorHandler(
       parseMode: "HTML",
     });
   } catch (e) {
-    logger.error("failed to report error:", e);
+    logger.error("Failed to report error", e);
   }
 }

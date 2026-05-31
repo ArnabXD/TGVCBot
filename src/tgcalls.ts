@@ -44,7 +44,7 @@ class TGVCCalls {
   constructor() {
     ntgCalls.on("stream-end", (chatId: number) => {
       this.onStreamEnd(chatId).catch((e) =>
-        logger.error("stream-end handler error:", e),
+        logger.error("Stream-end handler error", e),
       );
     });
   }
@@ -188,7 +188,7 @@ class TGVCCalls {
 
       // 3. Ensure VC is running and we have its id
       const vcId = await this.ensureVcId(chat.id);
-      logger.debug(`[${chat.name}] vcId=${vcId}`);
+      logger.debug(`[${chat.name}] Joining vcId=${vcId}`);
 
       // 4. Join VC with the offer → get server answer.
       // Telegram occasionally returns transient errors even when the join succeeds.
@@ -206,7 +206,7 @@ class TGVCCalls {
       } catch (err) {
         if (isRetryableJoinError(err)) {
           logger.warn(
-            `[${chat.name}] joinVideoChat failed (${err}), retrying with fresh offer`,
+            `[${chat.name}] Join failed, retrying with fresh offer — ${err}`,
           );
           await new Promise((r) => setTimeout(r, 2000));
           try {
@@ -240,7 +240,7 @@ class TGVCCalls {
 
       logger.info(`[${chat.name}] Playing — ${data.title}`);
     } catch (err) {
-      logger.error(`[${chat.name}] play() error:`, err);
+      logger.error(`[${chat.name}] Failed to play "${data.title}"`, err);
       await log(`[Error][${chat.name}] ${Bun.escapeHTML(String(err))}`);
       // Attempt to advance queue even on error
       await this.onStreamEnd(chat.id);
@@ -263,15 +263,13 @@ class TGVCCalls {
         chatInfo.type === "channel") &&
       chatInfo.videoChatId
     ) {
-      logger.debug(
-        `chatId=${chatId} found existing vcId=${chatInfo.videoChatId}`,
-      );
+      logger.debug(`[${chatId}] Found existing vcId=${chatInfo.videoChatId}`);
       this.vcIds.set(chatId, chatInfo.videoChatId);
       return chatInfo.videoChatId;
     }
 
     // No active VC — start one
-    logger.debug(`chatId=${chatId} no active VC, starting one`);
+    logger.debug(`[${chatId}] No active VC, starting one`);
     const vc = await userbot.startVideoChat(chatId);
     this.vcIds.set(chatId, vc.id);
     return vc.id;
@@ -285,12 +283,10 @@ class TGVCCalls {
     const next = queue.pop(chatId);
     const chatName = this.chatNames.get(chatId) ?? String(chatId);
     if (next) {
-      logger.debug(
-        `[${chatName}] stream-end, advancing to next: "${next.title}"`,
-      );
+      logger.debug(`[${chatName}] Advancing to next: "${next.title}"`);
       await this.play({ id: chatId, name: chatName }, next);
     } else {
-      logger.info(`[${chatName}] queue exhausted, tearing down`);
+      logger.info(`[${chatName}] Queue exhausted, leaving voice chat`);
       queue.clearCurrent(chatId);
       await this.teardown(chatId);
     }
@@ -301,7 +297,7 @@ class TGVCCalls {
    */
   private async teardown(chatId: number): Promise<void> {
     const chatName = this.chatNames.get(chatId) ?? String(chatId);
-    logger.debug(`[${chatName}] teardown`);
+    logger.debug(`[${chatName}] Tearing down`);
     this.active.delete(chatId);
     const vcId = this.vcIds.get(chatId);
     this.vcIds.delete(chatId);
@@ -317,7 +313,7 @@ class TGVCCalls {
         await userbot.leaveVideoChat(vcId);
       } catch (err) {
         logger.warn(
-          `[${chatName}] leaveVideoChat failed (may have already left): ${err}`,
+          `[${chatName}] Failed to leave voice chat (may have already left) — ${err}`,
         );
       }
     }

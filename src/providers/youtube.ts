@@ -29,7 +29,7 @@ class YouTube extends StreamProvider {
       safeSearch: true,
     });
     if (!results.length)
-      logger.warn(`search returned no results for query="${key}"`);
+      logger.warn(`Search returned no results for query="${key}"`);
     return results.map((r) => ({
       id: r.id ?? "dQw4w9WgXcQ",
       title: r.title ?? "Unknown",
@@ -39,7 +39,6 @@ class YouTube extends StreamProvider {
   }
 
   async getSong(id: string, from: RequestedBy): Promise<QueueData> {
-    logger.debug(`getSong id=${id} requestedBy=${from.id}`);
     const song = await YtSr.searchOne(id);
     return {
       link: song.url,
