@@ -13,6 +13,7 @@
  */
 
 import { YtdlCore } from "@ybd-project/ytdl-core";
+import { errors } from "@mtkruto/node";
 import { bot, log, userbot } from "./clients";
 import { buildFfmpegCmd } from "./ffmpeg";
 import { ntgCalls } from "./ntgcalls";
@@ -187,8 +188,11 @@ class TGVCCalls {
       const vcId = await this.ensureVcId(chat.id);
 
       // 4. Join VC with the offer → get server answer.
-      // Telegram occasionally returns -503 Timeout even when the join succeeds;
+      // Telegram occasionally returns transient errors even when the join succeeds;
       // wait briefly and retry once before giving up.
+      const isRetryableJoinError = (e: unknown) =>
+        e instanceof errors.GroupcallAddParticipantsFailed ||
+        (e instanceof errors.TelegramError && e.errorCode === -503);
       let answer: string;
       try {
         answer = await userbot.joinVideoChat(vcId, offer, {
@@ -196,7 +200,7 @@ class TGVCCalls {
           isVideoEnabled: false,
         });
       } catch (err) {
-        if (String(err).includes("-503") || String(err).includes("Timeout")) {
+        if (isRetryableJoinError(err)) {
           await new Promise((r) => setTimeout(r, 2000));
           answer = await userbot.joinVideoChat(vcId, offer, {
             isAudioEnabled: true,
