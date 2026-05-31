@@ -1,7 +1,10 @@
+import { consola } from "consola";
 import { YouTube as YtSr } from "youtube-sr";
 import env from "../env";
 import type { QueueData } from "../queue";
 import StreamProvider, { type RequestedBy } from "./base";
+
+const logger = consola.withTag("youtube");
 
 // ── Search result shape used by handlers ──────────────────────────────────────
 
@@ -25,6 +28,8 @@ class YouTube extends StreamProvider {
       limit: 10,
       safeSearch: true,
     });
+    if (!results.length)
+      logger.warn(`search returned no results for query="${key}"`);
     return results.map((r) => ({
       id: r.id ?? "dQw4w9WgXcQ",
       title: r.title ?? "Unknown",
@@ -34,6 +39,7 @@ class YouTube extends StreamProvider {
   }
 
   async getSong(id: string, from: RequestedBy): Promise<QueueData> {
+    logger.debug(`getSong id=${id} requestedBy=${from.id}`);
     const song = await YtSr.searchOne(id);
     return {
       link: song.url,

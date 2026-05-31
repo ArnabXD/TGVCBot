@@ -1,6 +1,9 @@
 import { Composer, type InlineKeyboardButton } from "@mtkruto/node";
+import { consola } from "consola";
 import { yt } from "../providers/youtube";
 import { tgcalls } from "../tgcalls";
+
+const logger = consola.withTag("handler:youtube");
 
 const composer = new Composer();
 
@@ -22,6 +25,9 @@ composer.command(["youtube", "yt"], async (ctx) => {
     await ctx.reply("Please provide a search keyword.");
     return;
   }
+  logger.info(
+    `/youtube query="${query}" chatId=${ctx.chat.id} userId=${ctx.from.id}`,
+  );
   await ctx.sendChatAction({ type: "typing" });
 
   const results = await yt.search(query);
@@ -53,6 +59,9 @@ composer.command(["ytsearch", "ytsr"], async (ctx) => {
     await ctx.reply("Please provide a search keyword.");
     return;
   }
+  logger.info(
+    `/ytsearch query="${query}" chatId=${ctx.chat.id} userId=${ctx.from.id}`,
+  );
   await ctx.sendChatAction({ type: "typing" });
 
   const results = (await yt.search(query)).slice(0, 10);
@@ -102,6 +111,9 @@ composer.callbackQuery(/^yt:\d+:[a-zA-Z0-9._-]+/, async (ctx) => {
   }
   if (!ctx.chat || !("title" in ctx.chat) || !videoId) return;
 
+  logger.info(
+    `yt callback videoId=${videoId} chatId=${ctx.chat.id} userId=${ctx.callbackQuery.from.id}`,
+  );
   const songData = await yt.getSong(videoId, {
     id: ctx.callbackQuery.from.id,
     first_name: ctx.callbackQuery.from.firstName,

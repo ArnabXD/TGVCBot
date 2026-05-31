@@ -1,5 +1,8 @@
+import { consola } from "consola";
 import type { QueueData } from "../queue";
 import StreamProvider, { type RequestedBy } from "./base";
+
+const logger = consola.withTag("jiosaavn");
 
 // ── API types (saavn.sumit.co / saavn.dev schema) ─────────────────────────────
 
@@ -62,14 +65,21 @@ class JioSaavn extends StreamProvider {
   async search(key: string): Promise<SearchResult[]> {
     const params = new URLSearchParams({ query: key, limit: "10" });
     const res = await fetch(`${this.base}/api/search/songs?${params}`);
-    if (!res.ok) return [];
+    if (!res.ok) {
+      logger.warn(`search failed: HTTP ${res.status} for query="${key}"`);
+      return [];
+    }
     const data = (await res.json()) as SearchResponse;
     return data.data?.results ?? [];
   }
 
   async getSong(id: string, from: RequestedBy): Promise<QueueData> {
+    logger.debug(`getSong id=${id} requestedBy=${from.id}`);
     const res = await fetch(`${this.base}/api/songs/${id}`);
-    if (!res.ok) throw new Error(`JioSaavn getSong failed: ${res.status}`);
+    if (!res.ok)
+      throw new Error(
+        `JioSaavn getSong failed: HTTP ${res.status} for id=${id}`,
+      );
     const body = (await res.json()) as SongResponse;
     const song = body.data[0];
     if (!song) throw new Error("JioSaavn: empty song response");

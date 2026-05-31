@@ -9,9 +9,12 @@
  *     [ watermark at bottom-right         ]
  */
 
+import { consola } from "consola";
 import sharp from "sharp";
 import env from "../env";
 import { getImage } from "./text-to-image";
+
+const logger = consola.withTag("banner");
 
 export interface BannerOptions {
   image: string;
@@ -22,9 +25,13 @@ export interface BannerOptions {
 async function fetchImageBuffer(url: string): Promise<Buffer | null> {
   try {
     const res = await fetch(url);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      logger.warn(`image fetch failed: HTTP ${res.status} url=${url}`);
+      return null;
+    }
     return Buffer.from(await res.arrayBuffer());
-  } catch {
+  } catch (err) {
+    logger.warn(`image fetch error: ${err} url=${url}`);
     return null;
   }
 }

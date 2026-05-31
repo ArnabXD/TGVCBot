@@ -1,6 +1,9 @@
 import { Composer } from "@mtkruto/node";
+import { consola } from "consola";
 import env from "../env";
 import { tgcalls } from "../tgcalls";
+
+const logger = consola.withTag("handler:radio");
 
 const composer = new Composer();
 
@@ -30,6 +33,9 @@ composer.command(["radio", "stream"], async (ctx) => {
     return;
   }
 
+  logger.info(
+    `/radio url="${url}" chatId=${ctx.chat.id} userId=${ctx.from.id}`,
+  );
   await ctx.sendChatAction({ type: "uploadingPhoto" });
 
   // After the private guard above, ctx.chat is ChatPGroup | ChatPSupergroup | ChatPChannel,

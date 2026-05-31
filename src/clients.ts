@@ -37,9 +37,11 @@ export const userbot = new Client({
  * Both are started in parallel for faster startup.
  */
 export async function startClients(): Promise<void> {
+  logger.info("Connecting clients...");
   await userbot.importAuthString(env.SESSION);
 
   await Promise.all([bot.start({ botToken: env.BOT_TOKEN }), userbot.start()]);
+  logger.success("Both clients connected");
 }
 
 /**

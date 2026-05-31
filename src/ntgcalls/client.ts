@@ -1,5 +1,8 @@
 import EventEmitter from "node:events";
 import { NtgCalls as NativeNtgCalls } from "@arnabxd/ntgcalls-napi";
+import { consola } from "consola";
+
+const logger = consola.withTag("ntgcalls");
 
 export class NTgCalls extends EventEmitter {
   private readonly native: NativeNtgCalls;
@@ -10,11 +13,15 @@ export class NTgCalls extends EventEmitter {
 
     // Register callbacks from the native thread safely
     this.native.on_stream_end((chatId: bigint) => {
+      logger.debug(`stream-end chatId=${chatId}`);
       this.emit("stream-end", chatId);
     });
 
     this.native.on_connection_change(
       (chatId: bigint, kind: number, state: number) => {
+        logger.debug(
+          `connection-change chatId=${chatId} kind=${kind} state=${state}`,
+        );
         this.emit("connection-change", chatId, { kind, state });
       },
     );

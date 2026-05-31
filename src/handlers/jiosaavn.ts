@@ -1,6 +1,9 @@
 import { Composer, type InlineKeyboardButton } from "@mtkruto/node";
+import { consola } from "consola";
 import { jiosaavn } from "../providers/jiosaavn";
 import { tgcalls } from "../tgcalls";
+
+const logger = consola.withTag("handler:jiosaavn");
 
 const composer = new Composer();
 
@@ -22,6 +25,9 @@ composer.command(["jiosaavn", "jsvn"], async (ctx) => {
     await ctx.reply("Please provide a search keyword.");
     return;
   }
+  logger.info(
+    `/jiosaavn query="${query}" chatId=${ctx.chat.id} userId=${ctx.from.id}`,
+  );
   await ctx.sendChatAction({ type: "typing" });
 
   const results = await jiosaavn.search(query);
@@ -53,6 +59,9 @@ composer.command(["jsvnsearch", "jiosaavnsearch", "jsvnsr"], async (ctx) => {
     await ctx.reply("Please provide a search keyword.");
     return;
   }
+  logger.info(
+    `/jsvnsearch query="${query}" chatId=${ctx.chat.id} userId=${ctx.from.id}`,
+  );
   await ctx.sendChatAction({ type: "typing" });
 
   const results = (await jiosaavn.search(query)).slice(0, 10);
@@ -103,6 +112,9 @@ composer.callbackQuery(/^jsvn:\d+:[a-zA-Z0-9._-]+/, async (ctx) => {
   }
   if (!ctx.chat || !("title" in ctx.chat) || !songId) return;
 
+  logger.info(
+    `jsvn callback songId=${songId} chatId=${ctx.chat.id} userId=${ctx.callbackQuery.from.id}`,
+  );
   const songData = await jiosaavn.getSong(songId, {
     id: ctx.callbackQuery.from.id,
     first_name: ctx.callbackQuery.from.firstName,

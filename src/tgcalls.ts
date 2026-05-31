@@ -184,9 +184,11 @@ class TGVCCalls {
 
       // 2. Generate WebRTC offer
       const offer = await ntgCalls.create(chat.id);
+      logger.debug(`[${chat.name}] WebRTC offer created`);
 
       // 3. Ensure VC is running and we have its id
       const vcId = await this.ensureVcId(chat.id);
+      logger.debug(`[${chat.name}] vcId=${vcId}`);
 
       // 4. Join VC with the offer → get server answer.
       // Telegram occasionally returns transient errors even when the join succeeds.
@@ -203,6 +205,9 @@ class TGVCCalls {
         });
       } catch (err) {
         if (isRetryableJoinError(err)) {
+          logger.warn(
+            `[${chat.name}] joinVideoChat failed (${err}), retrying with fresh offer`,
+          );
           await new Promise((r) => setTimeout(r, 2000));
           try {
             await ntgCalls.stop(chat.id);
@@ -258,11 +263,15 @@ class TGVCCalls {
         chatInfo.type === "channel") &&
       chatInfo.videoChatId
     ) {
+      logger.debug(
+        `chatId=${chatId} found existing vcId=${chatInfo.videoChatId}`,
+      );
       this.vcIds.set(chatId, chatInfo.videoChatId);
       return chatInfo.videoChatId;
     }
 
     // No active VC — start one
+    logger.debug(`chatId=${chatId} no active VC, starting one`);
     const vc = await userbot.startVideoChat(chatId);
     this.vcIds.set(chatId, vc.id);
     return vc.id;
@@ -274,11 +283,14 @@ class TGVCCalls {
    */
   private async onStreamEnd(chatId: number): Promise<void> {
     const next = queue.pop(chatId);
+    const chatName = this.chatNames.get(chatId) ?? String(chatId);
     if (next) {
-      // Play next — but we need a chat name; use id as fallback
-      const chatName = this.chatNames.get(chatId) ?? String(chatId);
+      logger.debug(
+        `[${chatName}] stream-end, advancing to next: "${next.title}"`,
+      );
       await this.play({ id: chatId, name: chatName }, next);
     } else {
+      logger.info(`[${chatName}] queue exhausted, tearing down`);
       queue.clearCurrent(chatId);
       await this.teardown(chatId);
     }
@@ -288,6 +300,8 @@ class TGVCCalls {
    * Stop NTgCalls for a chat and leave the voice chat.
    */
   private async teardown(chatId: number): Promise<void> {
+    const chatName = this.chatNames.get(chatId) ?? String(chatId);
+    logger.debug(`[${chatName}] teardown`);
     this.active.delete(chatId);
     const vcId = this.vcIds.get(chatId);
     this.vcIds.delete(chatId);
@@ -301,8 +315,10 @@ class TGVCCalls {
     if (vcId) {
       try {
         await userbot.leaveVideoChat(vcId);
-      } catch {
-        // already left or VC ended
+      } catch (err) {
+        logger.warn(
+          `[${chatName}] leaveVideoChat failed (may have already left): ${err}`,
+        );
       }
     }
   }

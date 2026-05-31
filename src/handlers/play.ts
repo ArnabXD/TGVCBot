@@ -1,6 +1,9 @@
 import { Composer } from "@mtkruto/node";
+import { consola } from "consola";
 import env from "../env";
 import { tgcalls } from "../tgcalls";
+
+const logger = consola.withTag("handler:play");
 
 const composer = new Composer();
 
@@ -27,6 +30,9 @@ composer.command(["play", "pl"], async (ctx) => {
     return;
   }
 
+  logger.info(
+    `/play fileId=${replied.audio.fileId} chatId=${ctx.chat.id} userId=${ctx.from.id}`,
+  );
   await ctx.sendChatAction({ type: "uploadingPhoto" });
 
   const audio = replied.audio;
