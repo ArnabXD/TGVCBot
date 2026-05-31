@@ -10,8 +10,11 @@
  */
 
 import { Client, StorageLocalStorage } from "@mtkruto/node";
+import { consola } from "consola";
 import { deviceConfig } from "./device";
 import env from "./env";
+
+const logger = consola.withTag("clients");
 
 export const bot = new Client({
   apiId: env.API_ID,
@@ -47,6 +50,6 @@ export async function log(text: string): Promise<void> {
   try {
     await bot.sendMessage(env.LOG_CHANNEL, text);
   } catch {
-    console.error("[log] Failed to send log message:", text);
+    logger.error("Failed to send log message:", text);
   }
 }

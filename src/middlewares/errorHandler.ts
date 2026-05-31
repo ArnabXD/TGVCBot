@@ -1,4 +1,7 @@
+import { consola } from "consola";
 import { log } from "../clients";
+
+const logger = consola.withTag("errorHandler");
 
 /**
  * Top-level error handler — logs to LOG_CHANNEL and replies to the user.
@@ -17,6 +20,6 @@ export async function errorHandler(
       parseMode: "HTML",
     });
   } catch (e) {
-    console.error("[errorHandler] failed to report error:", e);
+    logger.error("failed to report error:", e);
   }
 }

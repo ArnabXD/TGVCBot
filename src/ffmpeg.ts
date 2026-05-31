@@ -6,6 +6,10 @@
  * stdout: signed 16-bit little-endian, 48 kHz, mono.
  */
 
+import { consola } from "consola";
+
+const logger = consola.withTag("ffmpeg");
+
 /**
  * Build the ffmpeg shell command for a given input.
  *
@@ -28,9 +32,8 @@ export function buildFfmpegCmd(input: string): string {
  */
 export function testFFMPEG(): void {
   if (!Bun.which("ffmpeg")) {
-    console.error(
-      "[Error] ffmpeg not found in PATH.\n" +
-        "Install it (e.g. `apt install ffmpeg` / `brew install ffmpeg`) and restart.",
+    logger.fatal(
+      "ffmpeg not found in PATH. Install it (e.g. `apt install ffmpeg` / `brew install ffmpeg`) and restart.",
     );
     process.exit(1);
   }

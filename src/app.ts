@@ -1,6 +1,9 @@
+import { consola } from "consola";
 import { bot, log, startClients } from "./clients";
 import { testFFMPEG } from "./ffmpeg";
 import { initHandlers } from "./handlers";
+
+const logger = consola.withTag("app");
 
 // ── Startup checks ────────────────────────────────────────────────────────────
 
@@ -14,4 +17,4 @@ initHandlers(bot);
 
 await startClients();
 await log("♫ TGVCBot is running");
-console.log("[TGVCBot] Started");
+logger.success("Started");

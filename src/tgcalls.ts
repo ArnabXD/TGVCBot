@@ -12,12 +12,15 @@
  *   - Pop next from queue and play, or leave VC + stop NTgCalls if empty.
  */
 
-import { YtdlCore } from "@ybd-project/ytdl-core";
 import { errors } from "@mtkruto/node";
+import { YtdlCore } from "@ybd-project/ytdl-core";
+import { consola } from "consola";
 import { bot, log, userbot } from "./clients";
 import { buildFfmpegCmd } from "./ffmpeg";
 import { ntgCalls } from "./ntgcalls";
 import { type QueueData, queue } from "./queue";
+
+const logger = consola.withTag("tgcalls");
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -41,7 +44,7 @@ class TGVCCalls {
   constructor() {
     ntgCalls.on("stream-end", (chatId: number) => {
       this.onStreamEnd(chatId).catch((e) =>
-        console.error("[TGVCCalls] stream-end handler error:", e),
+        logger.error("stream-end handler error:", e),
       );
     });
   }
@@ -175,9 +178,7 @@ class TGVCCalls {
         // Send now-playing message (best-effort)
         await this.sendPlayingMessage(chat, data);
 
-        console.log(
-          `[TGVCBot][${chat.name}] Playing (Hot-Swapped) — ${data.title}`,
-        );
+        logger.info(`[${chat.name}] Playing (Hot-Swapped) — ${data.title}`);
         return;
       }
 
@@ -203,7 +204,11 @@ class TGVCCalls {
       } catch (err) {
         if (isRetryableJoinError(err)) {
           await new Promise((r) => setTimeout(r, 2000));
-          try { await ntgCalls.stop(chat.id); } catch { /* ignore */ }
+          try {
+            await ntgCalls.stop(chat.id);
+          } catch {
+            /* ignore */
+          }
           this.vcIds.delete(chat.id);
           const freshOffer = await ntgCalls.create(chat.id);
           const freshVcId = await this.ensureVcId(chat.id);
@@ -228,9 +233,9 @@ class TGVCCalls {
       // 7. Send now-playing message (best-effort)
       await this.sendPlayingMessage(chat, data);
 
-      console.log(`[TGVCBot][${chat.name}] Playing — ${data.title}`);
+      logger.info(`[${chat.name}] Playing — ${data.title}`);
     } catch (err) {
-      console.error(`[TGVCCalls][${chat.name}] play() error:`, err);
+      logger.error(`[${chat.name}] play() error:`, err);
       await log(`[Error][${chat.name}] ${Bun.escapeHTML(String(err))}`);
       // Attempt to advance queue even on error
       await this.onStreamEnd(chat.id);
