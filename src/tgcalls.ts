@@ -135,7 +135,7 @@ class TGVCCalls {
   ): Promise<string> {
     switch (data.provider) {
       case "youtube": {
-        const ytdl = new YtdlCore();
+        const ytdl = new YtdlCore({ disablePoTokenAutoGeneration: true });
         const info = await ytdl.getFullInfo(
           `https://www.youtube.com/watch?v=${data.mp3_link}`,
         );

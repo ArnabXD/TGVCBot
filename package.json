@@ -17,6 +17,7 @@
     "@ybd-project/ytdl-core": "^6.0.8",
     "consola": "^3.4.2",
     "envalid": "^8.1.1",
+    "hono": "^4.12.23",
     "sharp": "^0.34.5",
     "youtube-sr": "^4.3.4"
   },

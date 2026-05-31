@@ -12,6 +12,10 @@ const env = cleanEnv(process.env, {
     default: "https://telegra.ph/file/6b07279fd80ef2b844ed0.png",
   }),
   WATERMARK: str({ default: "TGVCBot" }),
+  PORT: num({ default: 3000 }),
+  WEBAPP_URL: str({ default: "" }),
+  WEBAPP_SHORT_NAME: str({ default: "app" }),
+  WEBAPP_DIRECT_LINK: str({ default: "" }),
 });
 
 export default env;

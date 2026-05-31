@@ -1,4 +1,6 @@
-import { Composer } from "@mtkruto/node";
+import { Composer, type InlineKeyboardButton } from "@mtkruto/node";
+import { bot } from "../clients";
+import env from "../env";
 import { checkInactiveVc } from "../middlewares/inactiveVc";
 import { queue } from "../queue";
 import { tgcalls } from "../tgcalls";
@@ -37,6 +39,44 @@ composer.command("stopvc", async (ctx) => {
   }
   const ok = await tgcalls.stop(ctx.chat.id);
   await ctx.reply(ok ? "■ Stopped." : "Nothing is playing.");
+});
+
+composer.command(["app", "vcapp", "controller"], async (ctx) => {
+  if (!ctx.chat || ctx.chat.type === "private") {
+    await ctx.reply("This command works in groups only.");
+    return;
+  }
+  if (!env.WEBAPP_URL && !env.WEBAPP_DIRECT_LINK) {
+    await ctx.reply("Mini App URL is not configured in the bot environment.");
+    return;
+  }
+
+  const me = await bot.getMe();
+  const directLink =
+    env.WEBAPP_DIRECT_LINK ||
+    `https://t.me/${me.username}/${env.WEBAPP_SHORT_NAME}`;
+  const cleanLink = directLink.endsWith("/")
+    ? directLink.slice(0, -1)
+    : directLink;
+
+  const chatIdParam = ctx.chat.id.toString().replace(/^-/, "g");
+  const button: InlineKeyboardButton = {
+    type: "url",
+    text: "🎵 Open Stream Controller",
+    url: `${cleanLink}?startapp=${chatIdParam}`,
+  };
+
+  await ctx.reply(
+    "🎵 <b>TGVCBot Stream Controller</b>\n\n" +
+      "Click the button below to search for songs, view the queue, and control the active stream!",
+    {
+      parseMode: "HTML",
+      replyMarkup: {
+        type: "inlineKeyboard",
+        inlineKeyboard: [[button]],
+      },
+    },
+  );
 });
 
 export default composer;
