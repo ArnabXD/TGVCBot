@@ -188,8 +188,9 @@ class TGVCCalls {
       const vcId = await this.ensureVcId(chat.id);
 
       // 4. Join VC with the offer → get server answer.
-      // Telegram occasionally returns transient errors even when the join succeeds;
-      // wait briefly and retry once before giving up.
+      // Telegram occasionally returns transient errors even when the join succeeds.
+      // On failure: stop ntgcalls, bust the vcId cache, wait, then retry with a
+      // fresh offer — reusing a stale SSRC causes repeated rejections.
       const isRetryableJoinError = (e: unknown) =>
         e instanceof errors.GroupcallAddParticipantsFailed ||
         (e instanceof errors.TelegramError && e.errorCode === -503);
@@ -202,7 +203,11 @@ class TGVCCalls {
       } catch (err) {
         if (isRetryableJoinError(err)) {
           await new Promise((r) => setTimeout(r, 2000));
-          answer = await userbot.joinVideoChat(vcId, offer, {
+          try { await ntgCalls.stop(chat.id); } catch { /* ignore */ }
+          this.vcIds.delete(chat.id);
+          const freshOffer = await ntgCalls.create(chat.id);
+          const freshVcId = await this.ensureVcId(chat.id);
+          answer = await userbot.joinVideoChat(freshVcId, freshOffer, {
             isAudioEnabled: true,
             isVideoEnabled: false,
           });
