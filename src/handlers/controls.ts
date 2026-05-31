@@ -7,7 +7,7 @@ const composer = new Composer();
 
 composer.command(["pause", "p"], checkInactiveVc, async (ctx) => {
   const ok = await tgcalls.pause(ctx.chat!.id);
-  await ctx.reply(ok ? "⏸ Paused." : "Not playing.");
+  await ctx.reply(ok ? "‖ Paused." : "Not playing.");
 });
 
 composer.command(["resume", "r"], checkInactiveVc, async (ctx) => {
@@ -17,7 +17,7 @@ composer.command(["resume", "r"], checkInactiveVc, async (ctx) => {
 
 composer.command(["skip", "next"], checkInactiveVc, async (ctx) => {
   const ok = await tgcalls.skip(ctx.chat!.id);
-  await ctx.reply(ok ? "⏭ Skipped." : "Nothing to skip.");
+  await ctx.reply(ok ? "» Skipped." : "Nothing to skip.");
 });
 
 composer.command("shuffle", checkInactiveVc, async (ctx) => {
@@ -36,7 +36,7 @@ composer.command("stopvc", async (ctx) => {
     return;
   }
   const ok = await tgcalls.stop(ctx.chat.id);
-  await ctx.reply(ok ? "⏹ Stopped." : "Nothing is playing.");
+  await ctx.reply(ok ? "■ Stopped." : "Nothing is playing.");
 });
 
 export default composer;

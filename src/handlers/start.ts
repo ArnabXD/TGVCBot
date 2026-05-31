@@ -8,7 +8,7 @@ composer.command("start", async (ctx) => {
   await ctx.reply(
     `Hi <a href="tg://user?id=${ctx.from.id}">${name}</a>\n` +
       `I play songs in Telegram voice chats.\n` +
-      `If you like this bot, consider starring the <a href="https://github.com/ArnabXD/TGVCBot">repository</a> ⭐`,
+      `If you like this bot, consider starring the <a href="https://github.com/ArnabXD/TGVCBot">repository</a> ★`,
     {
       parseMode: "HTML",
       linkPreview: { type: "input", isDisabled: true },
