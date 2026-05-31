@@ -6,18 +6,16 @@
     "dev": "bun --watch src/app.ts",
     "start": "bun src/app.ts",
     "gen-session": "bun scripts/gen-session.ts",
-    "download-ntgcalls": "bun scripts/download-ntgcalls.ts",
-    "postinstall": "bun scripts/download-ntgcalls.ts",
     "lint": "biome check src",
     "lint:fix": "biome check --write src",
     "format": "biome format --write src"
   },
   "dependencies": {
+    "@arnabxd/ntgcalls-napi": "^0.2.1",
     "@mtkruto/node": "latest",
     "@napi-rs/canvas": "^1.0.0",
     "@ybd-project/ytdl-core": "^6.0.8",
     "envalid": "^8.1.1",
-    "ntgcalls-napi": "file:./ntgcalls-rust",
     "sharp": "^0.34.5",
     "youtube-sr": "^4.3.4"
   },
@@ -25,6 +23,7 @@
     "@biomejs/biome": "latest",
     "@types/bun": "latest"
   },
+  "trustedDependencies": ["@arnabxd/ntgcalls-napi", "sharp"],
   "module": "src/app.ts",
   "type": "module",
   "private": true
