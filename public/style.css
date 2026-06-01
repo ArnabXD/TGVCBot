@@ -364,6 +364,8 @@ html, body {
   object-fit: cover;
   background: var(--surface);
   flex-shrink: 0;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .track-row-info { flex: 1; min-width: 0; }
@@ -454,24 +456,14 @@ html, body {
   background: rgba(255, 92, 92, 0.12);
 }
 
-/* SortableJS drag states */
+/* Dragged element ghost (x-sort.ghost) */
 .sortable-ghost {
   opacity: 0.4;
 }
 
-.sortable-chosen {
-  background: var(--surface);
-}
-
-.sortable-drag {
-  opacity: 0.95;
-}
-
-/* Cloned drag preview (forceFallback) — lift it off the list with a shadow. */
-.track-row-drag {
-  opacity: 1 !important;
-  background: var(--surface);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+/* While any item is being dragged, the plugin adds .sorting to <body>. */
+body.sorting .drag-handle {
+  cursor: grabbing;
 }
 
 /* ── Search ─────────────────────────────────────────────────────────────────── */

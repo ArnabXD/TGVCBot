@@ -21,7 +21,6 @@ function app() {
     toastMessage: '',
 
     pollingInterval: null,
-    sortable: null,
     // Ignore status polls until this timestamp (ms) to avoid clobbering an
     // optimistic reorder/remove before the server has committed it.
     suppressPollUntil: 0,
@@ -153,40 +152,27 @@ function app() {
       }
     },
 
-    initSortable() {
-      const el = this.$refs.queueContainer;
-      if (!el || typeof Sortable === 'undefined') return;
-      this.sortable = Sortable.create(el, {
-        handle: '.drag-handle',
-        animation: 150,
-        // Build the drag preview from a DOM clone Sortable controls (rather than
-        // the native browser drag image), so the row's <img> renders from the
-        // live DOM instead of showing a broken image during the drag.
-        forceFallback: true,
-        fallbackClass: 'track-row-drag',
-        onEnd: (evt) => {
-          if (evt.oldIndex === evt.newIndex) return;
-          // Read the dropped order from the DOM.
-          const ids = Array.from(el.querySelectorAll('[data-id]'))
-            .map((node) => Number(node.getAttribute('data-id')));
-          // Revert Sortable's DOM mutation so Alpine stays the single source of
-          // truth — it will re-render the new order from queueList below.
-          const moved = evt.item;
-          const ref = el.children[evt.oldIndex > evt.newIndex ? evt.oldIndex + 1 : evt.oldIndex];
-          el.insertBefore(moved, ref || null);
-          this.reorderQueue(ids);
-        }
-      });
-    },
-
-    reorderQueue(orderedIds) {
+    // Called by the @alpinejs/sort plugin on drop: `item` is the dragged
+    // track id, `position` its new 0-based index. Mirror the move into the
+    // local list (the render source) and persist the new order.
+    reorderQueue(item, position) {
       if (!this.chatId) return;
+      const id = Number(item);
+      const from = this.queueList.findIndex((t) => t.id === id);
+      if (from === -1 || from === position) return;
       if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-      // Optimistically reorder the local list to match the dropped order.
-      const byId = new Map(this.queueList.map((t) => [t.id, t]));
-      this.queueList = orderedIds.map((id) => byId.get(id)).filter(Boolean);
+
+      const next = this.queueList.slice();
+      const [moved] = next.splice(from, 1);
+      next.splice(position, 0, moved);
+      this.queueList = next;
+
       this.suppressPollUntil = Date.now() + 4000;
-      this.persistQueueAction('/api/queue/reorder', { orderedIds }, 'Queue reordered');
+      this.persistQueueAction(
+        '/api/queue/reorder',
+        { orderedIds: next.map((t) => t.id) },
+        'Queue reordered',
+      );
     },
 
     removeFromQueue(id) {
