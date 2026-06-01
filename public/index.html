@@ -22,7 +22,6 @@
           <div class="topbar-name" x-text="groupName">Group Stream</div>
           <div class="topbar-sub">
             <span x-text="'#' + chatId"></span>
-            <button @click="promptChatId()">change</button>
           </div>
         </div>
       </div>
@@ -97,7 +96,11 @@
                   <line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/>
                 </svg>
               </span>
-              <img :src="track.image || 'https://telegra.ph/file/6b07279fd80ef2b844ed0.png'" alt="" />
+              <img
+                :src="track.image || 'https://telegra.ph/file/6b07279fd80ef2b844ed0.png'"
+                onerror="this.onerror=null;this.src='https://telegra.ph/file/6b07279fd80ef2b844ed0.png'"
+                alt=""
+              />
               <div class="track-row-info">
                 <div class="track-row-title" x-text="track.title"></div>
                 <div class="track-row-artist" x-text="track.artist"></div>

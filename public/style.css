@@ -14,6 +14,12 @@
 }
 
 .light-theme {
+  /* Light fallbacks used when Telegram's theme params aren't injected (e.g.
+     browser preview). Inside Telegram the --tg-theme-* vars above win. */
+  --bg: var(--tg-theme-bg-color, #ffffff);
+  --text: var(--tg-theme-text-color, #000000);
+  --hint: var(--tg-theme-hint-color, #999999);
+  --surface: var(--tg-theme-secondary-bg-color, #f1f1f1);
   --glass: rgba(0,0,0,0.03);
   --border: rgba(0,0,0,0.08);
 }
@@ -73,16 +79,6 @@ html, body {
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-.topbar-sub button {
-  background: none;
-  border: none;
-  color: var(--link);
-  font-size: 0.7rem;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
 }
 
 /* status pill */
@@ -345,14 +341,10 @@ html, body {
 }
 
 .btn-shuffle {
-  background: none;
-  border: none;
   color: var(--link);
   font-size: 0.75rem;
   font-weight: 600;
-  cursor: pointer;
   padding: 2px 0;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .track-row {
@@ -413,6 +405,21 @@ html, body {
 
 /* ── Queue actions: drag, remove, clear ───────────────────────────────────────── */
 
+/* Shared reset for the queue's icon/text buttons and drag handle. */
+.btn-shuffle, .btn-clear, .btn-remove, .drag-handle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Centered icon containers. */
+.drag-handle, .btn-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .queue-actions {
   display: flex;
   align-items: center;
@@ -420,41 +427,26 @@ html, body {
 }
 
 .btn-clear {
-  background: none;
-  border: none;
   color: var(--hint);
   font-size: 0.75rem;
   font-weight: 600;
-  cursor: pointer;
   padding: 2px 0;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .drag-handle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: var(--hint);
   cursor: grab;
   flex-shrink: 0;
   touch-action: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .drag-handle:active { cursor: grabbing; }
 
 .btn-remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
   color: var(--hint);
-  cursor: pointer;
   flex-shrink: 0;
   padding: 4px;
   border-radius: 6px;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-remove:active {
@@ -473,6 +465,13 @@ html, body {
 
 .sortable-drag {
   opacity: 0.95;
+}
+
+/* Cloned drag preview (forceFallback) — lift it off the list with a shadow. */
+.track-row-drag {
+  opacity: 1 !important;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 /* ── Search ─────────────────────────────────────────────────────────────────── */

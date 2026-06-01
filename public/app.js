@@ -30,14 +30,8 @@ function app() {
       tg.ready();
       tg.expand();
 
-      if (tg.colorScheme === 'light') {
-        document.body.classList.add('light-theme');
-      }
-
-      tg.onEvent('themeChanged', () => {
-        this.isLightTheme = tg.colorScheme === 'light';
-        document.body.classList.toggle('light-theme', this.isLightTheme);
-      });
+      this.applyTheme();
+      tg.onEvent('themeChanged', () => this.applyTheme());
 
       const urlParams = new URLSearchParams(window.location.search);
       let cid = urlParams.get('chatId');
@@ -71,8 +65,10 @@ function app() {
         }
         this.chatId = Number(normalizedCid);
       } else {
-        this.chatId = -100123456789;
-        this.groupName = 'Demo Group';
+        // Opened outside a Telegram Mini App deep link (no chat to control) —
+        // send the visitor to the project's GitHub repo instead.
+        window.location.replace('https://github.com/ArnabXD/TGVCBot');
+        return;
       }
 
       tg.enableClosingConfirmation();
@@ -81,11 +77,57 @@ function app() {
       this.pollingInterval = setInterval(() => this.fetchStatus(), 3000);
     },
 
+    // Map every Telegram theme param onto a --tg-theme-* CSS variable so the
+    // app follows the user's actual Telegram theme (not just our dark default),
+    // and sync the native header/background so they match the webview.
+    applyTheme() {
+      this.isLightTheme = tg.colorScheme === 'light';
+      document.body.classList.toggle('light-theme', this.isLightTheme);
+
+      const params = tg.themeParams || {};
+      const root = document.documentElement;
+      for (const [key, value] of Object.entries(params)) {
+        if (!value) continue;
+        // secondary_bg_color -> --tg-theme-secondary-bg-color
+        root.style.setProperty(`--tg-theme-${key.replace(/_/g, '-')}`, value);
+      }
+
+      // Sync Telegram's native chrome with the app background.
+      const bg = params.bg_color;
+      try {
+        if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('bg_color');
+        if (bg && typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor(bg);
+      } catch {
+        // older clients may not support these — safe to ignore
+      }
+
+      // Keep the browser/OS chrome (e.g. address bar) in step too.
+      let meta = document.querySelector('meta[name="theme-color"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        document.head.appendChild(meta);
+      }
+      if (bg) meta.setAttribute('content', bg);
+    },
+
     switchTab(tab) {
       this.activeTab = tab;
       if (tg.HapticFeedback) {
         tg.HapticFeedback.impactOccurred('light');
       }
+    },
+
+    // Shared JSON POST to the API — always carries the auth header and chatId.
+    apiPost(url, body = {}) {
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': tg.initData || ''
+        },
+        body: JSON.stringify({ chatId: this.chatId, ...body })
+      });
     },
 
     async fetchStatus() {
@@ -117,6 +159,11 @@ function app() {
       this.sortable = Sortable.create(el, {
         handle: '.drag-handle',
         animation: 150,
+        // Build the drag preview from a DOM clone Sortable controls (rather than
+        // the native browser drag image), so the row's <img> renders from the
+        // live DOM instead of showing a broken image during the drag.
+        forceFallback: true,
+        fallbackClass: 'track-row-drag',
         onEnd: (evt) => {
           if (evt.oldIndex === evt.newIndex) return;
           // Read the dropped order from the DOM.
@@ -161,14 +208,7 @@ function app() {
 
     async persistQueueAction(url, extraBody, successMsg) {
       try {
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': tg.initData || ''
-          },
-          body: JSON.stringify({ chatId: this.chatId, ...extraBody })
-        });
+        const res = await this.apiPost(url, extraBody);
         if (res.ok) {
           const data = await res.json();
           // Trust the server's authoritative queue and release the poll lock.
@@ -193,14 +233,7 @@ function app() {
         tg.HapticFeedback.notificationOccurred(action === 'stop' ? 'warning' : 'success');
       }
       try {
-        const res = await fetch('/api/control', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': tg.initData || ''
-          },
-          body: JSON.stringify({ chatId: this.chatId, action })
-        });
+        const res = await this.apiPost('/api/control', { action });
         if (res.ok) {
           const data = await res.json();
           if (data.success) {
@@ -225,14 +258,7 @@ function app() {
       }
       const action = this.isPlaying ? 'pause' : 'resume';
       try {
-        const res = await fetch('/api/control', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': tg.initData || ''
-          },
-          body: JSON.stringify({ chatId: this.chatId, action })
-        });
+        const res = await this.apiPost('/api/control', { action });
         if (res.ok) {
           const data = await res.json();
           if (data.success) {
@@ -273,17 +299,9 @@ function app() {
       }
       this.triggerToast(`Queuing "${song.title}"...`);
       try {
-        const res = await fetch('/api/queue/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': tg.initData || ''
-          },
-          body: JSON.stringify({
-            chatId: this.chatId,
-            songId: song.id,
-            provider: this.searchProvider
-          })
+        const res = await this.apiPost('/api/queue/add', {
+          songId: song.id,
+          provider: this.searchProvider
         });
         if (res.ok) {
           const data = await res.json();
@@ -305,21 +323,6 @@ function app() {
       this.toastMessage = msg;
       this.showToast = true;
       setTimeout(() => { this.showToast = false; }, 2000);
-    },
-
-    promptChatId() {
-      const newId = prompt('Enter Telegram Group Chat ID (e.g. -100123456789):', this.chatId);
-      if (newId) {
-        const numId = Number(newId.trim());
-        if (!isNaN(numId)) {
-          this.chatId = numId;
-          this.groupName = 'Custom Chat (' + numId + ')';
-          this.fetchStatus();
-          this.triggerToast('Chat ID updated to ' + numId);
-        } else {
-          alert('Invalid number format for Chat ID.');
-        }
-      }
     }
   };
 }
