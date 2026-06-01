@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>TGVCBot Controller</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Alpine sort plugin must load BEFORE Alpine core -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="/style.css" />
   </head>
 
@@ -90,39 +89,12 @@
         </div>
 
         <div
-          x-sort="reorderQueue($item, $position)"
-          x-sort.ghost
-          x-sort:config="{ forceFallback: true, fallbackTolerance: 4 }"
-        >
-          <template x-for="track in queueList" :key="track.id">
-            <div class="track-row" x-sort:item="track.id">
-              <span class="drag-handle" title="Drag to reorder" x-sort:handle>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/>
-                </svg>
-              </span>
-              <img
-                :src="track.image || 'https://telegra.ph/file/6b07279fd80ef2b844ed0.png'"
-                onerror="this.onerror=null;this.src='https://telegra.ph/file/6b07279fd80ef2b844ed0.png'"
-                draggable="false"
-                alt=""
-              />
-              <div class="track-row-info">
-                <div class="track-row-title" x-text="track.title"></div>
-                <div class="track-row-artist" x-text="track.artist"></div>
-              </div>
-              <div class="track-row-meta">
-                <span class="track-row-dur" x-text="track.duration"></span>
-                <span class="track-row-req" x-text="track.requestedBy.first_name"></span>
-              </div>
-              <button class="btn-remove" title="Remove from queue" @click="removeFromQueue(track.id)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </div>
-          </template>
-        </div>
+          id="queue-sortable"
+          x-sort.ghost="reorderQueue($item, $position)"
+          x-sort:handle=".drag-handle"
+          x-sort:config="{ onStart: () => dragging = true, onEnd: () => dragging = false }"
+          x-effect="renderQueue($el, queueList)"
+        ></div>
 
         <template x-if="queueList.length === 0">
           <div class="empty-state">

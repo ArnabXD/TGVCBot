@@ -456,14 +456,19 @@ html, body {
   background: rgba(255, 92, 92, 0.12);
 }
 
-/* Dragged element ghost (x-sort.ghost) */
+/* Placeholder left in place while dragging */
 .sortable-ghost {
-  opacity: 0.4;
+  opacity: 0;
+  border: 1px dashed var(--accent) !important;
+  background: rgba(46,196,182,0.06) !important;
 }
 
-/* While any item is being dragged, the plugin adds .sorting to <body>. */
-body.sorting .drag-handle {
-  cursor: grabbing;
+/* The floating element that follows the cursor/finger */
+.sortable-drag {
+  opacity: 1 !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.45) !important;
+  border-color: var(--accent) !important;
+  transform: scale(1.02);
 }
 
 /* ── Search ─────────────────────────────────────────────────────────────────── */

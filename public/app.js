@@ -21,9 +21,8 @@ function app() {
     toastMessage: '',
 
     pollingInterval: null,
-    // Ignore status polls until this timestamp (ms) to avoid clobbering an
-    // optimistic reorder/remove before the server has committed it.
     suppressPollUntil: 0,
+    dragging: false,
 
     initApp() {
       tg.ready();
@@ -141,9 +140,7 @@ function app() {
           this.currentTrack = data.current;
           if (data.chatName) this.groupName = data.chatName;
           this.isPlaying = this.active && !!this.currentTrack;
-          // Skip overwriting the queue while an optimistic update is settling,
-          // so a poll mid-drag doesn't snap the list back to the old order.
-          if (Date.now() >= this.suppressPollUntil) {
+          if (!this.dragging && Date.now() >= this.suppressPollUntil) {
             this.queueList = data.queue || [];
           }
         }
@@ -152,27 +149,48 @@ function app() {
       }
     },
 
-    // Called by the @alpinejs/sort plugin on drop: `item` is the dragged
-    // track id, `position` its new 0-based index. Mirror the move into the
-    // local list (the render source) and persist the new order.
+    renderQueue(el, list) {
+      if (this.dragging) return;
+      const fallback = 'https://telegra.ph/file/6b07279fd80ef2b844ed0.png';
+      const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      const dragIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/></svg>`;
+      const removeIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      el.innerHTML = list.map((t) => `
+        <div class="track-row" x-sort:item="${esc(t.id)}" data-id="${esc(t.id)}">
+          <span class="drag-handle" title="Drag to reorder">${dragIcon}</span>
+          <img src="${esc(t.image || fallback)}" onerror="this.onerror=null;this.src='${fallback}'" draggable="false" alt="" />
+          <div class="track-row-info">
+            <div class="track-row-title">${esc(t.title)}</div>
+            <div class="track-row-artist">${esc(t.artist)}</div>
+          </div>
+          <div class="track-row-meta">
+            <span class="track-row-dur">${esc(t.duration)}</span>
+            <span class="track-row-req">${esc(t.requestedBy?.first_name)}</span>
+          </div>
+          <button class="btn-remove" title="Remove from queue" x-sort:ignore data-remove-id="${esc(t.id)}">${removeIcon}</button>
+        </div>`).join('');
+      el.onclick = (e) => {
+        const btn = e.target.closest('.btn-remove');
+        if (btn) this.removeFromQueue(Number(btn.dataset.removeId));
+      };
+    },
+
     reorderQueue(item, position) {
-      if (!this.chatId) return;
-      const id = Number(item);
-      const from = this.queueList.findIndex((t) => t.id === id);
-      if (from === -1 || from === position) return;
+      if (!this.chatId || item === undefined) return;
       if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
 
-      const next = this.queueList.slice();
-      const [moved] = next.splice(from, 1);
-      next.splice(position, 0, moved);
-      this.queueList = next;
+      const ids = this.queueList.map((t) => t.id);
+      const id = Number(item);
+      const from = ids.indexOf(id);
+      if (from === -1 || from === position) return;
+      ids.splice(from, 1);
+      ids.splice(position, 0, id);
+
+      const byId = Object.fromEntries(this.queueList.map((t) => [t.id, t]));
+      this.queueList = ids.map((i) => byId[i]);
 
       this.suppressPollUntil = Date.now() + 4000;
-      this.persistQueueAction(
-        '/api/queue/reorder',
-        { orderedIds: next.map((t) => t.id) },
-        'Queue reordered',
-      );
+      this.persistQueueAction('/api/queue/reorder', { orderedIds: ids }, 'Queue reordered');
     },
 
     removeFromQueue(id) {
