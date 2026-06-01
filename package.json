@@ -11,7 +11,7 @@
     "format": "biome format --write src"
   },
   "dependencies": {
-    "@arnabxd/ntgcalls-napi": "^0.3.0",
+    "@arnabxd/ntgcalls-napi": "^0.3.1",
     "@mtkruto/node": "latest",
     "@napi-rs/canvas": "^1.0.0",
     "@ybd-project/ytdl-core": "^6.0.8",
