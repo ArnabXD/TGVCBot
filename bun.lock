@@ -5,7 +5,7 @@
     "": {
       "name": "tgvcbot",
       "dependencies": {
-        "@arnabxd/ntgcalls-napi": "^0.2.1",
+        "@arnabxd/ntgcalls-napi": "^0.3.0",
         "@mtkruto/node": "latest",
         "@napi-rs/canvas": "^1.0.0",
         "@ybd-project/ytdl-core": "^6.0.8",
@@ -26,7 +26,7 @@
     "@arnabxd/ntgcalls-napi",
   ],
   "packages": {
-    "@arnabxd/ntgcalls-napi": ["@arnabxd/ntgcalls-napi@0.2.1", "", {}, "sha512-kmkw2nCUKnf0qdhy631s3xKqdzKJOwLnlvBcibd7+/mL73TK6OoDjt6it7MpcCsgJOE7HzGMXj0bQ54GAh0IFw=="],
+    "@arnabxd/ntgcalls-napi": ["@arnabxd/ntgcalls-napi@0.3.0", "", {}, "sha512-eqHbzfScZGBzZcl35NSAgEJpaEwOuEMKXSuwvgnKTjTK/sOFBjXyrXW5pLC+O0gURFLrcYLyacxrLqCgaYbnVg=="],
 
     "@asamuzakjp/css-color": ["@asamuzakjp/css-color@3.2.0", "", { "dependencies": { "@csstools/css-calc": "^2.1.3", "@csstools/css-color-parser": "^3.0.9", "@csstools/css-parser-algorithms": "^3.0.4", "@csstools/css-tokenizer": "^3.0.3", "lru-cache": "^10.4.3" } }, "sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw=="],
 

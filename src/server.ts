@@ -60,6 +60,7 @@ export function startWebServer() {
 
     return c.json({
       active: tgcalls.isActive(chatId),
+      paused: tgcalls.isPaused(chatId),
       current: queue.getCurrent(chatId) || null,
       queue: queue.getAll(chatId),
       chatName,
@@ -196,7 +197,10 @@ export function startWebServer() {
           return c.json({ error: "Unknown action" }, 400);
       }
 
-      return c.json({ success: ok });
+      return c.json({
+        success: ok,
+        paused: tgcalls.isPaused(chatId),
+      });
     } catch (err) {
       const errMsg =
         err instanceof Error ? err.message : "Internal server error";
