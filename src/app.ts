@@ -5,7 +5,10 @@ import { testFFMPEG } from "./ffmpeg";
 import { initHandlers } from "./handlers";
 import { startWebServer } from "./server";
 
-if (env.DEBUG) consola.level = 5; // enable debug logs
+const LOG_LEVELS: Record<string, number> = {
+  silent: 0, error: 1, warn: 2, info: 3, debug: 4, verbose: 5,
+};
+consola.level = LOG_LEVELS[env.LOG_LEVEL] ?? 3;
 
 const logger = consola.withTag("app");
 
