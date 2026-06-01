@@ -13,6 +13,7 @@ const env = cleanEnv(process.env, {
   }),
   WATERMARK: str({ default: "TGVCBot" }),
   PORT: num({ default: 3000 }),
+  DEBUG: str({ default: "" }),
   WEBAPP_URL: str({ default: "" }),
   WEBAPP_SHORT_NAME: str({ default: "app" }),
   WEBAPP_DIRECT_LINK: str({ default: "" }),
