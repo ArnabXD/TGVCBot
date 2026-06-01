@@ -1,3 +1,4 @@
+import { consola } from "consola";
 import { cleanEnv, num, str } from "envalid";
 
 const env = cleanEnv(process.env, {
@@ -27,5 +28,20 @@ const env = cleanEnv(process.env, {
     docs: "Mini App short name registered with @BotFather. When set, /play and /app show a button that opens https://t.me/<bot>/<short-name> as a Mini App. Leave empty to disable.",
   }),
 });
+
+// Set the global consola level here — before any other module imports env and
+// creates a tagged logger via consola.withTag(). Tagged loggers capture the
+// level at creation time and ignore later changes, so setting it in app.ts
+// (which imports logger-creating modules first) was too late and silently
+// dropped every logger.debug() call.
+const LOG_LEVELS: Record<string, number> = {
+  silent: 0,
+  error: 1,
+  warn: 2,
+  info: 3,
+  debug: 4,
+  verbose: 5,
+};
+consola.level = LOG_LEVELS[env.LOG_LEVEL] ?? 3;
 
 export default env;

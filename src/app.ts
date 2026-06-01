@@ -1,14 +1,10 @@
 import { consola } from "consola";
 import { bot, log, startClients } from "./clients";
-import env from "./env";
+// env sets consola.level as a side effect — keep this import before withTag().
+import "./env";
 import { testFFMPEG } from "./ffmpeg";
 import { initHandlers } from "./handlers";
 import { startWebServer } from "./server";
-
-const LOG_LEVELS: Record<string, number> = {
-  silent: 0, error: 1, warn: 2, info: 3, debug: 4, verbose: 5,
-};
-consola.level = LOG_LEVELS[env.LOG_LEVEL] ?? 3;
 
 const logger = consola.withTag("app");
 

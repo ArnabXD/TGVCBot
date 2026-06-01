@@ -44,29 +44,17 @@ class TGVCCalls {
   /** chatIds where playback is currently paused */
   private readonly paused = new Set<number>();
 
-  /**
-   * chatIds that are mid-hot-swap: setAudioSource was called on a live session.
-   * libntgcalls fires stream-end for the killed source — we must ignore that
-   * one event so we don't teardown a stream that is already playing the next track.
-   */
-  private readonly swapping = new Set<number>();
-
   constructor() {
-    ntgCalls.on(
-      "stream-end",
-      (chatId: number, _streamType: number, _streamDevice: number) => {
-        if (this.swapping.has(chatId)) {
-          this.swapping.delete(chatId);
-          logger.debug(
-            `[${this.chatNames.get(chatId) ?? chatId}] Suppressed post-hot-swap stream-end`,
-          );
-          return;
-        }
-        this.onStreamEnd(chatId).catch((e) =>
-          logger.error("Stream-end handler error", e),
-        );
-      },
-    );
+    // ntgcalls (verified on v0.3.1) does NOT emit a spurious stream-end when
+    // setAudioSource() hot-swaps the source — only natural end-of-track fires
+    // this event. So every stream-end advances the queue. (A previous "swapping"
+    // suppression flag waited for a spurious end that never came, leaving the
+    // flag armed so it swallowed the next real track-end and stalled the queue.)
+    ntgCalls.on("stream-end", (chatId: number) => {
+      this.onStreamEnd(chatId).catch((e) =>
+        logger.error("Stream-end handler error", e),
+      );
+    });
   }
 
   // ── Public state queries ────────────────────────────────────────────────────
@@ -186,7 +174,9 @@ class TGVCCalls {
           if (_id !== chatId) return;
           ntgCalls.off("stream-end", cleanup);
           import("node:fs").then(({ unlink }) =>
-            unlink(tmpPath, () => {/* ignore */}),
+            unlink(tmpPath, () => {
+              /* ignore */
+            }),
           );
         };
         ntgCalls.on("stream-end", cleanup);
@@ -207,8 +197,6 @@ class TGVCCalls {
       const ffmpegCmd = await this.resolveFfmpegCmd(data, chat.id);
 
       if (this.isActive(chat.id)) {
-        // Mark as swapping so the stream-end from the killed source is suppressed
-        this.swapping.add(chat.id);
         // If paused, resume first so the native layer is in a playing state
         // before setAudioSource replaces the source — avoids silent playback.
         if (this.isPaused(chat.id)) {
@@ -395,7 +383,6 @@ class TGVCCalls {
     logger.debug(`[${chatName}] Tearing down`);
     this.active.delete(chatId);
     this.paused.delete(chatId);
-    this.swapping.delete(chatId);
     const vcId = this.vcIds.get(chatId);
     this.vcIds.delete(chatId);
 
