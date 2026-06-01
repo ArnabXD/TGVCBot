@@ -51,7 +51,7 @@ composer.command(["app", "vcapp", "controller"], async (ctx) => {
     await ctx.reply("This command works in groups only.");
     return;
   }
-  if (!env.WEBAPP_URL && !env.WEBAPP_DIRECT_LINK) {
+  if (!env.WEBAPP_DIRECT_LINK) {
     await ctx.reply("Mini App URL is not configured in the bot environment.");
     return;
   }

@@ -27,7 +27,7 @@ composer.command(["play", "pl"], async (ctx) => {
 
   const replied = ctx.message?.replyToMessage;
   if (!replied || replied.type !== "audio") {
-    if (env.WEBAPP_URL || env.WEBAPP_DIRECT_LINK) {
+    if (env.WEBAPP_DIRECT_LINK) {
       const me = await bot.getMe();
       const directLink =
         env.WEBAPP_DIRECT_LINK ||

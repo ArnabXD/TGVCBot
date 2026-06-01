@@ -17,7 +17,6 @@ const env = cleanEnv(process.env, {
     default: "info",
     choices: ["silent", "error", "warn", "info", "debug", "verbose"],
   }),
-  WEBAPP_URL: str({ default: "" }),
   WEBAPP_SHORT_NAME: str({ default: "app" }),
   WEBAPP_DIRECT_LINK: str({ default: "" }),
 });
