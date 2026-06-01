@@ -19,6 +19,7 @@ import { bot, log, userbot } from "./clients";
 import { buildFfmpegCmd } from "./ffmpeg";
 import { ntgCalls } from "./ntgcalls";
 import { type QueueData, queue } from "./queue";
+import { controllerKeyboard } from "./utils/keyboard";
 
 const logger = consola.withTag("tgcalls");
 
@@ -85,7 +86,11 @@ class TGVCCalls {
       await bot.sendMessage(
         chat.id,
         `<a href="${data.link}">${Bun.escapeHTML(data.title)}</a> queued at position ${position} by <a href="tg://user?id=${data.requestedBy.id}">${Bun.escapeHTML(data.requestedBy.first_name)}</a>`,
-        { parseMode: "HTML", linkPreview: { type: "input", isDisabled: true } },
+        {
+          parseMode: "HTML",
+          linkPreview: { type: "input", isDisabled: true },
+          replyMarkup: await controllerKeyboard(chat.id),
+        },
       );
       return;
     }
@@ -416,6 +421,8 @@ class TGVCCalls {
       `<b>▸</b> Duration: ${data.duration}\n` +
       `<b>▸</b> Requested by <a href="tg://user?id=${data.requestedBy.id}">${Bun.escapeHTML(data.requestedBy.first_name)}</a>`;
 
+    const replyMarkup = await controllerKeyboard(chat.id);
+
     try {
       // Dynamic import avoids circular deps; banner module created in Phase 7
       const { generateBanner } = await import("./utils/banner");
@@ -427,12 +434,14 @@ class TGVCCalls {
       await bot.sendPhoto(chat.id, banner, {
         caption,
         parseMode: "HTML",
+        replyMarkup,
       });
     } catch {
       // Banner failed — fall back to plain text
       await bot.sendMessage(chat.id, caption, {
         parseMode: "HTML",
         linkPreview: { type: "input", isDisabled: true },
+        replyMarkup,
       });
     }
   }

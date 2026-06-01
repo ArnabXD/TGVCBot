@@ -1,8 +1,8 @@
-import { Composer, type InlineKeyboardButton } from "@mtkruto/node";
+import { Composer } from "@mtkruto/node";
 import { consola } from "consola";
-import { bot } from "../clients";
 import env from "../env";
 import { tgcalls } from "../tgcalls";
+import { controllerKeyboard } from "../utils/keyboard";
 
 const logger = consola.withTag("handler:play");
 
@@ -27,25 +27,12 @@ composer.command(["play", "pl"], async (ctx) => {
 
   const replied = ctx.message?.replyToMessage;
   if (!replied || replied.type !== "audio") {
-    if (env.WEBAPP_SHORT_NAME) {
-      const me = await bot.getMe();
-      const chatIdParam = ctx.chat.id.toString().replace(/^-/, "g");
-      const button: InlineKeyboardButton = {
-        type: "url",
-        text: "🎵 Open Stream Controller",
-        url: `https://t.me/${me.username}/${env.WEBAPP_SHORT_NAME}?startapp=${chatIdParam}`,
-      };
-
+    const replyMarkup = await controllerKeyboard(ctx.chat.id);
+    if (replyMarkup) {
       await ctx.reply(
         "🎵 <b>TGVCBot Stream Controller</b>\n\n" +
           "Click the button below to search for songs, view the queue, and control the active stream!",
-        {
-          parseMode: "HTML",
-          replyMarkup: {
-            type: "inlineKeyboard",
-            inlineKeyboard: [[button]],
-          },
-        },
+        { parseMode: "HTML", replyMarkup },
       );
       return;
     }

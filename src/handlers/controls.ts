@@ -1,9 +1,8 @@
-import { Composer, type InlineKeyboardButton } from "@mtkruto/node";
-import { bot } from "../clients";
-import env from "../env";
+import { Composer } from "@mtkruto/node";
 import { checkInactiveVc } from "../middlewares/inactiveVc";
 import { queue } from "../queue";
 import { tgcalls } from "../tgcalls";
+import { controllerKeyboard } from "../utils/keyboard";
 
 const composer = new Composer();
 
@@ -51,29 +50,16 @@ composer.command(["app", "vcapp", "controller"], async (ctx) => {
     await ctx.reply("This command works in groups only.");
     return;
   }
-  if (!env.WEBAPP_SHORT_NAME) {
+  const replyMarkup = await controllerKeyboard(ctx.chat.id);
+  if (!replyMarkup) {
     await ctx.reply("Mini App is not configured in the bot environment.");
     return;
   }
 
-  const me = await bot.getMe();
-  const chatIdParam = ctx.chat.id.toString().replace(/^-/, "g");
-  const button: InlineKeyboardButton = {
-    type: "url",
-    text: "🎵 Open Stream Controller",
-    url: `https://t.me/${me.username}/${env.WEBAPP_SHORT_NAME}?startapp=${chatIdParam}`,
-  };
-
   await ctx.reply(
     "🎵 <b>TGVCBot Stream Controller</b>\n\n" +
       "Click the button below to search for songs, view the queue, and control the active stream!",
-    {
-      parseMode: "HTML",
-      replyMarkup: {
-        type: "inlineKeyboard",
-        inlineKeyboard: [[button]],
-      },
-    },
+    { parseMode: "HTML", replyMarkup },
   );
 });
 
