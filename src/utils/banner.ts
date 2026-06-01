@@ -1,20 +1,39 @@
 /**
  * Banner generation — produces a 600×300 PNG for the "Now Playing" message.
  *
- * Layout:
- *   [ blurred+dimmed background (600×300) ]
- *     [ thumbnail (180×180) at (30, 60)  ]
- *     [ title text at (220, 55)           ]
- *     [ artist text below title           ]
- *     [ watermark at bottom-right         ]
+ * Layout (Variant B — Editorial Split):
+ *   [ left 200px: album art, dimmed, fading right ]
+ *   [ right 400px: dark bg, NOW PLAYING label, bold title, artist, divider, watermark ]
  */
 
+import { join } from "node:path";
+import {
+  createCanvas,
+  GlobalFonts,
+  loadImage,
+  type SKRSContext2D,
+} from "@napi-rs/canvas";
 import { consola } from "consola";
 import sharp from "sharp";
 import env from "../env";
-import { getImage } from "./text-to-image";
 
 const logger = consola.withTag("banner");
+
+const FONTS_DIR = join(process.cwd(), "fonts");
+const W = 600;
+const H = 300;
+const SPLIT = 200;
+
+let fontsRegistered = false;
+function ensureFonts() {
+  if (fontsRegistered) return;
+  GlobalFonts.registerFromPath(
+    join(FONTS_DIR, "Poppins-Regular.ttf"),
+    "Poppins",
+  );
+  GlobalFonts.registerFromPath(join(FONTS_DIR, "Poppins-Bold.ttf"), "Poppins");
+  fontsRegistered = true;
+}
 
 export interface BannerOptions {
   image: string;
@@ -36,54 +55,115 @@ async function fetchImageBuffer(url: string): Promise<Buffer | null> {
   }
 }
 
+function wrapLines(
+  ctx: SKRSContext2D,
+  font: string,
+  text: string,
+  maxWidth: number,
+): string[] {
+  ctx.font = font;
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let line = "";
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
 export async function generateBanner({
   image,
   title,
   artist,
 }: BannerOptions): Promise<Uint8Array<ArrayBuffer>> {
+  ensureFonts();
+
   const source = await fetchImageBuffer(image);
   if (!source) throw new Error(`Failed to fetch banner image: ${image}`);
 
-  const background = await sharp(source).resize(600, 300).blur(15).toBuffer();
-  const thumb = await sharp(source).resize(180, 180).toBuffer();
-
-  const titleImg = await getImage(title || "Music", {
-    fontSize: 26,
-    lineHeight: 35,
-  });
-  const artistImg = await getImage(artist || "...");
-  const watermarkImg = await getImage(env.WATERMARK, { fontSize: 14 });
-
-  const result = await sharp(background)
-    .composite([
-      // dark overlay for readability
-      {
-        input: {
-          create: {
-            width: 600,
-            height: 300,
-            channels: 4,
-            background: { r: 0, g: 0, b: 0, alpha: 0.5 },
-          },
-        },
-      },
-      { input: thumb, left: 30, top: 60 },
-      { input: titleImg.buffer, left: 220, top: 55, blend: "screen" },
-      {
-        input: artistImg.buffer,
-        left: 220,
-        top: 55 + titleImg.height,
-        blend: "screen",
-      },
-      {
-        input: watermarkImg.buffer,
-        top: 300 - watermarkImg.height,
-        left: 480,
-        blend: "screen",
-      },
-    ])
-    .png()
+  // Resize+crop album art to fill the left panel
+  const artBuf = await sharp(source)
+    .resize(SPLIT, H, { fit: "cover" })
     .toBuffer();
+  const artImage = await loadImage(artBuf);
 
-  return new Uint8Array(result.buffer as ArrayBuffer);
+  const canvas = createCanvas(W, H);
+  const ctx = canvas.getContext("2d");
+
+  // ── Right panel background ─────────────────────────────────────
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Left panel: album art ──────────────────────────────────────
+  ctx.drawImage(artImage, 0, 0, SPLIT, H);
+
+  // Dim the art
+  ctx.fillStyle = "rgba(0,0,0,0.45)";
+  ctx.fillRect(0, 0, SPLIT, H);
+
+  // Fade right edge of art into the dark background
+  const fade = ctx.createLinearGradient(SPLIT - 80, 0, SPLIT, 0);
+  fade.addColorStop(0, "rgba(14,14,14,0)");
+  fade.addColorStop(1, "rgba(14,14,14,1)");
+  ctx.fillStyle = fade;
+  ctx.fillRect(SPLIT - 80, 0, 80, H);
+
+  // ── Right panel content ────────────────────────────────────────
+  const textX = SPLIT + 28;
+  const maxTextWidth = W - textX - 24;
+  ctx.textBaseline = "top";
+
+  // Measure title lines to vertically center the whole block
+  const titleLineHeight = 36;
+  const titleLines = wrapLines(ctx, "bold 28px Poppins", title || "Music", maxTextWidth);
+  const blockHeight =
+    12 +  // NOW PLAYING label
+    14 +  // gap after label
+    titleLines.length * titleLineHeight +
+    12 +  // gap after title
+    18 +  // artist line height
+    20 +  // gap + divider
+    1;
+  let y = Math.round((H - blockHeight) / 2);
+
+  // "NOW PLAYING" label
+  ctx.font = "600 10px Poppins";
+  ctx.fillStyle = "#a78bfa";
+  ctx.fillText("▶  NOW PLAYING", textX, y);
+  y += 12 + 14;
+
+  // Title (bold, large)
+  ctx.font = "bold 28px Poppins";
+  ctx.fillStyle = "#ffffff";
+  for (const line of titleLines) {
+    ctx.fillText(line, textX, y);
+    y += titleLineHeight;
+  }
+  y += 12;
+
+  // Artist
+  ctx.font = "400 15px Poppins";
+  ctx.fillStyle = "rgba(255,255,255,0.45)";
+  ctx.fillText(artist || "Unknown", textX, y);
+  y += 18 + 20;
+
+  // Divider
+  ctx.fillStyle = "rgba(167,139,250,0.35)";
+  ctx.fillRect(textX, y, 32, 1);
+
+  // Watermark
+  ctx.font = "400 9px Poppins";
+  ctx.fillStyle = "rgba(255,255,255,0.18)";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(env.WATERMARK.toUpperCase(), W - 24 - ctx.measureText(env.WATERMARK.toUpperCase()).width, H - 18);
+
+  const buffer = canvas.toBuffer("image/png");
+  return new Uint8Array(buffer.buffer as ArrayBuffer);
 }
