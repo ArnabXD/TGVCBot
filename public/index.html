@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>TGVCBot Controller</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="/style.css" />
   </head>
@@ -82,22 +83,37 @@
         <!-- Queue -->
         <div class="queue-header">
           <span class="queue-label">Up next</span>
-          <button class="btn-shuffle" x-show="queueList.length > 1" @click="controlAction('shuffle')">&#8644; Shuffle</button>
+          <div class="queue-actions" x-show="queueList.length > 1">
+            <button class="btn-shuffle" @click="controlAction('shuffle')">&#8644; Shuffle</button>
+            <button class="btn-clear" @click="clearQueue()">&#10005; Clear</button>
+          </div>
         </div>
 
-        <template x-for="(track, i) in queueList" :key="i">
-          <div class="track-row">
-            <img :src="track.image || 'https://telegra.ph/file/6b07279fd80ef2b844ed0.png'" alt="" />
-            <div class="track-row-info">
-              <div class="track-row-title" x-text="track.title"></div>
-              <div class="track-row-artist" x-text="track.artist"></div>
+        <div x-ref="queueContainer" x-init="initSortable()">
+          <template x-for="track in queueList" :key="track.id">
+            <div class="track-row" :data-id="track.id">
+              <span class="drag-handle" title="Drag to reorder">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/>
+                </svg>
+              </span>
+              <img :src="track.image || 'https://telegra.ph/file/6b07279fd80ef2b844ed0.png'" alt="" />
+              <div class="track-row-info">
+                <div class="track-row-title" x-text="track.title"></div>
+                <div class="track-row-artist" x-text="track.artist"></div>
+              </div>
+              <div class="track-row-meta">
+                <span class="track-row-dur" x-text="track.duration"></span>
+                <span class="track-row-req" x-text="track.requestedBy.first_name"></span>
+              </div>
+              <button class="btn-remove" title="Remove from queue" @click="removeFromQueue(track.id)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
             </div>
-            <div class="track-row-meta">
-              <span class="track-row-dur" x-text="track.duration"></span>
-              <span class="track-row-req" x-text="track.requestedBy.first_name"></span>
-            </div>
-          </div>
-        </template>
+          </template>
+        </div>
 
         <template x-if="queueList.length === 0">
           <div class="empty-state">

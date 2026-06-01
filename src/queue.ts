@@ -26,6 +26,9 @@ export interface QueueData {
   provider: "jiosaavn" | "youtube" | "telegram" | "radio";
 }
 
+/** A queued track paired with its stable database row id. */
+export type QueueItem = QueueData & { id: number };
+
 /** Shape of a row coming back from SQLite */
 interface DbRow {
   id: number;
@@ -54,6 +57,10 @@ function rowToQueueData(row: DbRow): QueueData {
     mp3_link: row.mp3_link,
     provider: row.provider,
   };
+}
+
+function rowToQueueItem(row: DbRow): QueueItem {
+  return { id: row.id, ...rowToQueueData(row) };
 }
 
 // ── Prepared statements ───────────────────────────────────────────────────────
@@ -88,6 +95,11 @@ const stmts = {
   ),
 
   deleteById: db.prepare<void, [number]>("DELETE FROM queue WHERE id = ?"),
+
+  // Scoped to chat_id so an API caller can't delete another chat's rows by id.
+  deleteByIdForChat: db.prepare<void, [number, number]>(
+    "DELETE FROM queue WHERE id = ? AND chat_id = ?",
+  ),
 
   allQueue: db.prepare<DbRow, [number]>(
     "SELECT * FROM queue WHERE chat_id = ? ORDER BY id ASC",
@@ -199,9 +211,9 @@ export class Queue {
     return this.size(chatId) > 0;
   }
 
-  /** All queued tracks for a chat, in play order. */
-  getAll(chatId: number): QueueData[] {
-    return stmts.allQueue.all(chatId).map(rowToQueueData);
+  /** All queued tracks for a chat, in play order, each with its stable id. */
+  getAll(chatId: number): QueueItem[] {
+    return stmts.allQueue.all(chatId).map(rowToQueueItem);
   }
 
   /** Delete all queued tracks for a chat. */
@@ -251,6 +263,61 @@ export class Queue {
     const row = rows[position - 1]!;
     stmts.deleteById.run(row.id);
     return rowToQueueData(row);
+  }
+
+  /**
+   * Remove a track by its stable queue id (scoped to the chat).
+   * @returns true if a row was deleted.
+   */
+  removeById(chatId: number, id: number): boolean {
+    const res = stmts.deleteByIdForChat.run(id, chatId);
+    return res.changes > 0;
+  }
+
+  /**
+   * Reorder the queue to match `orderedIds` (the desired play order).
+   *
+   * Rows are re-inserted in the given order so the FIFO `id ASC` ordering
+   * reflects it. Ids not belonging to this chat are ignored; any existing
+   * tracks whose id is omitted from `orderedIds` are appended at the end in
+   * their current order, so a stale client list can never drop tracks.
+   */
+  reorder(chatId: number, orderedIds: number[]): void {
+    const rows = stmts.allQueue.all(chatId);
+    if (rows.length < 2) return;
+
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    const ordered: DbRow[] = [];
+    for (const id of orderedIds) {
+      const row = byId.get(id);
+      if (row) {
+        ordered.push(row);
+        byId.delete(id);
+      }
+    }
+    // Append any rows the client didn't mention (e.g. added since last poll).
+    for (const row of rows) {
+      if (byId.has(row.id)) ordered.push(row);
+    }
+
+    const tx = db.transaction(() => {
+      stmts.deleteAllQueue.run(chatId);
+      for (const r of ordered) {
+        stmts.insertAllQueue.run(
+          chatId,
+          r.link,
+          r.title,
+          r.image,
+          r.artist,
+          r.duration,
+          r.req_by_id,
+          r.req_by_fname,
+          r.mp3_link,
+          r.provider,
+        );
+      }
+    });
+    tx();
   }
 
   // ── Current track ───────────────────────────────────────────────────────────

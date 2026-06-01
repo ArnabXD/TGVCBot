@@ -21,6 +21,10 @@ function app() {
     toastMessage: '',
 
     pollingInterval: null,
+    sortable: null,
+    // Ignore status polls until this timestamp (ms) to avoid clobbering an
+    // optimistic reorder/remove before the server has committed it.
+    suppressPollUntil: 0,
 
     initApp() {
       tg.ready();
@@ -94,12 +98,92 @@ function app() {
           const data = await res.json();
           this.active = data.active;
           this.currentTrack = data.current;
-          this.queueList = data.queue || [];
           if (data.chatName) this.groupName = data.chatName;
           this.isPlaying = this.active && !!this.currentTrack;
+          // Skip overwriting the queue while an optimistic update is settling,
+          // so a poll mid-drag doesn't snap the list back to the old order.
+          if (Date.now() >= this.suppressPollUntil) {
+            this.queueList = data.queue || [];
+          }
         }
       } catch (err) {
         console.error('Status check failed', err);
+      }
+    },
+
+    initSortable() {
+      const el = this.$refs.queueContainer;
+      if (!el || typeof Sortable === 'undefined') return;
+      this.sortable = Sortable.create(el, {
+        handle: '.drag-handle',
+        animation: 150,
+        onEnd: (evt) => {
+          if (evt.oldIndex === evt.newIndex) return;
+          // Read the dropped order from the DOM.
+          const ids = Array.from(el.querySelectorAll('[data-id]'))
+            .map((node) => Number(node.getAttribute('data-id')));
+          // Revert Sortable's DOM mutation so Alpine stays the single source of
+          // truth — it will re-render the new order from queueList below.
+          const moved = evt.item;
+          const ref = el.children[evt.oldIndex > evt.newIndex ? evt.oldIndex + 1 : evt.oldIndex];
+          el.insertBefore(moved, ref || null);
+          this.reorderQueue(ids);
+        }
+      });
+    },
+
+    reorderQueue(orderedIds) {
+      if (!this.chatId) return;
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+      // Optimistically reorder the local list to match the dropped order.
+      const byId = new Map(this.queueList.map((t) => [t.id, t]));
+      this.queueList = orderedIds.map((id) => byId.get(id)).filter(Boolean);
+      this.suppressPollUntil = Date.now() + 4000;
+      this.persistQueueAction('/api/queue/reorder', { orderedIds }, 'Queue reordered');
+    },
+
+    removeFromQueue(id) {
+      if (!this.chatId) return;
+      if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+      // Optimistically drop it from the local list.
+      this.queueList = this.queueList.filter((t) => t.id !== id);
+      this.suppressPollUntil = Date.now() + 4000;
+      this.persistQueueAction('/api/queue/remove', { id }, 'Removed from queue');
+    },
+
+    async clearQueue() {
+      if (!this.chatId) return;
+      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+      this.queueList = [];
+      this.suppressPollUntil = Date.now() + 4000;
+      this.persistQueueAction('/api/queue/clear', {}, 'Queue cleared');
+    },
+
+    async persistQueueAction(url, extraBody, successMsg) {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': tg.initData || ''
+          },
+          body: JSON.stringify({ chatId: this.chatId, ...extraBody })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Trust the server's authoritative queue and release the poll lock.
+          if (Array.isArray(data.queue)) this.queueList = data.queue;
+          this.suppressPollUntil = 0;
+          if (data.success !== false) this.triggerToast(successMsg);
+        } else {
+          this.suppressPollUntil = 0;
+          this.triggerToast('Action failed.');
+          this.fetchStatus();
+        }
+      } catch {
+        this.suppressPollUntil = 0;
+        this.triggerToast('Network error.');
+        this.fetchStatus();
       }
     },
 

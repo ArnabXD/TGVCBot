@@ -158,6 +158,70 @@ export function startWebServer() {
     }
   });
 
+  // POST /api/queue/remove — remove a single queued track by its stable id
+  app.post("/api/queue/remove", async (c) => {
+    try {
+      const { chatId, id } = await c.req.json();
+      if (!chatId || typeof id !== "number") {
+        return c.json({ error: "Missing fields" }, 400);
+      }
+      const user = c.get("user");
+      const removed = queue.removeById(chatId, id);
+      logger.info(
+        `Queue remove via WebApp: chatId=${chatId} id=${id} removed=${removed} user=${user.first_name}`,
+      );
+      return c.json({ success: removed, queue: queue.getAll(chatId) });
+    } catch (err) {
+      const errMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      logger.error("Queue remove API failed", err);
+      return c.json({ error: errMsg }, 500);
+    }
+  });
+
+  // POST /api/queue/reorder — set the queue play order from a list of ids
+  app.post("/api/queue/reorder", async (c) => {
+    try {
+      const { chatId, orderedIds } = await c.req.json();
+      if (!chatId || !Array.isArray(orderedIds)) {
+        return c.json({ error: "Missing fields" }, 400);
+      }
+      const ids = orderedIds.filter((x): x is number => typeof x === "number");
+      const user = c.get("user");
+      queue.reorder(chatId, ids);
+      logger.info(
+        `Queue reorder via WebApp: chatId=${chatId} count=${ids.length} user=${user.first_name}`,
+      );
+      return c.json({ success: true, queue: queue.getAll(chatId) });
+    } catch (err) {
+      const errMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      logger.error("Queue reorder API failed", err);
+      return c.json({ error: errMsg }, 500);
+    }
+  });
+
+  // POST /api/queue/clear — empty the upcoming queue (keeps current track)
+  app.post("/api/queue/clear", async (c) => {
+    try {
+      const { chatId } = await c.req.json();
+      if (!chatId) {
+        return c.json({ error: "Missing fields" }, 400);
+      }
+      const user = c.get("user");
+      queue.clear(chatId);
+      logger.info(
+        `Queue clear via WebApp: chatId=${chatId} user=${user.first_name}`,
+      );
+      return c.json({ success: true, queue: queue.getAll(chatId) });
+    } catch (err) {
+      const errMsg =
+        err instanceof Error ? err.message : "Internal server error";
+      logger.error("Queue clear API failed", err);
+      return c.json({ error: errMsg }, 500);
+    }
+  });
+
   // POST /api/control
   app.post("/api/control", async (c) => {
     try {

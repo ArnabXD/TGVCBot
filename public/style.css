@@ -411,6 +411,70 @@ html, body {
   color: var(--link);
 }
 
+/* ── Queue actions: drag, remove, clear ───────────────────────────────────────── */
+
+.queue-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-clear {
+  background: none;
+  border: none;
+  color: var(--hint);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--hint);
+  cursor: grab;
+  flex-shrink: 0;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drag-handle:active { cursor: grabbing; }
+
+.btn-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--hint);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 4px;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-remove:active {
+  color: #ff5c5c;
+  background: rgba(255, 92, 92, 0.12);
+}
+
+/* SortableJS drag states */
+.sortable-ghost {
+  opacity: 0.4;
+}
+
+.sortable-chosen {
+  background: var(--surface);
+}
+
+.sortable-drag {
+  opacity: 0.95;
+}
+
 /* ── Search ─────────────────────────────────────────────────────────────────── */
 
 /* provider pills — full-width row, large tap targets */
