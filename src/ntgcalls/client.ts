@@ -1,32 +1,75 @@
 import EventEmitter from "node:events";
-import { NtgCalls as NativeNtgCalls } from "@arnabxd/ntgcalls-napi";
+import { NtgCalls } from "@arnabxd/ntgcalls-napi";
 import { consola } from "consola";
 
 const logger = consola.withTag("ntgcalls");
 
+const StreamType = { Audio: 0, Video: 1 } as const;
+
 export class NTgCalls extends EventEmitter {
-  private readonly native: NativeNtgCalls;
+  private readonly native: NtgCalls;
 
   constructor() {
     super();
-    this.native = new NativeNtgCalls();
+    this.native = new NtgCalls();
 
-    // Register callbacks from the native thread safely
-    this.native.on_stream_end((chatId: bigint) => {
+    this.native.on("stream-end", (chatId, streamType, streamDevice) => {
       const id = Number(chatId);
-      logger.debug(`Stream ended for chatId=${id}`);
-      this.emit("stream-end", id);
+      logger.debug(
+        `Stream ended for chatId=${id} — type=${streamType} device=${streamDevice}`,
+      );
+      if (streamType !== StreamType.Audio) return;
+      this.emit("stream-end", id, streamType, streamDevice);
     });
 
-    this.native.on_connection_change(
-      (chatId: bigint, kind: number, state: number) => {
-        const id = Number(chatId);
-        logger.debug(
-          `Connection change for chatId=${id} — kind=${kind} state=${state}`,
+    this.native.on("connection-change", (chatId, kind, state) => {
+      const id = Number(chatId);
+      logger.debug(
+        `Connection change for chatId=${id} — kind=${kind} state=${state}`,
+      );
+      this.emit("connection-change", id, kind, state);
+    });
+  }
+
+  /**
+   * Resolves when the WebRTC connection reaches Connected state.
+   * Rejects immediately on hard failures (Failed/Closed).
+   * For StreamConnection mode (Telegram group VCs), Connected fires after
+   * Telegram grants can_self_unmute (~1-2s post-join). Times out after
+   * `timeoutMs` ms and resolves anyway so audio can still be attempted —
+   * a timeout here means StreamConnection mode where Connected fires late;
+   * hard failures reject immediately so callers don't silently eat errors.
+   */
+  waitForConnected(chatId: number, timeoutMs = 15_000): Promise<void> {
+    // ntg_connection_state_enum: 0=Connecting, 1=Connected, 2=Timeout, 3=Failed, 4=Closed
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.off("connection-change", handler);
+        logger.warn(
+          `[${chatId}] waitForConnected timed out — proceeding anyway (StreamConnection mode)`,
         );
-        this.emit("connection-change", id, { kind, state });
-      },
-    );
+        resolve();
+      }, timeoutMs);
+
+      const handler = (id: number, _kind: number, state: number) => {
+        if (id !== chatId) return;
+        if (state === 1) {
+          clearTimeout(timer);
+          this.off("connection-change", handler);
+          resolve();
+        } else if (state === 3 || state === 4) {
+          clearTimeout(timer);
+          this.off("connection-change", handler);
+          reject(
+            new Error(
+              `WebRTC connection failed (state=${state}) for chatId=${chatId}`,
+            ),
+          );
+        }
+      };
+
+      this.on("connection-change", handler);
+    });
   }
 
   async create(chatId: number): Promise<string> {
@@ -63,10 +106,6 @@ export class NTgCalls extends EventEmitter {
 
   async stop(chatId: number): Promise<void> {
     return this.native.stop(chatId);
-  }
-
-  destroy(): void {
-    // Native resources are safely cleaned up by Rust's Drop trait implementation
   }
 }
 
