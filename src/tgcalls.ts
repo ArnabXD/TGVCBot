@@ -41,18 +41,42 @@ class TGVCCalls {
   /** chatIds currently connected via NTgCalls */
   private readonly active = new Set<number>();
 
+  /** chatIds where playback is currently paused */
+  private readonly paused = new Set<number>();
+
+  /**
+   * chatIds that are mid-hot-swap: setAudioSource was called on a live session.
+   * libntgcalls fires stream-end for the killed source — we must ignore that
+   * one event so we don't teardown a stream that is already playing the next track.
+   */
+  private readonly swapping = new Set<number>();
+
   constructor() {
-    ntgCalls.on("stream-end", (chatId: number) => {
-      this.onStreamEnd(chatId).catch((e) =>
-        logger.error("Stream-end handler error", e),
-      );
-    });
+    ntgCalls.on(
+      "stream-end",
+      (chatId: number, _streamType: number, _streamDevice: number) => {
+        if (this.swapping.has(chatId)) {
+          this.swapping.delete(chatId);
+          logger.debug(
+            `[${this.chatNames.get(chatId) ?? chatId}] Suppressed post-hot-swap stream-end`,
+          );
+          return;
+        }
+        this.onStreamEnd(chatId).catch((e) =>
+          logger.error("Stream-end handler error", e),
+        );
+      },
+    );
   }
 
   // ── Public state queries ────────────────────────────────────────────────────
 
   isActive(chatId: number): boolean {
     return this.active.has(chatId);
+  }
+
+  isPaused(chatId: number): boolean {
+    return this.paused.has(chatId);
   }
 
   // ── Core playback ───────────────────────────────────────────────────────────
@@ -81,17 +105,19 @@ class TGVCCalls {
     await this.play(chat, data);
   }
 
-  /** Pause the current stream. Returns false if not active. */
+  /** Pause the current stream. Returns false if not active or already paused. */
   async pause(chatId: number): Promise<boolean> {
-    if (!this.isActive(chatId)) return false;
+    if (!this.isActive(chatId) || this.isPaused(chatId)) return false;
     await ntgCalls.pause(chatId);
+    this.paused.add(chatId);
     return true;
   }
 
-  /** Resume a paused stream. Returns false if not active. */
+  /** Resume a paused stream. Returns false if not paused. */
   async resume(chatId: number): Promise<boolean> {
-    if (!this.isActive(chatId)) return false;
+    if (!this.isPaused(chatId)) return false;
     await ntgCalls.resume(chatId);
+    this.paused.delete(chatId);
     return true;
   }
 
@@ -147,13 +173,23 @@ class TGVCCalls {
         return buildFfmpegCmd(audio.url);
       }
       case "telegram": {
-        // mp3_link is a file_id — download to a temp file then pass path to ffmpeg
+        // mp3_link is a file_id — download to a temp file then pass path to ffmpeg.
+        // The caller is responsible for deleting tmpPath after ffmpeg is done; we
+        // register a one-shot stream-end listener to clean up automatically.
         const chunks: Uint8Array[] = [];
         for await (const chunk of bot.download(data.mp3_link)) {
           chunks.push(chunk);
         }
         const tmpPath = `/tmp/tgvc_${chatId}_${Date.now()}.audio`;
         await Bun.write(tmpPath, Buffer.concat(chunks));
+        const cleanup = (_id: number) => {
+          if (_id !== chatId) return;
+          ntgCalls.off("stream-end", cleanup);
+          import("node:fs").then(({ unlink }) =>
+            unlink(tmpPath, () => {/* ignore */}),
+          );
+        };
+        ntgCalls.on("stream-end", cleanup);
         return buildFfmpegCmd(tmpPath);
       }
       // "jiosaavn" | "radio" — mp3_link is a direct URL
@@ -171,6 +207,14 @@ class TGVCCalls {
       const ffmpegCmd = await this.resolveFfmpegCmd(data, chat.id);
 
       if (this.isActive(chat.id)) {
+        // Mark as swapping so the stream-end from the killed source is suppressed
+        this.swapping.add(chat.id);
+        // If paused, resume first so the native layer is in a playing state
+        // before setAudioSource replaces the source — avoids silent playback.
+        if (this.isPaused(chat.id)) {
+          await ntgCalls.resume(chat.id);
+          this.paused.delete(chat.id);
+        }
         // Hot-swap the audio source instantly without resetting WebRTC connection
         await ntgCalls.setAudioSource(chat.id, ffmpegCmd);
         queue.setCurrent(chat.id, data);
@@ -217,23 +261,48 @@ class TGVCCalls {
           this.vcIds.delete(chat.id);
           const freshOffer = await ntgCalls.create(chat.id);
           const freshVcId = await this.ensureVcId(chat.id);
-          answer = await userbot.joinVideoChat(freshVcId, freshOffer, {
-            isAudioEnabled: true,
-            isVideoEnabled: false,
-          });
+          try {
+            answer = await userbot.joinVideoChat(freshVcId, freshOffer, {
+              isAudioEnabled: true,
+              isVideoEnabled: false,
+            });
+          } catch (retryErr) {
+            // Retry also failed — stop the ntgcalls context we just created
+            // so the next play attempt can call create() cleanly.
+            try {
+              await ntgCalls.stop(chat.id);
+            } catch {
+              /* ignore */
+            }
+            throw retryErr;
+          }
         } else {
+          // Non-retryable: the original create() context is still alive, clean it up.
+          try {
+            await ntgCalls.stop(chat.id);
+          } catch {
+            /* ignore */
+          }
           throw err;
         }
       }
 
-      // 5. Complete WebRTC handshake
+      // 5. Complete WebRTC handshake.
+      // Register the listener before connect() so we never miss the Connected event.
+      // In StreamConnection mode (Telegram group VCs), Connected fires only after
+      // Telegram grants can_self_unmute — waitForConnected resolves on that signal,
+      // or falls back gracefully after 15 s so audio is still attempted.
+      const connected = ntgCalls.waitForConnected(chat.id);
       await ntgCalls.connect(chat.id, answer);
+      await connected;
+
+      // Mark active before setAudioSource so any immediate stream-end event
+      // (e.g. very short clip) doesn't get silently dropped by onStreamEnd.
+      this.active.add(chat.id);
+      queue.setCurrent(chat.id, data);
 
       // 6. Start audio
       await ntgCalls.setAudioSource(chat.id, ffmpegCmd);
-
-      this.active.add(chat.id);
-      queue.setCurrent(chat.id, data);
 
       // 7. Send now-playing message (best-effort)
       await this.sendPlayingMessage(chat, data);
@@ -242,8 +311,27 @@ class TGVCCalls {
     } catch (err) {
       logger.error(`[${chat.name}] Failed to play "${data.title}"`, err);
       await log(`[Error][${chat.name}] ${Bun.escapeHTML(String(err))}`);
-      // Attempt to advance queue even on error
-      await this.onStreamEnd(chat.id);
+      // Ensure no orphaned ntgcalls context is left alive for this chat.
+      // If the chat is already fully active teardown() handles stop(); otherwise
+      // we need to call stop() directly here so the next create() can succeed.
+      if (!this.isActive(chat.id)) {
+        try {
+          await ntgCalls.stop(chat.id);
+        } catch {
+          /* ignore */
+        }
+        // onStreamEnd() guards on isActive — bypass it here since we know the
+        // session never became active but the queue still needs to advance.
+        const chatName = this.chatNames.get(chat.id) ?? String(chat.id);
+        const next = queue.pop(chat.id);
+        if (next) {
+          await this.play({ id: chat.id, name: chatName }, next);
+        } else {
+          queue.clearCurrent(chat.id);
+        }
+      } else {
+        await this.onStreamEnd(chat.id);
+      }
     }
   }
 
@@ -280,8 +368,15 @@ class TGVCCalls {
    * Advances to the next queued track, or tears down if empty.
    */
   private async onStreamEnd(chatId: number): Promise<void> {
-    const next = queue.pop(chatId);
     const chatName = this.chatNames.get(chatId) ?? String(chatId);
+    if (!this.isActive(chatId)) {
+      // Spurious stream-end from libntgcalls (e.g. chatId=0 after hot-swap)
+      logger.warn(
+        `[${chatName}] Ignoring stream-end for inactive chatId=${chatId}`,
+      );
+      return;
+    }
+    const next = queue.pop(chatId);
     if (next) {
       logger.debug(`[${chatName}] Advancing to next: "${next.title}"`);
       await this.play({ id: chatId, name: chatName }, next);
@@ -299,6 +394,8 @@ class TGVCCalls {
     const chatName = this.chatNames.get(chatId) ?? String(chatId);
     logger.debug(`[${chatName}] Tearing down`);
     this.active.delete(chatId);
+    this.paused.delete(chatId);
+    this.swapping.delete(chatId);
     const vcId = this.vcIds.get(chatId);
     this.vcIds.delete(chatId);
 

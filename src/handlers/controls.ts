@@ -8,7 +8,12 @@ import { tgcalls } from "../tgcalls";
 const composer = new Composer();
 
 composer.command(["pause", "p"], checkInactiveVc, async (ctx) => {
-  const ok = await tgcalls.pause(ctx.chat!.id);
+  const chatId = ctx.chat!.id;
+  if (tgcalls.isPaused(chatId)) {
+    await ctx.reply("Already paused.");
+    return;
+  }
+  const ok = await tgcalls.pause(chatId);
   await ctx.reply(ok ? "‖ Paused." : "Not playing.");
 });
 

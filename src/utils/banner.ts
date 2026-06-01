@@ -159,10 +159,11 @@ export async function generateBanner({
   ctx.fillRect(textX, y, 32, 1);
 
   // Watermark
+  const watermark = env.WATERMARK.toUpperCase();
   ctx.font = "400 9px Poppins";
   ctx.fillStyle = "rgba(255,255,255,0.18)";
   ctx.textBaseline = "bottom";
-  ctx.fillText(env.WATERMARK.toUpperCase(), W - 24 - ctx.measureText(env.WATERMARK.toUpperCase()).width, H - 18);
+  ctx.fillText(watermark, W - 24 - ctx.measureText(watermark).width, H - 18);
 
   const buffer = canvas.toBuffer("image/png");
   return new Uint8Array(buffer.buffer as ArrayBuffer);
