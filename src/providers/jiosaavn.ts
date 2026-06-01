@@ -1,4 +1,5 @@
 import { consola } from "consola";
+import { decode } from "he";
 import type { QueueData } from "../queue";
 import StreamProvider, { type RequestedBy } from "./base";
 
@@ -53,6 +54,17 @@ function formatDuration(seconds: number | null): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+/** Decode HTML entities the JioSaavn API embeds in human-readable text fields. */
+function decodeResult(r: SearchResult): SearchResult {
+  return {
+    ...r,
+    name: decode(r.name),
+    artists: {
+      primary: r.artists.primary.map((a) => ({ ...a, name: decode(a.name) })),
+    },
+  };
+}
+
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 class JioSaavn extends StreamProvider {
@@ -70,7 +82,9 @@ class JioSaavn extends StreamProvider {
       return [];
     }
     const data = (await res.json()) as SearchResponse;
-    return data.data?.results ?? [];
+    // The JioSaavn API HTML-encodes text fields (e.g. &quot; in names) — decode
+    // at this boundary so all downstream consumers get clean Unicode.
+    return (data.data?.results ?? []).map(decodeResult);
   }
 
   async getSong(id: string, from: RequestedBy): Promise<QueueData> {
@@ -80,8 +94,9 @@ class JioSaavn extends StreamProvider {
         `JioSaavn getSong failed: HTTP ${res.status} for id=${id}`,
       );
     const body = (await res.json()) as SongResponse;
-    const song = body.data[0];
-    if (!song) throw new Error("JioSaavn: empty song response");
+    const raw = body.data[0];
+    if (!raw) throw new Error("JioSaavn: empty song response");
+    const song = decodeResult(raw);
 
     const mp3_link = bestDownloadUrl(song.downloadUrl);
     if (!mp3_link) throw new Error("JioSaavn: no download URL available");

@@ -1,4 +1,5 @@
 import { consola } from "consola";
+import { decode } from "he";
 import { YouTube as YtSr } from "youtube-sr";
 import env from "../env";
 import type { QueueData } from "../queue";
@@ -32,8 +33,8 @@ class YouTube extends StreamProvider {
       logger.warn(`Search returned no results for query="${key}"`);
     return results.map((r) => ({
       id: r.id ?? "dQw4w9WgXcQ",
-      title: r.title ?? "Unknown",
-      artist: r.channel?.name ?? "Unknown",
+      title: decode(r.title ?? "Unknown"),
+      artist: decode(r.channel?.name ?? "Unknown"),
       durationFormatted: r.durationFormatted,
     }));
   }
@@ -42,9 +43,9 @@ class YouTube extends StreamProvider {
     const song = await YtSr.searchOne(id);
     return {
       link: song.url,
-      title: song.title ?? "Unknown",
+      title: decode(song.title ?? "Unknown"),
       image: song.thumbnail?.url ?? env.THUMBNAIL,
-      artist: song.channel?.name ?? "Unknown",
+      artist: decode(song.channel?.name ?? "Unknown"),
       duration: song.durationFormatted,
       requestedBy: { id: from.id, first_name: from.first_name },
       mp3_link: song.id ?? "dQw4w9WgXcQ",
