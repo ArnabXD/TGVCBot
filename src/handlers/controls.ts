@@ -51,24 +51,17 @@ composer.command(["app", "vcapp", "controller"], async (ctx) => {
     await ctx.reply("This command works in groups only.");
     return;
   }
-  if (!env.WEBAPP_DIRECT_LINK) {
-    await ctx.reply("Mini App URL is not configured in the bot environment.");
+  if (!env.WEBAPP_SHORT_NAME) {
+    await ctx.reply("Mini App is not configured in the bot environment.");
     return;
   }
 
   const me = await bot.getMe();
-  const directLink =
-    env.WEBAPP_DIRECT_LINK ||
-    `https://t.me/${me.username}/${env.WEBAPP_SHORT_NAME}`;
-  const cleanLink = directLink.endsWith("/")
-    ? directLink.slice(0, -1)
-    : directLink;
-
   const chatIdParam = ctx.chat.id.toString().replace(/^-/, "g");
   const button: InlineKeyboardButton = {
     type: "url",
     text: "🎵 Open Stream Controller",
-    url: `${cleanLink}?startapp=${chatIdParam}`,
+    url: `https://t.me/${me.username}/${env.WEBAPP_SHORT_NAME}?startapp=${chatIdParam}`,
   };
 
   await ctx.reply(

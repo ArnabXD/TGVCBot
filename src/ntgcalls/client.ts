@@ -1,8 +1,44 @@
 import EventEmitter from "node:events";
-import { NtgCalls } from "@arnabxd/ntgcalls-napi";
+import { NtgCalls, register_logger } from "@arnabxd/ntgcalls-napi";
 import { consola } from "consola";
+import env from "../env";
 
 const logger = consola.withTag("ntgcalls");
+
+// ntgcalls log levels are bitmask: DEBUG=1, INFO=2, WARNING=4, ERROR=8, UNKNOWN=-1
+const LogLevel = { DEBUG: 1, INFO: 2, WARNING: 4, ERROR: 8 } as const;
+
+const nativeLogger = consola.withTag("ntgcalls:native");
+
+// Per native level: severity rank (for threshold filtering) + consola method.
+const logLevelMap = new Map<
+  number,
+  { rank: number; log: (msg: string) => void }
+>([
+  [LogLevel.DEBUG, { rank: 1, log: (msg) => nativeLogger.debug(msg) }],
+  [LogLevel.INFO, { rank: 2, log: (msg) => nativeLogger.info(msg) }],
+  [LogLevel.WARNING, { rank: 3, log: (msg) => nativeLogger.warn(msg) }],
+  [LogLevel.ERROR, { rank: 4, log: (msg) => nativeLogger.error(msg) }],
+]);
+
+// Minimum rank to emit, derived from NTGCALLS_LOG_LEVEL. silent drops everything.
+const minRank: Record<string, number> = {
+  silent: Number.POSITIVE_INFINITY,
+  debug: 1,
+  info: 2,
+  warn: 3,
+  error: 4,
+};
+const ntgcallsMinRank = minRank[env.NTGCALLS_LOG_LEVEL] ?? 4;
+
+register_logger(({ level, file, line, message }) => {
+  const entry = logLevelMap.get(level);
+  // Unknown levels (e.g. -1) always pass through so we never swallow surprises.
+  const rank = entry?.rank ?? Number.POSITIVE_INFINITY;
+  if (rank < ntgcallsMinRank) return;
+  const log = entry?.log ?? ((msg) => nativeLogger.log(msg));
+  log(`[${file}:${line}] ${message}`);
+});
 
 const StreamType = { Audio: 0, Video: 1 } as const;
 

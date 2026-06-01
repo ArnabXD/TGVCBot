@@ -17,8 +17,15 @@ const env = cleanEnv(process.env, {
     default: "info",
     choices: ["silent", "error", "warn", "info", "debug", "verbose"],
   }),
-  WEBAPP_SHORT_NAME: str({ default: "app" }),
-  WEBAPP_DIRECT_LINK: str({ default: "" }),
+  NTGCALLS_LOG_LEVEL: str({
+    default: "error",
+    choices: ["silent", "error", "warn", "info", "debug"],
+    docs: "Minimum level for native ntgcalls (C++) logs. Defaults to error to silence verbose DEBUG/INFO spam.",
+  }),
+  WEBAPP_SHORT_NAME: str({
+    default: "",
+    docs: "Mini App short name registered with @BotFather. When set, /play and /app show a button that opens https://t.me/<bot>/<short-name> as a Mini App. Leave empty to disable.",
+  }),
 });
 
 export default env;
