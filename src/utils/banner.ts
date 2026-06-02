@@ -1,9 +1,9 @@
 /**
  * Banner generation — produces a 600×300 PNG for the "Now Playing" message.
  *
- * Layout (Vinyl Heritage — Option A):
- *   [ left: circular album art, cyan ring border, center hole ]
- *   [ right: dark bg, NOW PLAYING label, title (cream), artist (muted), left bar accent ]
+ * Layout (aligned with the Mini App's now-playing hero):
+ *   [ left: squircle album art, soft shadow, faint vinyl-disc edge behind ]
+ *   [ right: near-black bg + teal ambient glow, NOW PLAYING label, title, artist, left bar accent ]
  */
 
 import { join } from "node:path";
@@ -22,16 +22,53 @@ const logger = consola.withTag("banner");
 const FONTS_DIR = join(process.cwd(), "fonts");
 const W = 600;
 const H = 300;
-const ART_SIZE = 158;
-const ACCENT = "#00E5FF";
+const ART_SIZE = 168;
+const ART_RADIUS = 26; // squircle corner radius, mirrors the Mini App's square art
+const ACCENT = "#2ec4b6"; // teal — matches the Mini App accent
+const ACCENT_RGB = "46,196,182";
+const BG = "#0f1115"; // near-black, matches the Mini App background
+const TITLE = "#f3f5f7";
+const MUTED = "#8a94a3";
+
+/** Trace a rounded-rectangle path (squircle) for clipping/stroking */
+function roundRectPath(
+  ctx: SKRSContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
 
 /** Draw a simple eighth-note music glyph (♪) using canvas paths */
-function drawMusicNote(ctx: SKRSContext2D, x: number, y: number, size: number, color: string) {
+function drawMusicNote(
+  ctx: SKRSContext2D,
+  x: number,
+  y: number,
+  size: number,
+  color: string,
+) {
   ctx.save();
   ctx.fillStyle = color;
   // note head
   ctx.beginPath();
-  ctx.ellipse(x, y + size * 0.62, size * 0.22, size * 0.18, -0.4, 0, Math.PI * 2);
+  ctx.ellipse(
+    x,
+    y + size * 0.62,
+    size * 0.22,
+    size * 0.18,
+    -0.4,
+    0,
+    Math.PI * 2,
+  );
   ctx.fill();
   // stem
   ctx.beginPath();
@@ -44,13 +81,24 @@ function drawMusicNote(ctx: SKRSContext2D, x: number, y: number, size: number, c
   // flag (arc)
   ctx.beginPath();
   ctx.moveTo(x + size * 0.18, y - size * 0.15);
-  ctx.quadraticCurveTo(x + size * 0.65, y + size * 0.05, x + size * 0.18, y + size * 0.25);
+  ctx.quadraticCurveTo(
+    x + size * 0.65,
+    y + size * 0.05,
+    x + size * 0.18,
+    y + size * 0.25,
+  );
   ctx.stroke();
   ctx.restore();
 }
 
 /** Draw a classic studio microphone icon */
-function drawMic(ctx: SKRSContext2D, x: number, y: number, size: number, color: string) {
+function drawMic(
+  ctx: SKRSContext2D,
+  x: number,
+  y: number,
+  size: number,
+  color: string,
+) {
   ctx.save();
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
@@ -203,7 +251,7 @@ export async function generateBanner({
   const source = await fetchImageBuffer(image);
   if (!source) throw new Error(`Failed to fetch banner image: ${image}`);
 
-  // Resize+crop album art into a square for circular display
+  // Resize+crop album art into a square for the squircle display
   const artBuf = await sharp(source)
     .resize(ART_SIZE, ART_SIZE, { fit: "cover" })
     .toBuffer();
@@ -213,61 +261,103 @@ export async function generateBanner({
   const ctx = canvas.getContext("2d");
 
   // ── Background ──────────────────────────────────────────────────
-  ctx.fillStyle = "#1A1A1A";
+  ctx.fillStyle = BG;
   ctx.fillRect(0, 0, W, H);
 
-  // ── Circular album art (left-center) ────────────────────────────
-  const cx = Math.round(ART_SIZE / 2) + 30; // circle center X
-  const cy = Math.round(H / 2);              // circle center Y
-  const r  = Math.round(ART_SIZE / 2);       // radius
+  // Ambient radial glow (top-left, over the art) — mirrors the Mini App's
+  // accent-tinted ambient wash so the two surfaces read as one product.
+  const glow = ctx.createRadialGradient(150, 40, 0, 150, 40, 360);
+  glow.addColorStop(0, `rgba(${ACCENT_RGB},0.16)`);
+  glow.addColorStop(1, `rgba(${ACCENT_RGB},0)`);
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
 
-  // Clip to circle, draw album art
-  ctx.save();
+  // ── Squircle album art (left-center) ────────────────────────────
+  const artX = 34;
+  const artY = Math.round((H - ART_SIZE) / 2);
+  const cy = Math.round(H / 2); // vertical center, shared by the vinyl nod
+
+  // Vinyl-edge nod: a faint disc whose rim barely peeks past the art's right
+  // side — a subtle echo of the Mini App's hero, not a heavy crescent.
+  const discR = Math.round(ART_SIZE * 0.46);
+  const discPeek = 20; // how far the rim shows beyond the art edge
+  const discCx = artX + ART_SIZE + discPeek - discR;
+  const discGrad = ctx.createRadialGradient(
+    discCx,
+    cy,
+    discR * 0.55,
+    discCx,
+    cy,
+    discR,
+  );
+  discGrad.addColorStop(0, "#1c2027");
+  discGrad.addColorStop(1, "#262b33");
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.clip();
-  ctx.drawImage(artImage, 30, cy - r, ART_SIZE, ART_SIZE);
+  ctx.arc(discCx, cy, discR, 0, Math.PI * 2);
+  ctx.fillStyle = discGrad;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${ACCENT_RGB},0.14)`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Soft drop shadow under the art
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.55)";
+  ctx.shadowBlur = 28;
+  ctx.shadowOffsetY = 14;
+  roundRectPath(ctx, artX, artY, ART_SIZE, ART_SIZE, ART_RADIUS);
+  ctx.fillStyle = "#000";
+  ctx.fill();
   ctx.restore();
 
-  // Cyan ring border
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.strokeStyle = ACCENT;
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  // Clip to squircle, draw album art
+  ctx.save();
+  roundRectPath(ctx, artX, artY, ART_SIZE, ART_SIZE, ART_RADIUS);
+  ctx.clip();
+  ctx.drawImage(artImage, artX, artY, ART_SIZE, ART_SIZE);
+  ctx.restore();
 
-  // Outer glow ring
-  ctx.beginPath();
-  ctx.arc(cx, cy, r + 8, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(0,229,255,0.12)";
-  ctx.lineWidth = 8;
-  ctx.stroke();
-
-  // Center hole
-  ctx.beginPath();
-  ctx.arc(cx, cy, 7, 0, Math.PI * 2);
-  ctx.fillStyle = "#1A1A1A";
-  ctx.fill();
-  ctx.strokeStyle = ACCENT;
-  ctx.lineWidth = 2;
+  // Subtle inner hairline border (matches the app's inset 1px ring)
+  roundRectPath(
+    ctx,
+    artX + 0.5,
+    artY + 0.5,
+    ART_SIZE - 1,
+    ART_SIZE - 1,
+    ART_RADIUS,
+  );
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  ctx.lineWidth = 1;
   ctx.stroke();
 
   // ── Right panel: text content ───────────────────────────────────
-  const textX = 30 + ART_SIZE + 36; // after the circle + gap
+  const textX = artX + ART_SIZE + 40; // after the art + gap
   const maxTextWidth = W - textX - 24;
   ctx.textBaseline = "top";
 
   // Measure title lines to vertically center (artist uses dynamic wrapLines)
   const titleLineHeight = 38;
-  const titleLines = wrapLines(ctx, "bold 30px Poppins", title || "Music", maxTextWidth, 3);
-  const artistLines = wrapLines(ctx, "400 20px Poppins", artist || "Unknown", maxTextWidth - 20, 2);
+  const titleLines = wrapLines(
+    ctx,
+    "bold 30px Poppins",
+    title || "Music",
+    maxTextWidth,
+    3,
+  );
+  const artistLines = wrapLines(
+    ctx,
+    "400 20px Poppins",
+    artist || "Unknown",
+    maxTextWidth - 20,
+    2,
+  );
   const blockHeight =
-    13 +                    // NOW PLAYING label
-    18 +                    // gap
+    13 + // NOW PLAYING label
+    18 + // gap
     titleLines.length * titleLineHeight +
-    10 +                    // gap after title
+    10 + // gap after title
     artistLines.length * 22 +
-    32 +                    // gap + bottom line
+    32 + // gap + bottom line
     1;
   let y = Math.round((H - blockHeight) / 2);
 
@@ -278,16 +368,16 @@ export async function generateBanner({
   ctx.fillText("NOW PLAYING", textX, y);
   y += 13 + 18;
 
-  // Left accent bar — cyan, with glow
+  // Left accent bar — teal, with glow
   ctx.fillStyle = ACCENT;
   ctx.fillRect(0, y - 4, 3, 52);
   // Glow effect (simulated with slightly wider semi-transparent bar)
-  ctx.fillStyle = "rgba(0,229,255,0.25)";
+  ctx.fillStyle = `rgba(${ACCENT_RGB},0.25)`;
   ctx.fillRect(0, y - 4, 6, 52);
 
-  // Title — cream white
+  // Title
   ctx.font = "bold 30px Poppins";
-  ctx.fillStyle = "#F0F9FF";
+  ctx.fillStyle = TITLE;
   for (const line of titleLines) {
     ctx.fillText(line, textX, y);
     y += titleLineHeight;
@@ -296,8 +386,8 @@ export async function generateBanner({
 
   // Artist — muted gray with mic icon to the left, wraps if too long
   ctx.font = "400 20px Poppins";
-  ctx.fillStyle = "#7A8A9A";
-  drawMic(ctx, textX - 4, y + 1, 20, "#7A8A9A");
+  ctx.fillStyle = MUTED;
+  drawMic(ctx, textX - 4, y + 1, 20, MUTED);
   for (const line of artistLines) {
     ctx.fillText(line, textX + 20, y);
     y += 22;
@@ -305,14 +395,14 @@ export async function generateBanner({
   y += 22;
 
   // Bottom accent line with mini waveform
-  ctx.fillStyle = "rgba(0,229,255,0.35)";
+  ctx.fillStyle = `rgba(${ACCENT_RGB},0.35)`;
   ctx.fillRect(textX, y, 28, 1);
-  drawWaveform(ctx, textX + 36, y, "rgba(0,229,255,0.45)");
+  drawWaveform(ctx, textX + 36, y, `rgba(${ACCENT_RGB},0.45)`);
 
   // Watermark
   const watermark = env.WATERMARK.toUpperCase();
   ctx.font = "400 9px Poppins";
-  ctx.fillStyle = "rgba(0,229,255,0.4)";
+  ctx.fillStyle = `rgba(${ACCENT_RGB},0.4)`;
   ctx.textBaseline = "bottom";
   ctx.fillText(watermark, W - 24 - ctx.measureText(watermark).width, H - 18);
 

@@ -12,12 +12,17 @@
 
   <body x-data="app()" x-init="initApp()" :class="{ 'light-theme': isLightTheme }">
 
+    <!-- ── Ambient glow (fades in while streaming) ── -->
+    <div class="ambient" :class="{ on: active }"></div>
+
     <!-- ── Top bar ── -->
     <header class="topbar">
       <div class="topbar-title">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-        </svg>
+        <div class="topbar-mark">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+          </svg>
+        </div>
         <div>
           <div class="topbar-name" x-text="groupName">Group Stream</div>
           <div class="topbar-sub">
@@ -37,24 +42,31 @@
       <!-- Player tab -->
       <div class="tab-panel" :class="{ active: activeTab === 'player' }">
 
-        <!-- Now playing strip -->
-        <div class="now-playing">
-          <div class="album-art" :class="{ spinning: active && isPlaying, paused: !isPlaying }">
-            <div class="vinyl-hole"></div>
-            <template x-if="currentTrack && currentTrack.image">
-              <img :src="currentTrack.image" alt="" />
-            </template>
-            <template x-if="!currentTrack || !currentTrack.image">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 5v7"/>
-              </svg>
-            </template>
+        <!-- Now playing hero — square art with a faint spinning vinyl edge behind -->
+        <div class="np-hero">
+          <div class="album-stage" :class="{ playing: active && isPlaying, paused: active && !isPlaying }">
+            <div class="vinyl-disc"></div>
+            <div class="album-art">
+              <template x-if="currentTrack && currentTrack.image">
+                <img :src="currentTrack.image" alt="" />
+              </template>
+              <template x-if="!currentTrack || !currentTrack.image">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                </svg>
+              </template>
+            </div>
           </div>
           <div class="now-playing-info">
             <div class="np-title" x-text="currentTrack ? currentTrack.title : 'Nothing playing'"></div>
             <div class="np-artist" x-text="currentTrack ? currentTrack.artist : 'Search a song to start streaming'"></div>
             <template x-if="currentTrack && currentTrack.requestedBy">
-              <span class="np-req" x-text="'by ' + currentTrack.requestedBy.first_name"></span>
+              <span class="np-req">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
+                </svg>
+                <span x-text="'Requested by ' + currentTrack.requestedBy.first_name"></span>
+              </span>
             </template>
           </div>
         </div>
@@ -62,29 +74,27 @@
         <!-- Controls -->
         <div class="controls">
           <button class="btn-ctrl danger" @click="controlAction('stop')" title="Stop">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="3"/></svg>
           </button>
           <button class="btn-ctrl primary" @click="togglePlay()" title="Play / Pause">
             <template x-if="isPlaying">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
             </template>
             <template x-if="!isPlaying">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8V4z"/></svg>
             </template>
           </button>
           <button class="btn-ctrl accent" @click="controlAction('skip')" title="Skip">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/>
-            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M5 4l11 8-11 8V4z"/><rect x="18" y="4" width="3" height="16" rx="1"/></svg>
           </button>
         </div>
 
         <!-- Queue -->
-        <div class="queue-header">
-          <span class="queue-label">Up next</span>
+        <div class="queue-header" x-show="queueList.length > 0">
+          <span class="queue-label" x-text="'Up Next · ' + queueList.length">Up Next</span>
           <div class="queue-actions" x-show="queueList.length > 1">
             <button class="btn-shuffle" @click="controlAction('shuffle')">&#8644; Shuffle</button>
-            <button class="btn-clear" @click="clearQueue()">&#10005; Clear</button>
+            <button class="btn-clear" @click="clearQueue()">Clear</button>
           </div>
         </div>
 
@@ -196,14 +206,14 @@
     <!-- ── Bottom tab bar ── -->
     <nav class="tabbar">
       <button class="tab-btn" :class="{ active: activeTab === 'player' }" @click="switchTab('player')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3"/>
+        <svg width="20" height="20" viewBox="0 0 24 24" :fill="activeTab === 'player' ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 4l14 8-14 8V4z"/>
         </svg>
         Player
       </button>
       <button class="tab-btn" :class="{ active: activeTab === 'search' }" @click="switchTab('search')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         Search
       </button>
