@@ -121,6 +121,10 @@
             @click="searchProvider = 'jiosaavn'; performSearch()">
             JioSaavn
           </button>
+          <button class="provider-pill" :class="{ active: searchProvider === 'radio' }"
+            @click="searchProvider = 'radio'; performSearch()">
+            Radio
+          </button>
         </div>
 
         <!-- Search input -->
@@ -128,7 +132,8 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <input type="search" placeholder="Search songs, artists…"
+          <input type="search"
+            :placeholder="searchProvider === 'radio' ? 'Search radio stations…' : 'Search songs, artists…'"
             x-model="searchQuery"
             @input.debounce.450ms="performSearch()"
             autocomplete="off" />

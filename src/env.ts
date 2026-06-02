@@ -10,7 +10,7 @@ const env = cleanEnv(process.env, {
   BOT_TOKEN: str(),
   LOG_CHANNEL: num(),
   THUMBNAIL: str({
-    default: "https://telegra.ph/file/6b07279fd80ef2b844ed0.png",
+    default: "https://graph.org/file/6b07279fd80ef2b844ed0.png",
   }),
   WATERMARK: str({ default: "TGVCBot" }),
   PORT: num({ default: 3000 }),

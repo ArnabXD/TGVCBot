@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { bot } from "./clients";
 import env from "./env";
 import { jiosaavn } from "./providers/jiosaavn";
+import { radiobrowser } from "./providers/radiobrowser";
 import { yt } from "./providers/youtube";
 import { type QueueData, queue } from "./queue";
 import { tgcalls } from "./tgcalls";
@@ -78,7 +79,18 @@ export function startWebServer() {
 
     try {
       let results: unknown[] = [];
-      if (provider === "jiosaavn") {
+      if (provider === "radio") {
+        const res = await radiobrowser.search(query);
+        results = res.map((r) => ({
+          id: r.stationuuid,
+          title: r.name.trim() || "Radio",
+          artist: [r.country, r.codec, r.bitrate ? `${r.bitrate}kbps` : ""]
+            .filter(Boolean)
+            .join(" · "),
+          duration: "∞",
+          image: r.favicon || "",
+        }));
+      } else if (provider === "jiosaavn") {
         const res = await jiosaavn.search(query);
         results = res.map((r) => ({
           id: r.id,
@@ -141,7 +153,9 @@ export function startWebServer() {
       }
 
       let songData: QueueData;
-      if (provider === "jiosaavn") {
+      if (provider === "radio") {
+        songData = await radiobrowser.getSong(songId, requester);
+      } else if (provider === "jiosaavn") {
         songData = await jiosaavn.getSong(songId, requester);
       } else {
         songData = await yt.getSong(songId, requester);
