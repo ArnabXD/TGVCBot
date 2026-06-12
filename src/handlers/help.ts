@@ -6,7 +6,8 @@ const HELP =
   `<b>Available commands:</b>\n\n` +
   `/jiosaavn &lt;query&gt; — Play from JioSaavn (first result)\n` +
   `/jsvnsearch &lt;query&gt; — Search JioSaavn and pick a result\n` +
-  `/youtube &lt;query&gt; — Play from YouTube (first result)\n` +
+  `/youtube &lt;query|link&gt; — Play from YouTube (first result or link)\n` +
+  `/ytvideo &lt;query|link&gt; — Stream a YouTube video (with picture) in VC\n` +
   `/ytsearch &lt;query&gt; — Search YouTube and pick a result\n` +
   `/play — Reply to an audio file to play it\n` +
   `/radio &lt;url&gt; — Stream a direct HTTP audio URL\n` +

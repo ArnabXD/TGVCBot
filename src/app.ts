@@ -5,12 +5,14 @@ import "./env";
 import { testFFMPEG } from "./ffmpeg";
 import { initHandlers } from "./handlers";
 import { startWebServer } from "./server";
+import { testYtDlp } from "./ytdlp";
 
 const logger = consola.withTag("app");
 
 // ── Startup checks ────────────────────────────────────────────────────────────
 
 testFFMPEG();
+testYtDlp();
 
 // ── Register handlers before connecting ──────────────────────────────────────
 

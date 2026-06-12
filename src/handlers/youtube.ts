@@ -1,6 +1,8 @@
 import { Composer, type InlineKeyboardButton } from "@mtkruto/node";
 import { consola } from "consola";
-import { yt } from "../providers/youtube";
+import type { RequestedBy } from "../providers/base";
+import { extractYouTubeId, yt } from "../providers/youtube";
+import type { QueueData } from "../queue";
 import { tgcalls } from "../tgcalls";
 
 const logger = consola.withTag("handler:youtube");
@@ -11,7 +13,23 @@ function cmdArgs(text: string): string {
   return text.split(" ").slice(1).join(" ").trim();
 }
 
-// ── /youtube <query> — play top result immediately ────────────────────────────
+/**
+ * Resolve a command argument to a track: a YouTube link plays that exact
+ * video, anything else is treated as a search query (top result wins).
+ */
+async function resolveSong(
+  query: string,
+  from: RequestedBy,
+): Promise<QueueData | null> {
+  const linkId = extractYouTubeId(query);
+  if (linkId) return yt.getSong(linkId, from);
+
+  const results = await yt.search(query);
+  if (!results.length) return null;
+  return yt.getSong(results[0]!.id, from);
+}
+
+// ── /youtube <query|link> — play top result (or linked video) immediately ─────
 
 composer.command(["youtube", "yt"], async (ctx) => {
   if (!ctx.chat || ctx.chat.type === "private") {
@@ -22,7 +40,7 @@ composer.command(["youtube", "yt"], async (ctx) => {
 
   const query = ctx.message ? cmdArgs(ctx.message.text) : "";
   if (!query) {
-    await ctx.reply("Please provide a search keyword.");
+    await ctx.reply("Please provide a search keyword or YouTube link.");
     return;
   }
   logger.info(
@@ -30,18 +48,50 @@ composer.command(["youtube", "yt"], async (ctx) => {
   );
   await ctx.sendChatAction({ type: "typing" });
 
-  const results = await yt.search(query);
-  if (!results.length) {
-    await ctx.reply("No results found.");
-    return;
-  }
-  const songData = await yt.getSong(results[0]!.id, {
+  const songData = await resolveSong(query, {
     id: ctx.from.id,
     first_name: ctx.from.firstName,
   });
+  if (!songData) {
+    await ctx.reply("No results found.");
+    return;
+  }
   await tgcalls.streamOrQueue(
     { id: ctx.chat.id, name: ctx.chat.title },
     songData,
+  );
+});
+
+// ── /ytvideo <query|link> — stream video (picture + sound) into the VC ────────
+
+composer.command(["ytvideo", "ytv"], async (ctx) => {
+  if (!ctx.chat || ctx.chat.type === "private") {
+    await ctx.reply("This command works in groups only.");
+    return;
+  }
+  if (!ctx.from || !("isBot" in ctx.from)) return;
+
+  const query = ctx.message ? cmdArgs(ctx.message.text) : "";
+  if (!query) {
+    await ctx.reply("Please provide a search keyword or YouTube link.");
+    return;
+  }
+  logger.info(
+    `/ytvideo query="${query}" chatId=${ctx.chat.id} userId=${ctx.from.id}`,
+  );
+  await ctx.sendChatAction({ type: "typing" });
+
+  const songData = await resolveSong(query, {
+    id: ctx.from.id,
+    first_name: ctx.from.firstName,
+  });
+  if (!songData) {
+    await ctx.reply("No results found.");
+    return;
+  }
+  await tgcalls.streamOrQueue(
+    { id: ctx.chat.id, name: ctx.chat.title },
+    { ...songData, video: true },
   );
 });
 

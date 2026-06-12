@@ -1,7 +1,12 @@
 import EventEmitter from "node:events";
-import { NtgCalls, register_logger } from "@arnabxd/ntgcalls-napi";
+import {
+  type MediaDescription,
+  NtgCalls,
+  register_logger,
+} from "@arnabxd/ntgcalls-napi";
 import { consola } from "consola";
 import env from "../env";
+import { VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH } from "../ffmpeg";
 
 const logger = consola.withTag("ntgcalls");
 
@@ -41,6 +46,14 @@ register_logger(({ level, file, line, message }) => {
 });
 
 const StreamType = { Audio: 0, Video: 1 } as const;
+
+// ntgcalls enum values (mirrors what the binding's set_audio_source helper
+// uses internally — see ntgcalls-napi src/session.rs):
+//   MediaSource.Shell = 2 — ntgcalls spawns the given shell command and reads
+//   raw media from its stdout.
+//   StreamMode.Capture = 0 — we are sending media into the call.
+const MEDIA_SOURCE_SHELL = 2;
+const STREAM_MODE_CAPTURE = 0;
 
 export class NTgCalls extends EventEmitter {
   private readonly native: NtgCalls;
@@ -122,6 +135,41 @@ export class NTgCalls extends EventEmitter {
 
   async setAudioSource(chatId: number, ffmpegCmd: string): Promise<void> {
     return this.native.set_audio_source(chatId, ffmpegCmd);
+  }
+
+  /**
+   * Replace the outgoing media sources for a chat — audio always, video
+   * optionally. Passing no videoCmd removes any active video track.
+   *
+   * The video ffmpeg command must produce rawvideo yuv420p frames of exactly
+   * VIDEO_WIDTH×VIDEO_HEIGHT at VIDEO_FPS (use buildFfmpegVideoCmd), since
+   * those dimensions are declared to ntgcalls here.
+   */
+  async setStreamSources(
+    chatId: number,
+    audioCmd: string,
+    videoCmd?: string,
+  ): Promise<void> {
+    const desc: MediaDescription = {
+      microphone: {
+        mediaSource: MEDIA_SOURCE_SHELL,
+        input: audioCmd,
+        sampleRate: 48000,
+        channelCount: 1,
+        keepOpen: false,
+      },
+      camera: videoCmd
+        ? {
+            mediaSource: MEDIA_SOURCE_SHELL,
+            input: videoCmd,
+            width: VIDEO_WIDTH,
+            height: VIDEO_HEIGHT,
+            fps: VIDEO_FPS,
+            keepOpen: false,
+          }
+        : undefined,
+    };
+    return this.native.set_stream_sources(chatId, STREAM_MODE_CAPTURE, desc);
   }
 
   async pause(chatId: number): Promise<void> {

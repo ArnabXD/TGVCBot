@@ -14,7 +14,6 @@
     "@arnabxd/ntgcalls-napi": "^0.3.1",
     "@mtkruto/node": "latest",
     "@napi-rs/canvas": "^1.0.0",
-    "@ybd-project/ytdl-core": "^6.0.8",
     "consola": "^3.4.2",
     "envalid": "^8.1.1",
     "he": "^1.2.0",

@@ -24,6 +24,8 @@ export interface QueueData {
   };
   mp3_link: string;
   provider: "jiosaavn" | "youtube" | "telegram" | "radio";
+  /** Stream the video track into the VC too (YouTube only). */
+  video?: boolean;
 }
 
 /** A queued track paired with its stable database row id. */
@@ -42,6 +44,7 @@ interface DbRow {
   req_by_fname: string;
   mp3_link: string;
   provider: "jiosaavn" | "youtube" | "telegram" | "radio";
+  video: number;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -56,6 +59,7 @@ function rowToQueueData(row: DbRow): QueueData {
     requestedBy: { id: row.req_by_id, first_name: row.req_by_fname },
     mp3_link: row.mp3_link,
     provider: row.provider,
+    video: !!row.video,
   };
 }
 
@@ -80,10 +84,11 @@ const stmts = {
       string,
       string,
       string,
+      number,
     ]
   >(`
-    INSERT INTO queue (chat_id, link, title, image, artist, duration, req_by_id, req_by_fname, mp3_link, provider)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO queue (chat_id, link, title, image, artist, duration, req_by_id, req_by_fname, mp3_link, provider, video)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `),
 
   countQueue: db.prepare<{ n: number }, [number]>(
@@ -122,10 +127,11 @@ const stmts = {
       string,
       string,
       string,
+      number,
     ]
   >(`
-    INSERT INTO queue (chat_id, link, title, image, artist, duration, req_by_id, req_by_fname, mp3_link, provider)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO queue (chat_id, link, title, image, artist, duration, req_by_id, req_by_fname, mp3_link, provider, video)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `),
 
   // current table
@@ -142,10 +148,11 @@ const stmts = {
       string,
       string,
       string,
+      number,
     ]
   >(`
-    INSERT INTO current (chat_id, link, title, image, artist, duration, req_by_id, req_by_fname, mp3_link, provider)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO current (chat_id, link, title, image, artist, duration, req_by_id, req_by_fname, mp3_link, provider, video)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(chat_id) DO UPDATE SET
       link        = excluded.link,
       title       = excluded.title,
@@ -155,7 +162,8 @@ const stmts = {
       req_by_id   = excluded.req_by_id,
       req_by_fname= excluded.req_by_fname,
       mp3_link    = excluded.mp3_link,
-      provider    = excluded.provider
+      provider    = excluded.provider,
+      video       = excluded.video
   `),
 
   getCurrent: db.prepare<DbRow, [number]>(
@@ -186,6 +194,7 @@ export class Queue {
       data.requestedBy.first_name,
       data.mp3_link,
       data.provider,
+      data.video ? 1 : 0,
     );
     return stmts.countQueue.get(chatId)!.n;
   }
@@ -247,6 +256,7 @@ export class Queue {
           r.req_by_fname,
           r.mp3_link,
           r.provider,
+          r.video,
         );
       }
     });
@@ -314,6 +324,7 @@ export class Queue {
           r.req_by_fname,
           r.mp3_link,
           r.provider,
+          r.video,
         );
       }
     });
@@ -335,6 +346,7 @@ export class Queue {
       data.requestedBy.first_name,
       data.mp3_link,
       data.provider,
+      data.video ? 1 : 0,
     );
   }
 

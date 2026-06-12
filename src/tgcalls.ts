@@ -13,13 +13,13 @@
  */
 
 import { errors } from "@mtkruto/node";
-import { YtdlCore } from "@ybd-project/ytdl-core";
 import { consola } from "consola";
 import { bot, log, userbot } from "./clients";
-import { buildFfmpegCmd } from "./ffmpeg";
+import { buildFfmpegCmd, buildFfmpegVideoCmd } from "./ffmpeg";
 import { ntgCalls } from "./ntgcalls";
 import { type QueueData, queue } from "./queue";
 import { controllerKeyboard } from "./utils/keyboard";
+import { resolveYouTubeUrls } from "./ytdlp";
 
 const logger = consola.withTag("tgcalls");
 
@@ -28,6 +28,12 @@ const logger = consola.withTag("tgcalls");
 export interface ChatInfo {
   id: number;
   name: string;
+}
+
+/** Resolved ffmpeg shell commands for one track. */
+interface ResolvedMedia {
+  audioCmd: string;
+  videoCmd?: string;
 }
 
 // ── TGVCCalls class ───────────────────────────────────────────────────────────
@@ -44,6 +50,9 @@ class TGVCCalls {
 
   /** chatIds where playback is currently paused */
   private readonly paused = new Set<number>();
+
+  /** chatIds whose VC join was made with isVideoEnabled (can send video) */
+  private readonly videoJoined = new Set<number>();
 
   constructor() {
     // ntgcalls (verified on v0.3.1) does NOT emit a spurious stream-end when
@@ -145,25 +154,24 @@ class TGVCCalls {
   // ── Private helpers ─────────────────────────────────────────────────────────
 
   /**
-   * Resolve the ffmpeg command for a track based on its provider.
-   * YouTube requires a fresh stream URL from ytdl; all others use mp3_link directly.
+   * Resolve the ffmpeg command(s) for a track based on its provider.
+   * YouTube requires a fresh stream URL from yt-dlp; all others use mp3_link
+   * directly. Only YouTube tracks can carry a video stream (`data.video`).
    */
-  private async resolveFfmpegCmd(
+  private async resolveMedia(
     data: QueueData,
     chatId: number,
-  ): Promise<string> {
+  ): Promise<ResolvedMedia> {
     switch (data.provider) {
       case "youtube": {
-        const ytdl = new YtdlCore({ disablePoTokenAutoGeneration: true });
-        const info = await ytdl.getFullInfo(
-          `https://www.youtube.com/watch?v=${data.mp3_link}`,
+        const { audioUrl, videoUrl } = await resolveYouTubeUrls(
+          data.mp3_link,
+          !!data.video,
         );
-        // Prefer opus (itag 251) for best quality; fall back to first format
-        const audio =
-          info.formats.find((f) => f.itag === 251) ?? info.formats[0];
-        if (!audio?.url)
-          throw new Error("No audio format found for YouTube video");
-        return buildFfmpegCmd(audio.url);
+        return {
+          audioCmd: buildFfmpegCmd(audioUrl),
+          videoCmd: videoUrl ? buildFfmpegVideoCmd(videoUrl) : undefined,
+        };
       }
       case "telegram": {
         // mp3_link is a file_id — download to a temp file then pass path to ffmpeg.
@@ -185,11 +193,11 @@ class TGVCCalls {
           );
         };
         ntgCalls.on("stream-end", cleanup);
-        return buildFfmpegCmd(tmpPath);
+        return { audioCmd: buildFfmpegCmd(tmpPath) };
       }
       // "jiosaavn" | "radio" — mp3_link is a direct URL
       default:
-        return buildFfmpegCmd(data.mp3_link);
+        return { audioCmd: buildFfmpegCmd(data.mp3_link) };
     }
   }
 
@@ -198,18 +206,43 @@ class TGVCCalls {
    */
   private async play(chat: ChatInfo, data: QueueData): Promise<void> {
     try {
-      // 1. Resolve ffmpeg command (may involve network calls)
-      const ffmpegCmd = await this.resolveFfmpegCmd(data, chat.id);
+      // 1. Resolve ffmpeg command(s) (may involve network calls)
+      const media = await this.resolveMedia(data, chat.id);
+      const needVideo = !!media.videoCmd;
+
+      // A video track can't be hot-swapped onto an audio-only join — Telegram
+      // only accepts video from participants who joined with video enabled.
+      // Drop the WebRTC session (we stay in the VC; the re-join below replaces
+      // our participant) and fall through to the full setup path.
+      if (
+        this.isActive(chat.id) &&
+        needVideo &&
+        !this.videoJoined.has(chat.id)
+      ) {
+        logger.debug(`[${chat.name}] Re-joining with video enabled`);
+        try {
+          await ntgCalls.stop(chat.id);
+        } catch {
+          /* ignore */
+        }
+        this.active.delete(chat.id);
+        this.paused.delete(chat.id);
+      }
 
       if (this.isActive(chat.id)) {
         // If paused, resume first so the native layer is in a playing state
-        // before setAudioSource replaces the source — avoids silent playback.
+        // before the source swap replaces it — avoids silent playback.
         if (this.isPaused(chat.id)) {
           await ntgCalls.resume(chat.id);
           this.paused.delete(chat.id);
         }
-        // Hot-swap the audio source instantly without resetting WebRTC connection
-        await ntgCalls.setAudioSource(chat.id, ffmpegCmd);
+        // Hot-swap the media sources instantly without resetting the WebRTC
+        // connection. Omitting videoCmd also removes a previous video track.
+        await ntgCalls.setStreamSources(
+          chat.id,
+          media.audioCmd,
+          media.videoCmd,
+        );
         queue.setCurrent(chat.id, data);
 
         // Send now-playing message (best-effort)
@@ -234,12 +267,13 @@ class TGVCCalls {
       const isRetryableJoinError = (e: unknown) =>
         e instanceof errors.GroupcallAddParticipantsFailed ||
         (e instanceof errors.TelegramError && e.errorCode === -503);
+      const joinParams = {
+        isAudioEnabled: true,
+        isVideoEnabled: needVideo,
+      };
       let answer: string;
       try {
-        answer = await userbot.joinVideoChat(vcId, offer, {
-          isAudioEnabled: true,
-          isVideoEnabled: false,
-        });
+        answer = await userbot.joinVideoChat(vcId, offer, joinParams);
       } catch (err) {
         if (isRetryableJoinError(err)) {
           logger.warn(
@@ -255,10 +289,11 @@ class TGVCCalls {
           const freshOffer = await ntgCalls.create(chat.id);
           const freshVcId = await this.ensureVcId(chat.id);
           try {
-            answer = await userbot.joinVideoChat(freshVcId, freshOffer, {
-              isAudioEnabled: true,
-              isVideoEnabled: false,
-            });
+            answer = await userbot.joinVideoChat(
+              freshVcId,
+              freshOffer,
+              joinParams,
+            );
           } catch (retryErr) {
             // Retry also failed — stop the ntgcalls context we just created
             // so the next play attempt can call create() cleanly.
@@ -289,13 +324,18 @@ class TGVCCalls {
       await ntgCalls.connect(chat.id, answer);
       await connected;
 
-      // Mark active before setAudioSource so any immediate stream-end event
+      // Mark active before starting media so any immediate stream-end event
       // (e.g. very short clip) doesn't get silently dropped by onStreamEnd.
       this.active.add(chat.id);
+      if (needVideo) {
+        this.videoJoined.add(chat.id);
+      } else {
+        this.videoJoined.delete(chat.id);
+      }
       queue.setCurrent(chat.id, data);
 
-      // 6. Start audio
-      await ntgCalls.setAudioSource(chat.id, ffmpegCmd);
+      // 6. Start media
+      await ntgCalls.setStreamSources(chat.id, media.audioCmd, media.videoCmd);
 
       // 7. Send now-playing message (best-effort)
       await this.sendPlayingMessage(chat, data);
@@ -388,6 +428,7 @@ class TGVCCalls {
     logger.debug(`[${chatName}] Tearing down`);
     this.active.delete(chatId);
     this.paused.delete(chatId);
+    this.videoJoined.delete(chatId);
     const vcId = this.vcIds.get(chatId);
     this.vcIds.delete(chatId);
 

@@ -7,6 +7,39 @@ import StreamProvider, { type RequestedBy } from "./base";
 
 const logger = consola.withTag("youtube");
 
+// ── URL parsing ───────────────────────────────────────────────────────────────
+
+const YT_VIDEO_ID = /^[a-zA-Z0-9_-]{11}$/;
+
+/**
+ * Extract a YouTube video id from a URL.
+ * Supports youtube.com/watch?v=, youtu.be/, Shorts, embed, live and
+ * music.youtube.com links. Returns null when `text` isn't a YouTube URL.
+ */
+export function extractYouTubeId(text: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(text);
+  } catch {
+    return null;
+  }
+
+  const host = url.hostname.replace(/^(www|m)\./, "");
+  if (host === "youtu.be") {
+    const id = url.pathname.split("/")[1] ?? "";
+    return YT_VIDEO_ID.test(id) ? id : null;
+  }
+  if (host === "youtube.com" || host === "music.youtube.com") {
+    const v = url.searchParams.get("v");
+    if (v && YT_VIDEO_ID.test(v)) return v;
+    const match = url.pathname.match(
+      /^\/(?:shorts|embed|live|v)\/([a-zA-Z0-9_-]{11})(?:[/?]|$)/,
+    );
+    return match?.[1] ?? null;
+  }
+  return null;
+}
+
 // ── Search result shape used by handlers ──────────────────────────────────────
 
 export interface YtSearchResult {

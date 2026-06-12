@@ -15,8 +15,13 @@ db.run("PRAGMA synchronous = NORMAL");
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
+// Drop & recreate on startup — the queue never survives a restart anyway, and
+// recreating doubles as a free schema migration when columns change.
+db.run("DROP TABLE IF EXISTS queue");
+db.run("DROP TABLE IF EXISTS current");
+
 db.run(`
-  CREATE TABLE IF NOT EXISTS queue (
+  CREATE TABLE queue (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     chat_id    INTEGER NOT NULL,
     link       TEXT NOT NULL,
@@ -27,12 +32,13 @@ db.run(`
     req_by_id  INTEGER NOT NULL,
     req_by_fname TEXT NOT NULL,
     mp3_link   TEXT NOT NULL,
-    provider   TEXT NOT NULL
+    provider   TEXT NOT NULL,
+    video      INTEGER NOT NULL DEFAULT 0
   )
 `);
 
 db.run(`
-  CREATE TABLE IF NOT EXISTS current (
+  CREATE TABLE current (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     chat_id    INTEGER NOT NULL UNIQUE,
     link       TEXT NOT NULL,
@@ -43,12 +49,9 @@ db.run(`
     req_by_id  INTEGER NOT NULL,
     req_by_fname TEXT NOT NULL,
     mp3_link   TEXT NOT NULL,
-    provider   TEXT NOT NULL
+    provider   TEXT NOT NULL,
+    video      INTEGER NOT NULL DEFAULT 0
   )
 `);
-
-// Truncate on startup — queue never survives a restart
-db.run("DELETE FROM queue");
-db.run("DELETE FROM current");
 
 export default db;
