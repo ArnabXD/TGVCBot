@@ -4,105 +4,95 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-TGVCBot is a Telegram bot that streams music in Telegram Voice Chats. It's a **pnpm monorepo** managed with Turborepo containing two apps:
+TGVCBot is a Telegram bot that streams music into Telegram Voice Chats. The `feature/bun-rewrite` branch (this branch) is a complete rewrite as a **single-package Bun app** — the pnpm/Turborepo monorepo, grammy, GramJS, and tgcalls-next from `main` are all gone.
 
-- `apps/tgvcbot/` — The main bot (TypeScript, Node.js ≥ 16)
-- `apps/website/` — Documentation site (Eleventy + Tailwind CSS)
+Stack: **Bun** runtime, **Biome** lint/format, **MTKruto** (`@mtkruto/node`) for both Telegram clients, **`@arnabxd/ntgcalls-napi`** (native NTgCalls bindings) for WebRTC audio streaming, **Hono** for the Mini App HTTP server, **bun:sqlite** for the queue.
 
 ## Commands
 
-All commands run from the repo root using pnpm. Turborepo pipelines tasks across both workspaces.
-
 ```bash
-# Development
-pnpm dev              # Run all apps in parallel (dev mode)
-pnpm build            # Build all apps
-pnpm lint             # Lint all apps (zero warnings enforced)
-pnpm format           # Prettier format all TS/JS/CSS in apps/
-
-# Bot-specific (from apps/tgvcbot/)
-pnpm dev              # Run with ts-node (no build required)
-pnpm test             # TypeScript type-check only (tsc --noEmit)
-pnpm build            # Compile to dist/ via tsc
-pnpm lint             # ESLint with --max-warnings=0
+bun install            # Install dependencies
+bun run dev            # Run with watch mode (bun --watch src/app.ts)
+bun start              # Run once
+bun run lint           # biome check src
+bun run lint:fix       # biome check --write src
+bun run format         # biome format --write src
+bun run gen-session    # Interactive login to generate the userbot SESSION string
 ```
 
-The `test` script in the bot package is TypeScript compilation — there are no runtime tests.
+There is no test suite and no typecheck script — `biome check` is the only verification (TypeScript is not installed; tsconfig.json serves the editor and Bun's transpiler only).
+
+Note: `.github/workflows/ci.yml` is stale from the pnpm-era `main` branch and does not match this branch's tooling.
+
+Commit messages follow Conventional Commits style (`feat:`, `fix:`, `chore:`). Do not add a Co-Authored-By trailer.
 
 ## Architecture
 
-### Dual-client design
+### Dual-client design (`src/clients.ts`)
 
-The bot requires **two Telegram clients running simultaneously**:
+Two MTKruto `Client` instances share the same API credentials:
 
-1. **Bot client** (`src/bot.ts`) — A grammy `Bot` instance using `BOT_TOKEN`. Handles all user commands and sends messages.
-2. **Userbot client** (`src/userbot.ts`) — A MTProto client via `telegram` (GramJS) using `API_ID`/`API_HASH`/`SESSION`. This is a regular Telegram account (not a bot) that actually joins the voice chat and streams audio. Required because the Telegram Bot API cannot participate in voice chats.
+1. **bot** — authenticates with `BOT_TOKEN`; receives commands, sends messages.
+2. **userbot** — a real user account (auth string from `SESSION`, imported via `importAuthString` on every start); joins/starts the voice chat and performs the WebRTC join, since bots cannot participate in voice chats. Uses a Telegram Desktop device fingerprint (`src/device.ts`).
+
+Both persist MTProto sessions to disk (`./db/bot-session`, `./db/userbot-session`).
 
 ### Audio streaming pipeline
 
 ```
-User command → Handler → Provider (search/resolve) → QueueData
-    → tgcalls.streamOrQueue()
-        → If playing: push to SQLite queue
-        → If idle: GramTGCalls.stream()
-            → ffmpeg (getReadable) converts source to s16le PCM stream
-            → tgcalls-next streams raw audio into the voice chat via userbot
+Command/API → Provider.getSong() → QueueData → tgcalls.streamOrQueue()
+    → already active: push to SQLite queue
+    → idle: play()
+        1. resolveFfmpegCmd(data)            — provider-specific source resolution
+        2. ntgCalls.create(chatId)           → WebRTC offer JSON
+        3. ensureVcId() / startVideoChat()   — find or start the VC
+        4. userbot.joinVideoChat(vcId, offer) → server answer (retried once with a
+           fresh offer on transient join errors — stale SSRCs cause rejections)
+        5. ntgCalls.connect(chatId, answer) + waitForConnected()
+        6. ntgCalls.setAudioSource(chatId, ffmpegCmd) — audio flows
 ```
 
-`src/tgcalls.ts` — `TGVCCalls` singleton. Maintains a `Map<chatId, GramTGCalls>` for concurrent per-chat voice streams. Listens for `audio-finish` to auto-advance the queue.
+Key points in `src/tgcalls.ts` (the `TGVCCalls` singleton):
 
-### Queue persistence
+- **Hot-swap**: when a chat is already active, `setStreamSources()` replaces the media sources instantly without re-doing the WebRTC handshake (used by skip and queue advance). ntgcalls (verified on v0.3.1) emits **no spurious stream-end on hot-swap** — every `stream-end` is a real track end; do not add swap-suppression logic.
+- **Video tracks** (`QueueData.video`, set by `/ytvideo`): a second shell-ffmpeg source (`camera` in the MediaDescription) feeds raw yuv420p frames at a fixed 1280×720@30 canvas (`buildFfmpegVideoCmd` letterboxes via scale+pad — frame size must exactly match the dimensions declared to ntgcalls). The VC join uses `isVideoEnabled: true`; hot-swapping a video track onto an audio-only join requires dropping the ntgcalls session and re-joining (tracked in `videoJoined`). Queue advance fires on the **audio** stream-end only (video stream-ends are filtered in the wrapper).
+- On `stream-end`: pop next track and hot-swap, or tear down (stop NTgCalls + leave VC) if the queue is empty.
+- NTgCalls runs ffmpeg itself (shell mode) — `src/ffmpeg.ts` only builds the command string, which must write raw PCM (s16le, 48 kHz, mono) to stdout. ffmpeg presence is checked at startup; missing → exit.
+- `src/ntgcalls/client.ts` wraps the napi bindings in an EventEmitter, bridges native C++ logs into consola (filtered by `NTGCALLS_LOG_LEVEL`), and implements `waitForConnected()` (Telegram group VCs signal Connected only after `can_self_unmute` is granted; falls back after 15 s).
 
-The queue is stored in SQLite (`./db/tgvc.sqlite`) via knex + better-sqlite3. Two tables:
+### Queue persistence (`src/db.ts`, `src/queue.ts`)
 
-- `queue` — upcoming tracks per chat (FIFO)
-- `current` — currently playing track per chat (unique per chat_id)
+`bun:sqlite` (synchronous, WAL mode) at `./db/tgvc.sqlite`, prepared statements at module load. Tables: `queue` (FIFO per chat, ordered by `id ASC`) and `current` (one row per chat). Both are **truncated on startup**. Reorder/shuffle work by delete-and-reinsert inside a transaction so the autoincrement id order reflects play order.
 
-Both tables are **truncated on startup** (not preserved across restarts).
+### Stream providers (`src/providers/`)
 
-### Stream providers
+Providers extend `StreamProvider` (`base.ts`) with `search()` and `getSong() → QueueData`. The meaning of `QueueData.mp3_link` differs per provider and is resolved in `tgcalls.resolveFfmpegCmd()`:
 
-All providers extend `StreamProvider` (`src/providers/base.ts`) and produce a `QueueData` object:
+| Provider | `mp3_link` holds | Resolved at play time |
+|----------|------------------|----------------------|
+| `jiosaavn` | direct audio URL | passed straight to ffmpeg |
+| `youtube` | video ID | fresh stream URL via the **yt-dlp CLI** (`src/ytdlp.ts`; `bestaudio`, video tracks add `bestvideo[height<=720]`). `extractYouTubeId()` lets `/yt`/`/ytvideo` accept pasted links. Do not reintroduce ytdl-core libraries — all their clients get 403 from googlevideo (unsolved n-sig/poToken) |
+| `telegram` | Telegram `file_id` | downloaded to `/tmp`, deleted on stream-end (no provider class — handled in `handlers/play.ts`) |
+| `radio` | stream URL | passed straight to ffmpeg (`radiobrowser.ts` queries the radio-browser.info API) |
 
-| Provider | Source | Key field |
-|----------|--------|-----------|
-| `jiosaavn` | External API at `jsvn-tgvc.vercel.app` | `mp3_link` = direct audio URL |
-| `youtube` | youtube-sr + ytdl-core | `mp3_link` = YouTube video ID |
-| `telegram` | Telegram audio file | `mp3_link` = Telegram `file_id` |
-| `radio` | Direct HTTP stream URL | `mp3_link` = stream URL |
+### Handlers (`src/handlers/`)
 
-Each provider is handled differently in `src/tgcalls.ts` `streamOrQueue()` — YouTube needs ytdl to get the actual stream URL at play time; Telegram files need the Bot API download URL.
+MTKruto `Composer` instances registered in order by `initHandlers()` (`index.ts`). Control commands (`/pause`, `/resume`, `/skip`, `/shuffle`) are guarded by the `checkInactiveVc` middleware (`src/middlewares/inactiveVc.ts`), which rejects private chats and chats with no live stream.
 
-### Handler registration
+### Mini App + HTTP server (`src/server.ts`, `public/`)
 
-`src/handlers/index.ts` registers all grammy composers onto the bot in order. Each handler file exports a `Composer` instance. The `CheckInactiveVcMiddleware` middleware (in `src/middlewares/inactiveVc.ts`) guards control commands from running when no voice chat is active.
+Hono on `Bun.serve` (port `PORT`, default 3000). All `/api/*` routes require a valid Telegram Mini App `initData` signature in the `Authorization` header, verified by `src/utils/auth.ts` against `BOT_TOKEN`. Endpoints: `/api/status`, `/api/search`, `/api/queue/{add,remove,reorder,clear}`, `/api/control`. Static fallback serves `public/` — a no-build-step Alpine.js (CDN) single-page Mini App (`index.html`, `app.js`, `style.css`). Setting `WEBAPP_SHORT_NAME` makes `/play` and `/app` attach a button opening the Mini App.
 
-### Banner generation
+### Banner generation (`src/utils/banner.ts`)
 
-When a track starts, `src/utils/banner.ts` generates a 600×300 PNG using:
-- `sharp` — image resize/blur/composite
-- `@napi-rs/canvas` — text rendering (`src/utils/text-to-image.ts`)
+Now-playing messages render a PNG banner via `sharp` + `@napi-rs/canvas` (`text-to-image.ts`, fonts in `fonts/`); on failure the bot falls back to a plain-text message.
 
-Falls back to plain text message if banner generation fails.
+### Gotcha: env import order
+
+`src/env.ts` (envalid) sets `consola.level` as a side effect. Tagged loggers (`consola.withTag`) capture the level at creation, so `import "./env"` must come before any module that creates loggers — `src/app.ts` documents this.
 
 ## Environment Setup
 
-Copy `apps/tgvcbot/.env.sample` to `apps/tgvcbot/.env`:
+Copy `.env.example` to `.env`. Required: `API_ID`, `API_HASH` (my.telegram.org), `SESSION` (generate with `bun run gen-session`), `BOT_TOKEN`, `LOG_CHANNEL`. Optional: `THUMBNAIL`, `WATERMARK`, `PORT`, `LOG_LEVEL`, `NTGCALLS_LOG_LEVEL` (native C++ log verbosity, default `error`), `WEBAPP_SHORT_NAME` (BotFather Mini App short name; empty disables the Mini App button).
 
-| Variable | Description |
-|----------|-------------|
-| `API_ID` | Telegram API ID (from my.telegram.org) |
-| `API_HASH` | Telegram API Hash |
-| `SESSION` | GramJS StringSession for the userbot account |
-| `BOT_TOKEN` | Telegram bot token from @BotFather |
-| `LOG_CHANNEL` | Numeric chat ID for bot log messages |
-| `THUMBNAIL` | Default thumbnail URL (optional) |
-| `WATERMARK` | Text watermark on banners (optional, default: "TGVCBot") |
-
-**ffmpeg must be installed** on the host — the bot checks for it on startup and exits if missing.
-
-The SQLite DB file is created at `./db/tgvc.sqlite` relative to the working directory when the bot starts. Ensure the `db/` directory exists or is writable.
-
-## Commit Conventions
-
-Commits must follow Conventional Commits (enforced by commitlint + husky). lint-staged runs ESLint + Prettier on staged `.ts` files before commit.
+**ffmpeg must be installed** on the host (fatal check at startup). **yt-dlp must be installed and kept updated** (`yt-dlp -U`) for YouTube playback — a stale yt-dlp is the usual cause when YouTube tracks die instantly (googlevideo 403 → immediate stream-end). The `db/` directory must be writable (SQLite DB + MTProto session storage).
